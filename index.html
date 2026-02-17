@@ -23,7 +23,7 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useCallback, useEffect, useMemo } = React;
+    const { useState, useCallback, useEffect, useMemo, useRef } = React;
 
     /* ── Brand tokens ─────────────────────────────────────────── */
     const BRAND = {
@@ -221,8 +221,13 @@
     }
 
     /* ── StepCard (enhanced) ───────────────────────────────────── */
-    function StepCard({ step, index, onUpdate, onAddInvisibleAfter, sessionStepData, stability, yieldOpps }) {
+    function StepCard({ step, index, onUpdate, onAddInvisibleAfter, sessionStepData, stability, yieldOpps, expandSignal }) {
       const [expanded, setExpanded] = useState(false);
+      const isFirstRender = useRef(true);
+      useEffect(() => {
+        if (isFirstRender.current) { isFirstRender.current = false; return; }
+        setExpanded(expandSignal % 2 === 1);
+      }, [expandSignal]);
       const borderColor = step.isInvisible ? BRAND.amber : step.starred ? BRAND.emerald : BRAND.lightGray;
       const bgColor = step.isInvisible ? BRAND.amberLight : BRAND.white;
 
@@ -516,6 +521,7 @@
       const [perspective, setPerspective] = useState("Student");
       const [showIntro, setShowIntro] = useState(true);
       const [yieldApprovals, setYieldApprovals] = useState({});
+      const [expandSignal, setExpandSignal] = useState(0);
 
       const session = useMemo(() => getSessionById(selectedSession), [selectedSession]);
       const pKey = perspectiveKey(perspective);
@@ -743,11 +749,12 @@
 
           {!isAdmin && (
             <>
-              <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
                 <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>📝 {filledCount}/{steps.length} annotated</div>
                 <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>⭐ {starredCount} seeds</div>
                 <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>👻 {steps.filter((s) => s.isInvisible).length} invisible</div>
                 {selectedSession && session && <div style={{ background: BRAND.blueLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>📁 Viewing: {session.label.replace(/—.*/, "").trim()} ({new Date(session.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })})</div>}
+                <button onClick={() => setExpandSignal(s => s + 1)} style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, border: `1px solid ${BRAND.lightGray}`, cursor: "pointer", fontWeight: 600, color: BRAND.darkGray }}>{expandSignal % 2 === 1 ? "▲ Collapse All" : "▼ Expand All"}</button>
               </div>
 
               {steps.map((step) => {
@@ -762,6 +769,7 @@
                     sessionStepData={getStepSessionData(step.id)}
                     stability={getStability(step.id)}
                     yieldOpps={yieldOpps}
+                    expandSignal={expandSignal}
                   />
                 );
               })}
