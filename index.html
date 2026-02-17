@@ -10,11 +10,12 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; padding: 0; background: #F9FAFB; -webkit-font-smoothing: antialiased; }
-    textarea:focus, button:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }
+    textarea:focus, select:focus, button:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }
     @media (max-width: 600px) {
       h1 { font-size: 22px !important; }
     }
   </style>
+  <script src="sessions-data.js"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -22,8 +23,9 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useCallback } = React;
+    const { useState, useCallback, useEffect, useMemo } = React;
 
+    /* ── Brand tokens ─────────────────────────────────────────── */
     const BRAND = {
       black: "#1A1A1A",
       darkGray: "#2D2D2D",
@@ -41,6 +43,10 @@
       blueLight: "#DBEAFE",
     };
 
+    const MONO = "'JetBrains Mono', 'Consolas', monospace";
+    const SANS = "Inter, -apple-system, sans-serif";
+
+    /* ── Emotions ──────────────────────────────────────────────── */
     const EMOTIONS = [
       { emoji: "😰", label: "Anxious", color: BRAND.red },
       { emoji: "😟", label: "Uncertain", color: BRAND.amber },
@@ -51,6 +57,7 @@
       { emoji: "😤", label: "Frustrated", color: BRAND.red },
     ];
 
+    /* ── Default steps ────────────────────────────────────────── */
     const DEFAULT_STEPS = [
       { id: "1", title: "Get the Assignment", official: 'Receive one-line chief concern (e.g., "43 y/o male, 1-week worsening SOB")', artifact: "Posted to VMED", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
       { id: "2", title: "Build Your Differential", official: "Broad differential using anatomical/systems reasoning. Rank top 3. Select 5 history Qs, 3-5 PE maneuvers with likelihood ratios.", artifact: "Pre-Class Differential Worksheet", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
@@ -64,36 +71,200 @@
       { id: "8", title: "Next Case", official: "Cycle repeats with a new chief concern.", artifact: "New worksheet posted", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
     ];
 
-    function StepCard({ step, index, onUpdate, onAddInvisibleAfter }) {
+    /* ── Helpers ───────────────────────────────────────────────── */
+    const SESSION_DATA = window.FCM_SESSION_DATA || null;
+
+    function getSessionById(id) {
+      if (!SESSION_DATA) return null;
+      return SESSION_DATA.sessions.find(s => s.id === id) || null;
+    }
+
+    function perspectiveKey(perspective) {
+      if (perspective === "Student") return "student";
+      if (perspective === "Coach / Faculty") return "coach";
+      if (perspective === "Administrator") return "administrator";
+      return "student";
+    }
+
+    function loadAnnotations(sessionId) {
+      try {
+        const raw = localStorage.getItem(`fcm-annotations-${sessionId || "blank"}`);
+        return raw ? JSON.parse(raw) : {};
+      } catch { return {}; }
+    }
+
+    function saveAnnotations(sessionId, annotations) {
+      try {
+        localStorage.setItem(`fcm-annotations-${sessionId || "blank"}`, JSON.stringify(annotations));
+      } catch {}
+    }
+
+    function loadYieldApprovals(sessionId) {
+      try {
+        const raw = localStorage.getItem(`fcm-yield-${sessionId || "blank"}`);
+        return raw ? JSON.parse(raw) : {};
+      } catch { return {}; }
+    }
+
+    function saveYieldApprovals(sessionId, approvals) {
+      try {
+        localStorage.setItem(`fcm-yield-${sessionId || "blank"}`, JSON.stringify(approvals));
+      } catch {}
+    }
+
+    /* ── SessionSelector ──────────────────────────────────────── */
+    function SessionSelector({ selectedSession, onSelect }) {
+      const sessions = SESSION_DATA ? SESSION_DATA.sessions : [];
+
+      return (
+        <div style={{ marginBottom: 20 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "block", marginBottom: 6, fontFamily: MONO }}>Session Data</label>
+          <select
+            value={selectedSession || ""}
+            onChange={e => onSelect(e.target.value || null)}
+            style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1px solid ${BRAND.lightGray}`, fontSize: 14, fontFamily: SANS, background: BRAND.white, cursor: "pointer", appearance: "auto" }}
+          >
+            <option value="">Blank Template</option>
+            {sessions.map(s => (
+              <option key={s.id} value={s.id}>{s.label} ({s.date})</option>
+            ))}
+          </select>
+          {selectedSession && (() => {
+            const session = getSessionById(selectedSession);
+            if (!session) return null;
+            return (
+              <div style={{ marginTop: 8, padding: "10px 14px", background: BRAND.blueLight, borderRadius: 8, fontSize: 13, color: BRAND.darkGray, lineHeight: 1.5 }}>
+                {session.description} &middot; {session.participantCount} participants
+              </div>
+            );
+          })()}
+        </div>
+      );
+    }
+
+    /* ── StabilityBadge ───────────────────────────────────────── */
+    function StabilityBadge({ stability }) {
+      if (!stability) return null;
+      const config = {
+        stable: { bg: BRAND.emeraldLight, color: BRAND.emerald, label: "Stable" },
+        emerging: { bg: BRAND.amberLight, color: BRAND.amber, label: "Emerging" },
+        tentative: { bg: "#F3F4F6", color: BRAND.medGray, label: "Tentative" },
+      };
+      const c = config[stability.level] || config.tentative;
+      return (
+        <span
+          title={`${stability.evidence} (${stability.supportCount} participants)`}
+          style={{ padding: "2px 10px", borderRadius: 12, background: c.bg, color: c.color, fontSize: 11, fontWeight: 700, fontFamily: MONO, cursor: "help", whiteSpace: "nowrap" }}
+        >
+          {c.label}
+        </span>
+      );
+    }
+
+    /* ── HighYieldBadge ───────────────────────────────────────── */
+    function HighYieldBadge({ yieldOpps, stepId }) {
+      const opp = yieldOpps && yieldOpps.find(o => o.stepId === stepId && o.yieldScore >= 7);
+      if (!opp) return null;
+      return (
+        <span
+          title={`High yield (${opp.yieldScore}/10): ${opp.title}`}
+          style={{ padding: "2px 10px", borderRadius: 12, background: BRAND.redLight, color: BRAND.red, fontSize: 11, fontWeight: 700, fontFamily: MONO, cursor: "help", whiteSpace: "nowrap" }}
+        >
+          High Yield
+        </span>
+      );
+    }
+
+    /* ── PrefilledInsights ────────────────────────────────────── */
+    function PrefilledInsights({ stepData }) {
+      if (!stepData) return null;
+      const { summary, themes, keyQuotes, contextNotes } = stepData;
+      if (!summary && (!themes || themes.length === 0) && (!keyQuotes || keyQuotes.length === 0)) return null;
+
+      return (
+        <div style={{ marginBottom: 16, padding: "14px 16px", background: "#EFF6FF", borderRadius: 8, borderLeft: `3px solid ${BRAND.blue}` }}>
+          <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.blue, fontWeight: 700, marginBottom: 8, fontFamily: MONO }}>Session Insights</div>
+          {summary && <p style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, margin: "0 0 10px 0" }}>{summary}</p>}
+          {themes && themes.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+              {themes.map((t, i) => (
+                <span key={i} style={{ padding: "3px 10px", borderRadius: 12, background: BRAND.blueLight, color: BRAND.blue, fontSize: 11, fontWeight: 600, fontFamily: MONO }}>{t}</span>
+              ))}
+            </div>
+          )}
+          {keyQuotes && keyQuotes.length > 0 && (
+            <div style={{ marginBottom: contextNotes ? 10 : 0 }}>
+              {keyQuotes.map((q, i) => (
+                <div key={i} style={{ padding: "8px 12px", background: BRAND.white, borderRadius: 6, marginBottom: i < keyQuotes.length - 1 ? 6 : 0, borderLeft: `2px solid ${BRAND.blue}` }}>
+                  <div style={{ fontSize: 13, color: BRAND.darkGray, fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
+                  <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>— {q.speaker}{q.context ? ` · ${q.context}` : ""}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {contextNotes && <p style={{ fontSize: 12, color: BRAND.medGray, lineHeight: 1.5, margin: 0, fontStyle: "italic" }}>{contextNotes}</p>}
+        </div>
+      );
+    }
+
+    /* ── Field ─────────────────────────────────────────────────── */
+    function Field({ label, value, onChange, placeholder, borderColor, labelColor, fromSession }) {
+      return (
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: labelColor || BRAND.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 4, fontFamily: MONO }}>
+            {label}
+            {fromSession && <span style={{ fontSize: 10, fontWeight: 500, color: BRAND.blue, fontStyle: "italic" }}>(from session)</span>}
+          </label>
+          <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={2} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${borderColor || BRAND.lightGray}`, fontSize: 14, fontFamily: SANS, resize: "vertical", boxSizing: "border-box" }} />
+        </div>
+      );
+    }
+
+    /* ── StepCard (enhanced) ───────────────────────────────────── */
+    function StepCard({ step, index, onUpdate, onAddInvisibleAfter, sessionStepData, stability, yieldOpps }) {
       const [expanded, setExpanded] = useState(false);
       const borderColor = step.isInvisible ? BRAND.amber : step.starred ? BRAND.emerald : BRAND.lightGray;
       const bgColor = step.isInvisible ? BRAND.amberLight : BRAND.white;
 
+      const isFromSession = (field) => {
+        if (!sessionStepData) return false;
+        const suggested = sessionStepData[`suggested${field.charAt(0).toUpperCase() + field.slice(1)}`];
+        return suggested && step[field] === suggested;
+      };
+
       return (
         <div style={{ border: `2px solid ${borderColor}`, borderRadius: 12, background: bgColor, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden" }}>
           <div
-            style={{ background: step.isInvisible ? BRAND.amber : BRAND.black, color: step.isInvisible ? BRAND.black : BRAND.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontFamily: "'JetBrains Mono', 'Consolas', monospace" }}
+            style={{ background: step.isInvisible ? BRAND.amber : BRAND.black, color: step.isInvisible ? BRAND.black : BRAND.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontFamily: MONO }}
             onClick={() => setExpanded(!expanded)}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <span style={{ fontSize: 13, opacity: 0.7 }}>{step.isInvisible ? "\uD83D\uDC7B" : `${index}.`}</span>
               <span style={{ fontWeight: 700, fontSize: 15 }}>{step.title}</span>
               {step.emotion !== null && <span style={{ fontSize: 20 }}>{EMOTIONS[step.emotion]?.emoji}</span>}
               {step.starred && <span style={{ fontSize: 18 }}>\u2B50</span>}
+              <StabilityBadge stability={stability} />
+              <HighYieldBadge yieldOpps={yieldOpps} stepId={step.id} />
             </div>
             <span style={{ fontSize: 18, opacity: 0.6 }}>{expanded ? "\u25B2" : "\u25BC"}</span>
           </div>
           {expanded && (
             <div style={{ padding: "16px 20px" }}>
               <div style={{ marginBottom: 16, padding: "10px 14px", background: BRAND.offWhite, borderRadius: 8, borderLeft: `3px solid ${BRAND.medGray}` }}>
-                <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>Official Version</div>
+                <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Official Version</div>
                 <div style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.5 }}>{step.official}</div>
                 <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>\uD83D\uDCC4 {step.artifact}</div>
               </div>
-              <Field label="What ACTUALLY happens?" value={step.actual} onChange={(v) => onUpdate({ actual: v })} placeholder="Not what you're supposed to do \u2014 what you actually did..." />
+              <PrefilledInsights stepData={sessionStepData} />
+              <Field label="What ACTUALLY happens?" value={step.actual} onChange={(v) => onUpdate({ actual: v })} placeholder="Not what you're supposed to do \u2014 what you actually did..." fromSession={isFromSession("actual")} />
               <Field label="What were you thinking?" value={step.thinking} onChange={(v) => onUpdate({ thinking: v })} placeholder="The internal monologue \u2014 about the case, your grade, what the coach thinks..." />
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "block", marginBottom: 8, fontFamily: "'JetBrains Mono', monospace" }}>How did this feel?</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 8, fontFamily: MONO }}>
+                  How did this feel?
+                  {sessionStepData && sessionStepData.suggestedEmotion !== undefined && step.emotion === sessionStepData.suggestedEmotion && (
+                    <span style={{ fontSize: 10, fontWeight: 500, color: BRAND.blue, fontStyle: "italic" }}>(from session)</span>
+                  )}
+                </label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {EMOTIONS.map((em, i) => (
                     <button key={i} onClick={() => onUpdate({ emotion: step.emotion === i ? null : i })} style={{ padding: "6px 12px", borderRadius: 20, border: step.emotion === i ? `2px solid ${em.color}` : `1px solid ${BRAND.lightGray}`, background: step.emotion === i ? em.color + "18" : BRAND.white, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}>
@@ -103,13 +274,13 @@
                   ))}
                 </div>
               </div>
-              <Field label="\uD83D\uDD34 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={BRAND.redLight} labelColor={BRAND.red} />
-              <Field label="\u2B50 Wishlist \u2014 I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible \u2014 just describe the help you'd want..." borderColor={BRAND.emeraldLight} labelColor={BRAND.emerald} />
+              <Field label="\uD83D\uDD34 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={BRAND.redLight} labelColor={BRAND.red} fromSession={isFromSession("friction")} />
+              <Field label="\u2B50 Wishlist \u2014 I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible \u2014 just describe the help you'd want..." borderColor={BRAND.emeraldLight} labelColor={BRAND.emerald} fromSession={isFromSession("wish")} />
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <button onClick={() => onUpdate({ starred: !step.starred })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: step.starred ? BRAND.emerald : BRAND.lightGray, color: step.starred ? BRAND.white : BRAND.darkGray, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+                <button onClick={() => onUpdate({ starred: !step.starred })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: step.starred ? BRAND.emerald : BRAND.lightGray, color: step.starred ? BRAND.white : BRAND.darkGray, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: MONO }}>
                   {step.starred ? "\u2B50 Starred" : "\u2606 Star This"}
                 </button>
-                <button onClick={onAddInvisibleAfter} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${BRAND.amber}`, background: BRAND.amberLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+                <button onClick={onAddInvisibleAfter} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${BRAND.amber}`, background: BRAND.amberLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>
                   \uD83D\uDC7B Add Invisible Step After
                 </button>
               </div>
@@ -119,15 +290,152 @@
       );
     }
 
-    function Field({ label, value, onChange, placeholder, borderColor, labelColor }) {
+    /* ── AdminDashboard ───────────────────────────────────────── */
+    function AdminDashboard({ session, allSessions }) {
+      if (!session) {
+        return (
+          <div style={{ padding: 24, background: BRAND.offWhite, borderRadius: 12, textAlign: "center", color: BRAND.medGray }}>
+            <p style={{ fontFamily: MONO, fontSize: 14 }}>Select a session to view administrator insights.</p>
+            <p style={{ fontSize: 13 }}>The Administrator view shows macro jobs-to-be-done rather than the step-by-step journey.</p>
+          </div>
+        );
+      }
+
+      const adminData = session.perspectives?.administrator;
+      if (!adminData || !adminData.macroJobs) return null;
+
+      const statusColor = (status) => {
+        if (status.toLowerCase().includes("functional")) return BRAND.amber;
+        if (status.toLowerCase().includes("invisible") || status.toLowerCase().includes("aspirational")) return BRAND.red;
+        return BRAND.emerald;
+      };
+
       return (
-        <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: labelColor || BRAND.darkGray, display: "block", marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>{label}</label>
-          <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={2} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${borderColor || BRAND.lightGray}`, fontSize: 14, fontFamily: "Inter, sans-serif", resize: "vertical", boxSizing: "border-box" }} />
+        <div>
+          <div style={{ marginBottom: 20, padding: "12px 16px", background: BRAND.blueLight, borderRadius: 8, borderLeft: `3px solid ${BRAND.blue}` }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: BRAND.blue, fontFamily: MONO }}>ADMINISTRATOR VIEW</div>
+            <div style={{ fontSize: 13, color: BRAND.darkGray, marginTop: 4 }}>Macro jobs-to-be-done — how well does the system support administrative needs?</div>
+          </div>
+
+          {adminData.macroJobs.map(job => (
+            <div key={job.id} style={{ background: BRAND.white, borderRadius: 12, border: `2px solid ${BRAND.lightGray}`, marginBottom: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+              <div style={{ background: BRAND.black, color: BRAND.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: MONO }}>
+                <span style={{ fontWeight: 700, fontSize: 15 }}>{job.title}</span>
+                <span style={{ padding: "3px 12px", borderRadius: 12, background: statusColor(job.status) + "30", color: statusColor(job.status), fontSize: 11, fontWeight: 700 }}>{job.status}</span>
+              </div>
+              <div style={{ padding: "16px 20px" }}>
+                {job.keyInsights && job.keyInsights.length > 0 && (
+                  <div style={{ marginBottom: 14 }}>
+                    <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.emerald, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Key Insights</div>
+                    {job.keyInsights.map((insight, i) => (
+                      <div key={i} style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, paddingLeft: 12, borderLeft: `2px solid ${BRAND.emeraldLight}`, marginBottom: 6 }}>{insight}</div>
+                    ))}
+                  </div>
+                )}
+                {job.keyQuotes && job.keyQuotes.length > 0 && (
+                  <div style={{ marginBottom: 14 }}>
+                    {job.keyQuotes.map((q, i) => (
+                      <div key={i} style={{ padding: "8px 12px", background: BRAND.offWhite, borderRadius: 6, marginBottom: 4, borderLeft: `2px solid ${BRAND.blue}` }}>
+                        <div style={{ fontSize: 13, color: BRAND.darkGray, fontStyle: "italic" }}>"{q.text}"</div>
+                        <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 2 }}>— {q.speaker}{q.context ? ` · ${q.context}` : ""}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {job.frictionPoints && job.frictionPoints.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.red, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Friction Points</div>
+                    {job.frictionPoints.map((fp, i) => (
+                      <div key={i} style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, paddingLeft: 12, borderLeft: `2px solid ${BRAND.redLight}`, marginBottom: 6 }}>{fp}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {allSessions && allSessions.length >= 2 && SESSION_DATA?.cumulative?.trendNotes && (
+            <div style={{ background: BRAND.amberLight, borderRadius: 12, padding: 20, marginTop: 8, border: `1px solid ${BRAND.amber}` }}>
+              <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 14, color: BRAND.darkGray }}>Cross-Session Trends</h3>
+              <p style={{ fontSize: 13, color: BRAND.darkGray, margin: 0, lineHeight: 1.6 }}>{SESSION_DATA.cumulative.trendNotes}</p>
+            </div>
+          )}
         </div>
       );
     }
 
+    /* ── YieldAnalysis ─────────────────────────────────────────── */
+    function YieldAnalysis({ opportunities, approvals, onApprovalChange, steps }) {
+      if (!opportunities || opportunities.length === 0) return null;
+
+      const sorted = [...opportunities].sort((a, b) => b.yieldScore - a.yieldScore);
+
+      const stepTitle = (stepId) => {
+        const s = steps.find(st => st.id === stepId);
+        return s ? s.title : stepId;
+      };
+
+      const approvalStyles = {
+        approved: { bg: BRAND.emeraldLight, border: BRAND.emerald, label: "Approved" },
+        discuss: { bg: BRAND.amberLight, border: BRAND.amber, label: "Needs Discussion" },
+        dismissed: { bg: "#F3F4F6", border: BRAND.medGray, label: "Dismissed" },
+      };
+
+      return (
+        <div style={{ background: BRAND.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.lightGray}` }}>
+          <h3 style={{ margin: "0 0 4px 0", fontFamily: MONO, color: BRAND.black, fontSize: 16 }}>Yield Analysis</h3>
+          <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Ranked improvement opportunities from session data. Review and triage.</p>
+          {sorted.map((opp, i) => {
+            const status = approvals[`${opp.stepId}-${i}`];
+            const style = status ? approvalStyles[status] : null;
+            return (
+              <div key={i} style={{ border: `1px solid ${style ? style.border : BRAND.lightGray}`, borderRadius: 10, padding: "14px 16px", marginBottom: 12, background: style ? style.bg : BRAND.offWhite }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 22, color: opp.yieldScore >= 8 ? BRAND.red : opp.yieldScore >= 6 ? BRAND.amber : BRAND.medGray }}>{opp.yieldScore}</span>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: BRAND.darkGray }}>{opp.title}</div>
+                      <div style={{ fontSize: 11, color: BRAND.medGray, fontFamily: MONO }}>at: {stepTitle(opp.stepId)}</div>
+                    </div>
+                  </div>
+                  {status && <span style={{ padding: "3px 10px", borderRadius: 12, background: style.border + "20", color: style.border, fontSize: 11, fontWeight: 700, fontFamily: MONO }}>{style.label}</span>}
+                </div>
+                <p style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, margin: "0 0 10px 0" }}>{opp.rationale}</p>
+                {opp.suggestedInterventions && opp.suggestedInterventions.length > 0 && (
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Suggested Interventions</div>
+                    {opp.suggestedInterventions.map((int, j) => (
+                      <div key={j} style={{ fontSize: 12, color: BRAND.darkGray, padding: "4px 0 4px 12px", borderLeft: `2px solid ${BRAND.lightGray}` }}>{int}</div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[
+                    { key: "approved", label: "\u2705 Approve", bg: BRAND.emerald },
+                    { key: "discuss", label: "\uD83D\uDCAC Needs Discussion", bg: BRAND.amber },
+                    { key: "dismissed", label: "\u2715 Dismiss", bg: BRAND.medGray },
+                  ].map(btn => (
+                    <button
+                      key={btn.key}
+                      onClick={() => onApprovalChange(`${opp.stepId}-${i}`, status === btn.key ? null : btn.key)}
+                      style={{
+                        padding: "6px 14px", borderRadius: 6, border: status === btn.key ? `2px solid ${btn.bg}` : `1px solid ${BRAND.lightGray}`,
+                        background: status === btn.key ? btn.bg + "18" : BRAND.white, color: BRAND.darkGray,
+                        cursor: "pointer", fontSize: 12, fontWeight: status === btn.key ? 700 : 500, fontFamily: MONO
+                      }}
+                    >
+                      {btn.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    /* ── EmotionalArc ──────────────────────────────────────────── */
     function EmotionalArc({ steps }) {
       const withEmotions = steps.filter((s) => s.emotion !== null);
       if (withEmotions.length < 2) return null;
@@ -137,7 +445,7 @@
 
       return (
         <div style={{ background: BRAND.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.lightGray}` }}>
-          <h3 style={{ margin: "0 0 16px 0", fontFamily: "'JetBrains Mono', monospace", color: BRAND.black }}>\uD83D\uDCC8 Emotional Arc</h3>
+          <h3 style={{ margin: "0 0 16px 0", fontFamily: MONO, color: BRAND.black }}>\uD83D\uDCC8 Emotional Arc</h3>
           <svg viewBox="-5 -10 110 120" style={{ width: "100%", height: 160 }}>
             <line x1="0" y1="50" x2="100" y2="50" stroke={BRAND.lightGray} strokeWidth="0.3" strokeDasharray="2" />
             <path d={pathD} fill="none" stroke={BRAND.emerald} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -155,16 +463,17 @@
       );
     }
 
+    /* ── WishlistSummary ───────────────────────────────────────── */
     function WishlistSummary({ steps }) {
       const starred = steps.filter((s) => s.starred && s.wish);
       if (starred.length === 0) return null;
       return (
         <div style={{ background: BRAND.emeraldLight, borderRadius: 12, padding: 20, marginTop: 24, border: `2px solid ${BRAND.emerald}` }}>
-          <h3 style={{ margin: "0 0 12px 0", fontFamily: "'JetBrains Mono', monospace" }}>\u2B50 Feature Seeds ({starred.length})</h3>
+          <h3 style={{ margin: "0 0 12px 0", fontFamily: MONO }}>\u2B50 Feature Seeds ({starred.length})</h3>
           <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Starred wishes \u2192 features for your app. Copy into your PRD.</p>
           {starred.map((s) => (
             <div key={s.id} style={{ background: BRAND.white, borderRadius: 8, padding: "12px 16px", marginBottom: 8, borderLeft: `3px solid ${BRAND.emerald}` }}>
-              <div style={{ fontSize: 12, color: BRAND.emerald, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>At: {s.title}</div>
+              <div style={{ fontSize: 12, color: BRAND.emerald, fontWeight: 700, fontFamily: MONO }}>At: {s.title}</div>
               <div style={{ fontSize: 14, color: BRAND.darkGray, marginTop: 4 }}>{s.wish}</div>
             </div>
           ))}
@@ -172,14 +481,100 @@
       );
     }
 
+    /* ── CumulativeAnalysis ────────────────────────────────────── */
+    function CumulativeAnalysis({ sessionCount }) {
+      if (!SESSION_DATA?.cumulative || sessionCount < 2) return null;
+      const { trendNotes, yieldOpportunities } = SESSION_DATA.cumulative;
+
+      return (
+        <div style={{ background: BRAND.amberLight, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.amber}` }}>
+          <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 14, color: BRAND.darkGray }}>Cumulative Analysis ({sessionCount} sessions)</h3>
+          {trendNotes && <p style={{ fontSize: 13, color: BRAND.darkGray, margin: "0 0 12px 0", lineHeight: 1.6 }}>{trendNotes}</p>}
+          {yieldOpportunities && yieldOpportunities.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.amber, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Top Opportunities Across Sessions</div>
+              {yieldOpportunities.slice(0, 3).map((opp, i) => (
+                <div key={i} style={{ fontSize: 13, color: BRAND.darkGray, padding: "4px 0 4px 12px", borderLeft: `2px solid ${BRAND.amber}`, marginBottom: 4 }}>
+                  <strong>{opp.yieldScore}/10</strong> — {opp.title} ({opp.sessions.length} session{opp.sessions.length > 1 ? "s" : ""})
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ── FCMJourneyMapper (main) ───────────────────────────────── */
     function FCMJourneyMapper() {
+      const [selectedSession, setSelectedSession] = useState(null);
       const [steps, setSteps] = useState(DEFAULT_STEPS);
       const [perspective, setPerspective] = useState("Student");
       const [showIntro, setShowIntro] = useState(true);
+      const [yieldApprovals, setYieldApprovals] = useState({});
 
+      const session = useMemo(() => getSessionById(selectedSession), [selectedSession]);
+      const pKey = perspectiveKey(perspective);
+      const isAdmin = perspective === "Administrator";
+      const allSessions = SESSION_DATA ? SESSION_DATA.sessions : [];
+
+      // Load session data into steps when session or perspective changes
+      useEffect(() => {
+        if (!selectedSession || !session) {
+          // Blank template — restore annotations from localStorage
+          const saved = loadAnnotations(null);
+          const fresh = DEFAULT_STEPS.map(s => {
+            const ann = saved[s.id];
+            return ann ? { ...s, ...ann } : { ...s };
+          });
+          setSteps(fresh);
+          setYieldApprovals(loadYieldApprovals(null));
+          return;
+        }
+
+        const perspData = session.perspectives?.[pKey];
+        const stepsData = perspData?.steps;
+        const saved = loadAnnotations(selectedSession);
+
+        const merged = DEFAULT_STEPS.map(s => {
+          const sd = stepsData?.[s.id];
+          const ann = saved[s.id] || {};
+          if (!sd) return { ...s, ...ann };
+          return {
+            ...s,
+            actual: ann.actual ?? sd.suggestedActual ?? s.actual,
+            emotion: ann.emotion !== undefined ? ann.emotion : (sd.suggestedEmotion !== undefined ? sd.suggestedEmotion : s.emotion),
+            friction: ann.friction ?? sd.suggestedFriction ?? s.friction,
+            wish: ann.wish ?? sd.suggestedWish ?? s.wish,
+            thinking: ann.thinking ?? s.thinking,
+            starred: ann.starred !== undefined ? ann.starred : s.starred,
+          };
+        });
+        setSteps(merged);
+        setYieldApprovals(loadYieldApprovals(selectedSession));
+      }, [selectedSession, pKey]);
+
+      // Persist annotations on change
       const updateStep = useCallback((id, updates) => {
-        setSteps((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
-      }, []);
+        setSteps(prev => {
+          const next = prev.map(s => (s.id === id ? { ...s, ...updates } : s));
+          // Save annotations
+          const annotations = {};
+          next.forEach(s => {
+            const def = DEFAULT_STEPS.find(d => d.id === s.id);
+            if (!def) return;
+            const ann = {};
+            if (s.actual !== def.actual) ann.actual = s.actual;
+            if (s.thinking !== def.thinking) ann.thinking = s.thinking;
+            if (s.emotion !== def.emotion) ann.emotion = s.emotion;
+            if (s.friction !== def.friction) ann.friction = s.friction;
+            if (s.wish !== def.wish) ann.wish = s.wish;
+            if (s.starred !== def.starred) ann.starred = s.starred;
+            if (Object.keys(ann).length > 0) annotations[s.id] = ann;
+          });
+          saveAnnotations(selectedSession, annotations);
+          return next;
+        });
+      }, [selectedSession]);
 
       const addInvisibleAfter = useCallback((afterId) => {
         setSteps((prev) => {
@@ -191,9 +586,38 @@
         });
       }, []);
 
+      const handleYieldApproval = useCallback((key, value) => {
+        setYieldApprovals(prev => {
+          const next = { ...prev };
+          if (value === null) { delete next[key]; } else { next[key] = value; }
+          saveYieldApprovals(selectedSession, next);
+          return next;
+        });
+      }, [selectedSession]);
+
+      const getStepSessionData = (stepId) => {
+        if (!session) return null;
+        return session.perspectives?.[pKey]?.steps?.[stepId] || null;
+      };
+
+      const getStability = (stepId) => {
+        if (!session) return null;
+        return session.analysis?.stability?.[stepId] || null;
+      };
+
+      const getYieldOpps = () => {
+        if (!session) return null;
+        return session.analysis?.yieldOpportunities || null;
+      };
+
       const handleExport = () => {
         const starred = steps.filter((s) => s.starred && s.wish);
-        let md = `# FCM Journey Map \u2014 ${perspective} Perspective\n*Generated ${new Date().toLocaleDateString()} \u00b7 HDS 2026*\n\n`;
+        let md = `# FCM Journey Map \u2014 ${perspective} Perspective\n`;
+        md += `*Generated ${new Date().toLocaleDateString()} \u00b7 HDS 2026*\n`;
+        if (session) {
+          md += `*Session: ${session.label} (${session.date}) \u00b7 ${session.participantCount} participants*\n`;
+        }
+        md += `\n`;
         md += `| # | Step | Emotion | What Actually Happens | Friction | Wish |\n|---|------|---------|----------------------|---------|------|\n`;
         let vi = 0;
         steps.forEach((s) => {
@@ -201,6 +625,16 @@
           const em = s.emotion !== null ? EMOTIONS[s.emotion].emoji + " " + EMOTIONS[s.emotion].label : "\u2014";
           md += `| ${s.isInvisible ? "\uD83D\uDC7B" : vi} | ${s.title} | ${em} | ${s.actual || "\u2014"} | ${s.friction || "\u2014"} | ${s.wish || "\u2014"} |\n`;
         });
+        if (session) {
+          const yieldOpps = getYieldOpps();
+          if (yieldOpps && yieldOpps.length > 0) {
+            md += `\n## Yield Analysis\n`;
+            yieldOpps.forEach((opp, i) => {
+              const status = yieldApprovals[`${opp.stepId}-${i}`] || "pending";
+              md += `- **${opp.yieldScore}/10** ${opp.title} [${status}]: ${opp.rationale}\n`;
+            });
+          }
+        }
         if (starred.length > 0) {
           md += `\n## \u2B50 Feature Seeds\n`;
           starred.forEach((s, i) => { md += `${i + 1}. **"${s.title}":** ${s.wish}\n`; });
@@ -210,12 +644,14 @@
         }
         const blob = new Blob([md], { type: "text/markdown" });
         const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-        a.download = `fcm-journey-${perspective.toLowerCase().replace(/\s/g, "-")}.md`; a.click();
+        a.download = `fcm-journey-${perspective.toLowerCase().replace(/\s/g, "-")}${session ? `-${session.id}` : ""}.md`; a.click();
       };
 
       const handleCopy = () => {
         const starred = steps.filter((s) => s.starred && s.wish);
-        let t = `FCM Journey \u2014 ${perspective}\n\n`;
+        let t = `FCM Journey \u2014 ${perspective}\n`;
+        if (session) t += `Session: ${session.label}\n`;
+        t += "\n";
         let vi = 0;
         steps.forEach((s) => {
           if (!s.isInvisible) vi++;
@@ -238,21 +674,22 @@
       const filledCount = steps.filter((s) => s.actual || s.emotion !== null || s.friction || s.wish).length;
       const starredCount = steps.filter((s) => s.starred).length;
       let visibleIdx = 0;
+      const yieldOpps = getYieldOpps();
 
       return (
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px", fontFamily: "Inter, -apple-system, sans-serif" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: BRAND.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
-            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: BRAND.black, fontFamily: "'JetBrains Mono', monospace" }}>FCM Journey Mapper</h1>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: BRAND.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
+            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: BRAND.black, fontFamily: MONO }}>FCM Journey Mapper</h1>
             <p style={{ color: BRAND.medGray, fontSize: 15, margin: 0 }}>Map the <em>real</em> experience &mdash; not the official version.</p>
           </div>
 
           {showIntro && (
             <div style={{ background: BRAND.blueLight, borderRadius: 12, padding: 20, marginBottom: 24, border: `1px solid ${BRAND.blue}`, position: "relative" }}>
               <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: BRAND.medGray }}>\u2715</button>
-              <h3 style={{ margin: "0 0 8px 0", fontFamily: "'JetBrains Mono', monospace", fontSize: 15 }}>How this works</h3>
+              <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 15 }}>How this works</h3>
               <p style={{ fontSize: 14, color: BRAND.darkGray, margin: "0 0 8px 0", lineHeight: 1.6 }}>
-                Below are the "official" steps of an FCM case cycle. For each one, tell us what <strong>actually happens</strong>. Rate your emotion. Note friction. Write wishes and \u2B50 star the ones that matter most &mdash; those become features.
+                Below are the "official" steps of an FCM case cycle. {selectedSession ? "This session has pre-populated insights from group discussion \u2014 review them and add your own perspective." : "For each one, tell us what actually happens."} Rate your emotion. Note friction. Write wishes and \u2B50 star the ones that matter most &mdash; those become features.
               </p>
               <p style={{ fontSize: 14, color: BRAND.darkGray, margin: 0, lineHeight: 1.6 }}>
                 <strong>See a gap?</strong> Hit \uD83D\uDC7B to add invisible steps nobody documents. When done, export and paste into Claude for job stories and PRD specs.
@@ -260,35 +697,68 @@
             </div>
           )}
 
+          {SESSION_DATA && <SessionSelector selectedSession={selectedSession} onSelect={setSelectedSession} />}
+
           <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
             {["Student", "Coach / Faculty", "Administrator"].map((p) => (
-              <button key={p} onClick={() => setPerspective(p)} style={{ padding: "8px 20px", borderRadius: 8, border: perspective === p ? `2px solid ${BRAND.emerald}` : `1px solid ${BRAND.lightGray}`, background: perspective === p ? BRAND.emeraldLight : BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: perspective === p ? 700 : 500, fontSize: 14, fontFamily: "'JetBrains Mono', monospace" }}>
+              <button key={p} onClick={() => setPerspective(p)} style={{ padding: "8px 20px", borderRadius: 8, border: perspective === p ? `2px solid ${BRAND.emerald}` : `1px solid ${BRAND.lightGray}`, background: perspective === p ? BRAND.emeraldLight : BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: perspective === p ? 700 : 500, fontSize: 14, fontFamily: MONO }}>
                 {p}
               </button>
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
-            <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDCDD {filledCount}/{steps.length} annotated</div>
-            <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>\u2B50 {starredCount} seeds</div>
-            <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDC7B {steps.filter((s) => s.isInvisible).length} invisible</div>
-          </div>
+          {!isAdmin && (
+            <>
+              <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+                <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\uD83D\uDCDD {filledCount}/{steps.length} annotated</div>
+                <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\u2B50 {starredCount} seeds</div>
+                <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\uD83D\uDC7B {steps.filter((s) => s.isInvisible).length} invisible</div>
+                {selectedSession && <div style={{ background: BRAND.blueLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\uD83D\uDCC1 Session loaded</div>}
+              </div>
 
-          {steps.map((step) => {
-            if (!step.isInvisible) visibleIdx++;
-            return <StepCard key={step.id} step={step} index={visibleIdx} onUpdate={(u) => updateStep(step.id, u)} onAddInvisibleAfter={() => addInvisibleAfter(step.id)} />;
-          })}
+              {steps.map((step) => {
+                if (!step.isInvisible) visibleIdx++;
+                return (
+                  <StepCard
+                    key={step.id}
+                    step={step}
+                    index={visibleIdx}
+                    onUpdate={(u) => updateStep(step.id, u)}
+                    onAddInvisibleAfter={() => addInvisibleAfter(step.id)}
+                    sessionStepData={getStepSessionData(step.id)}
+                    stability={getStability(step.id)}
+                    yieldOpps={yieldOpps}
+                  />
+                );
+              })}
 
-          <EmotionalArc steps={steps} />
-          <WishlistSummary steps={steps} />
+              <EmotionalArc steps={steps} />
+              <WishlistSummary steps={steps} />
+
+              {yieldOpps && (
+                <YieldAnalysis
+                  opportunities={yieldOpps}
+                  approvals={yieldApprovals}
+                  onApprovalChange={handleYieldApproval}
+                  steps={steps}
+                />
+              )}
+
+              {allSessions.length >= 2 && <CumulativeAnalysis sessionCount={allSessions.length} />}
+            </>
+          )}
+
+          {isAdmin && (
+            <AdminDashboard session={session} allSessions={allSessions} />
+          )}
 
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
-            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDCCB Export Markdown</button>
-            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDCCE Copy for Claude</button>
+            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: MONO }}>\uD83D\uDCCB Export Markdown</button>
+            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>\uD83D\uDCCE Copy for Claude</button>
           </div>
 
           <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${BRAND.lightGray}` }}>
-            <p style={{ fontSize: 12, color: BRAND.medGray, fontFamily: "'JetBrains Mono', monospace" }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
+            <p style={{ fontSize: 12, color: BRAND.medGray, fontFamily: MONO }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
           </div>
         </div>
       );
