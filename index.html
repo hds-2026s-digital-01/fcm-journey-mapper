@@ -516,6 +516,53 @@
       );
     }
 
+    /* ── LeadingOpportunities ──────────────────────────────────── */
+    function LeadingOpportunities() {
+      const opps = SESSION_DATA?.cumulative?.yieldOpportunities;
+      if (!opps || opps.length === 0) return null;
+
+      const [collapsed, setCollapsed] = useState(() => {
+        try { return localStorage.getItem("fcm-leading-collapsed") === "true"; } catch { return false; }
+      });
+
+      const toggleCollapse = () => {
+        const next = !collapsed;
+        setCollapsed(next);
+        try { localStorage.setItem("fcm-leading-collapsed", String(next)); } catch {}
+      };
+
+      const top3 = opps.slice(0, 3);
+      const scoreColor = (s) => s >= 9 ? BRAND.red : s >= 7 ? BRAND.amber : BRAND.medGray;
+
+      return (
+        <div style={{ marginBottom: 20, background: BRAND.white, borderRadius: 12, border: `1px solid ${BRAND.lightGray}`, overflow: "hidden" }}>
+          <div onClick={toggleCollapse} style={{ padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", background: BRAND.offWhite }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 11, textTransform: "uppercase", fontWeight: 700, color: BRAND.red, fontFamily: MONO }}>Leading Opportunities</span>
+              <span style={{ fontSize: 11, color: BRAND.medGray, fontFamily: MONO }}>Top 3 across all sessions</span>
+            </div>
+            <span style={{ fontSize: 14, color: BRAND.medGray }}>{collapsed ? "▼" : "▲"}</span>
+          </div>
+          {!collapsed && (
+            <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+              {top3.map((opp, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                  <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 20, color: scoreColor(opp.yieldScore), minWidth: 32, textAlign: "center" }}>{opp.yieldScore}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: BRAND.darkGray }}>{opp.title}</div>
+                    <div style={{ fontSize: 12, color: BRAND.medGray, marginTop: 2 }}>
+                      {opp.sessions.length} session{opp.sessions.length > 1 ? "s" : ""}
+                      {opp.rationale ? ` · ${opp.rationale}` : ""}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     /* ── FCMJourneyMapper (main) ───────────────────────────────── */
     function getDefaultSession() {
       if (!SESSION_DATA || !SESSION_DATA.sessions.length) return null;
@@ -745,6 +792,8 @@
           )}
 
           {SESSION_DATA && <SessionSelector selectedSession={selectedSession} onSelect={setSelectedSession} />}
+
+          {SESSION_DATA && allSessions.length >= 2 && <LeadingOpportunities />}
 
           <div className="perspective-tabs" style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
             {["Student", "Coach / Faculty", "Administrator"].map((p) => (
