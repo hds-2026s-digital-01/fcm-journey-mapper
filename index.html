@@ -61,13 +61,13 @@
     const DEFAULT_STEPS = [
       { id: "1", title: "Get the Assignment", official: 'Receive one-line chief concern (e.g., "43 y/o male, 1-week worsening SOB")', artifact: "Posted to VMED", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
       { id: "2", title: "Build Your Differential", official: "Broad differential using anatomical/systems reasoning. Rank top 3. Select 5 history Qs, 3-5 PE maneuvers with likelihood ratios.", artifact: "Pre-Class Differential Worksheet", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
-      { id: "gap1", title: "\u23F3 The Gap", official: "Days or a week pass. You study other things. The case goes cold.", artifact: "No artifact \u2014 this gap is real", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true },
+      { id: "gap1", title: "⏳ The Gap", official: "Days or a week pass. You study other things. The case goes cold.", artifact: "No artifact — this gap is real", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true },
       { id: "3", title: "Small Group Session", official: "4-hour session with coach and ~6 students. You present or observe peers presenting.", artifact: "In-person, coach-led", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
-      { id: "4", title: "Patient Encounter", official: "Interview standardized patient: setting stage \u2192 open-ended Qs \u2192 focusing \u2192 HPI (7 components) \u2192 PMH/PSH/Meds/Allergies/FH/SH/ROS \u2192 PE \u2192 assessment & plan.", artifact: "Communication Checklist", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "4", title: "Patient Encounter", official: "Interview standardized patient: setting stage → open-ended Qs → focusing → HPI (7 components) → PMH/PSH/Meds/Allergies/FH/SH/ROS → PE → assessment & plan.", artifact: "Communication Checklist", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
       { id: "5", title: "Coach Feedback", official: "Verbal feedback during/after encounter. Quality varies.", artifact: "Verbal, sometimes noted", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
       { id: "6", title: "Write the Note", official: "Synthesize encounter: pertinent history, PE findings, up to 3 ranked diagnoses with evidence, diagnostic studies.", artifact: "Illness Script Template", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
       { id: "7", title: "Get Written Feedback", official: "Coach reviews illness script in LMS. Feedback may be detailed or cursory. Often delayed.", artifact: "VMED comments", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
-      { id: "gap2", title: "\u23F3 The Fade", official: "You may never revisit this case. Learning from feedback is self-directed. No structured follow-up.", artifact: "Nothing", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true },
+      { id: "gap2", title: "⏳ The Fade", official: "You may never revisit this case. Learning from feedback is self-directed. No structured follow-up.", artifact: "Nothing", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true },
       { id: "8", title: "Next Case", official: "Cycle repeats with a new chief concern.", artifact: "New worksheet posted", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
     ];
 
@@ -239,25 +239,25 @@
             onClick={() => setExpanded(!expanded)}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <span style={{ fontSize: 13, opacity: 0.7 }}>{step.isInvisible ? "\uD83D\uDC7B" : `${index}.`}</span>
+              <span style={{ fontSize: 13, opacity: 0.7 }}>{step.isInvisible ? "👻" : `${index}.`}</span>
               <span style={{ fontWeight: 700, fontSize: 15 }}>{step.title}</span>
               {step.emotion !== null && <span style={{ fontSize: 20 }}>{EMOTIONS[step.emotion]?.emoji}</span>}
-              {step.starred && <span style={{ fontSize: 18 }}>\u2B50</span>}
+              {step.starred && <span style={{ fontSize: 18 }}>⭐</span>}
               <StabilityBadge stability={stability} />
               <HighYieldBadge yieldOpps={yieldOpps} stepId={step.id} />
             </div>
-            <span style={{ fontSize: 18, opacity: 0.6 }}>{expanded ? "\u25B2" : "\u25BC"}</span>
+            <span style={{ fontSize: 18, opacity: 0.6 }}>{expanded ? "▲" : "▼"}</span>
           </div>
           {expanded && (
             <div style={{ padding: "16px 20px" }}>
               <div style={{ marginBottom: 16, padding: "10px 14px", background: BRAND.offWhite, borderRadius: 8, borderLeft: `3px solid ${BRAND.medGray}` }}>
                 <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Official Version</div>
                 <div style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.5 }}>{step.official}</div>
-                <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>\uD83D\uDCC4 {step.artifact}</div>
+                <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>📄 {step.artifact}</div>
               </div>
               <PrefilledInsights stepData={sessionStepData} />
-              <Field label="What ACTUALLY happens?" value={step.actual} onChange={(v) => onUpdate({ actual: v })} placeholder="Not what you're supposed to do \u2014 what you actually did..." fromSession={isFromSession("actual")} />
-              <Field label="What were you thinking?" value={step.thinking} onChange={(v) => onUpdate({ thinking: v })} placeholder="The internal monologue \u2014 about the case, your grade, what the coach thinks..." />
+              <Field label="What ACTUALLY happens?" value={step.actual} onChange={(v) => onUpdate({ actual: v })} placeholder="Not what you're supposed to do — what you actually did..." fromSession={isFromSession("actual")} />
+              <Field label="What were you thinking?" value={step.thinking} onChange={(v) => onUpdate({ thinking: v })} placeholder="The internal monologue — about the case, your grade, what the coach thinks..." />
               <div style={{ marginBottom: 14 }}>
                 <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 8, fontFamily: MONO }}>
                   How did this feel?
@@ -274,14 +274,14 @@
                   ))}
                 </div>
               </div>
-              <Field label="\uD83D\uDD34 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={BRAND.redLight} labelColor={BRAND.red} fromSession={isFromSession("friction")} />
-              <Field label="\u2B50 Wishlist \u2014 I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible \u2014 just describe the help you'd want..." borderColor={BRAND.emeraldLight} labelColor={BRAND.emerald} fromSession={isFromSession("wish")} />
+              <Field label="🔴 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={BRAND.redLight} labelColor={BRAND.red} fromSession={isFromSession("friction")} />
+              <Field label="⭐ Wishlist — I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible — just describe the help you'd want..." borderColor={BRAND.emeraldLight} labelColor={BRAND.emerald} fromSession={isFromSession("wish")} />
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <button onClick={() => onUpdate({ starred: !step.starred })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: step.starred ? BRAND.emerald : BRAND.lightGray, color: step.starred ? BRAND.white : BRAND.darkGray, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: MONO }}>
-                  {step.starred ? "\u2B50 Starred" : "\u2606 Star This"}
+                  {step.starred ? "⭐ Starred" : "☆ Star This"}
                 </button>
                 <button onClick={onAddInvisibleAfter} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${BRAND.amber}`, background: BRAND.amberLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>
-                  \uD83D\uDC7B Add Invisible Step After
+                  👻 Add Invisible Step After
                 </button>
               </div>
             </div>
@@ -411,9 +411,9 @@
                 )}
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {[
-                    { key: "approved", label: "\u2705 Approve", bg: BRAND.emerald },
-                    { key: "discuss", label: "\uD83D\uDCAC Needs Discussion", bg: BRAND.amber },
-                    { key: "dismissed", label: "\u2715 Dismiss", bg: BRAND.medGray },
+                    { key: "approved", label: "✅ Approve", bg: BRAND.emerald },
+                    { key: "discuss", label: "💬 Needs Discussion", bg: BRAND.amber },
+                    { key: "dismissed", label: "✕ Dismiss", bg: BRAND.medGray },
                   ].map(btn => (
                     <button
                       key={btn.key}
@@ -445,7 +445,7 @@
 
       return (
         <div style={{ background: BRAND.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.lightGray}` }}>
-          <h3 style={{ margin: "0 0 16px 0", fontFamily: MONO, color: BRAND.black }}>\uD83D\uDCC8 Emotional Arc</h3>
+          <h3 style={{ margin: "0 0 16px 0", fontFamily: MONO, color: BRAND.black }}>📈 Emotional Arc</h3>
           <svg viewBox="-5 -10 110 120" style={{ width: "100%", height: 160 }}>
             <line x1="0" y1="50" x2="100" y2="50" stroke={BRAND.lightGray} strokeWidth="0.3" strokeDasharray="2" />
             <path d={pathD} fill="none" stroke={BRAND.emerald} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -453,11 +453,11 @@
               <g key={i}>
                 <circle cx={p.x} cy={p.y} r="3" fill={EMOTIONS[p.step.emotion]?.color || BRAND.medGray} />
                 <text x={p.x} y={p.y - 8} textAnchor="middle" fontSize="8">{EMOTIONS[p.step.emotion]?.emoji}</text>
-                <text x={p.x} y={p.y + 14} textAnchor="middle" fontSize="3.5" fill={BRAND.medGray}>{p.step.title.length > 12 ? p.step.title.slice(0, 12) + "\u2026" : p.step.title}</text>
+                <text x={p.x} y={p.y + 14} textAnchor="middle" fontSize="3.5" fill={BRAND.medGray}>{p.step.title.length > 12 ? p.step.title.slice(0, 12) + "…" : p.step.title}</text>
               </g>
             ))}
-            <text x="0" y="-4" fontSize="3.5" fill={BRAND.emerald}>\uD83D\uDE01 Energized</text>
-            <text x="0" y="108" fontSize="3.5" fill={BRAND.red}>\uD83D\uDE30 Anxious</text>
+            <text x="0" y="-4" fontSize="3.5" fill={BRAND.emerald}>😁 Energized</text>
+            <text x="0" y="108" fontSize="3.5" fill={BRAND.red}>😰 Anxious</text>
           </svg>
         </div>
       );
@@ -469,8 +469,8 @@
       if (starred.length === 0) return null;
       return (
         <div style={{ background: BRAND.emeraldLight, borderRadius: 12, padding: 20, marginTop: 24, border: `2px solid ${BRAND.emerald}` }}>
-          <h3 style={{ margin: "0 0 12px 0", fontFamily: MONO }}>\u2B50 Feature Seeds ({starred.length})</h3>
-          <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Starred wishes \u2192 features for your app. Copy into your PRD.</p>
+          <h3 style={{ margin: "0 0 12px 0", fontFamily: MONO }}>⭐ Feature Seeds ({starred.length})</h3>
+          <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Starred wishes → features for your app. Copy into your PRD.</p>
           {starred.map((s) => (
             <div key={s.id} style={{ background: BRAND.white, borderRadius: 8, padding: "12px 16px", marginBottom: 8, borderLeft: `3px solid ${BRAND.emerald}` }}>
               <div style={{ fontSize: 12, color: BRAND.emerald, fontWeight: 700, fontFamily: MONO }}>At: {s.title}</div>
@@ -584,7 +584,7 @@
       const addInvisibleAfter = useCallback((afterId) => {
         setSteps((prev) => {
           const idx = prev.findIndex((s) => s.id === afterId);
-          const newStep = { id: `inv-${Date.now()}`, title: "\uD83D\uDC7B [Name this step]", official: "You discovered this \u2014 it's not in any official document.", artifact: "None", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true };
+          const newStep = { id: `inv-${Date.now()}`, title: "👻 [Name this step]", official: "You discovered this — it's not in any official document.", artifact: "None", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true };
           const next = [...prev];
           next.splice(idx + 1, 0, newStep);
           return next;
@@ -617,10 +617,10 @@
 
       const handleExport = () => {
         const starred = steps.filter((s) => s.starred && s.wish);
-        let md = `# FCM Journey Map \u2014 ${perspective} Perspective\n`;
-        md += `*Generated ${new Date().toLocaleDateString()} \u00b7 HDS 2026*\n`;
+        let md = `# FCM Journey Map — ${perspective} Perspective\n`;
+        md += `*Generated ${new Date().toLocaleDateString()} · HDS 2026*\n`;
         if (session) {
-          md += `*Session: ${session.label} (${session.date}) \u00b7 ${session.participantCount} participants*\n`;
+          md += `*Session: ${session.label} (${session.date}) · ${session.participantCount} participants*\n`;
         }
         md += `\n`;
         md += `## Context\n\n`;
@@ -636,14 +636,14 @@
         let vi = 0;
         steps.forEach((s) => {
           if (!s.isInvisible) vi++;
-          const em = s.emotion !== null ? EMOTIONS[s.emotion].emoji + " " + EMOTIONS[s.emotion].label : "\u2014";
-          md += `| ${s.isInvisible ? "\uD83D\uDC7B" : vi} | ${s.title} | ${em} | ${s.actual || "\u2014"} | ${s.friction || "\u2014"} | ${s.wish || "\u2014"} |\n`;
+          const em = s.emotion !== null ? EMOTIONS[s.emotion].emoji + " " + EMOTIONS[s.emotion].label : "—";
+          md += `| ${s.isInvisible ? "👻" : vi} | ${s.title} | ${em} | ${s.actual || "—"} | ${s.friction || "—"} | ${s.wish || "—"} |\n`;
         });
         if (session) {
           const yieldOpps = getYieldOpps();
           if (yieldOpps && yieldOpps.length > 0) {
             md += `\n## Yield Analysis\n\n`;
-            md += `Ranked improvement opportunities from session data, scored 1\u201310.\n\n`;
+            md += `Ranked improvement opportunities from session data, scored 1–10.\n\n`;
             yieldOpps.forEach((opp, i) => {
               const status = yieldApprovals[`${opp.stepId}-${i}`] || "pending";
               md += `- **${opp.yieldScore}/10** ${opp.title} [${status}]: ${opp.rationale}\n`;
@@ -651,7 +651,7 @@
           }
         }
         if (starred.length > 0) {
-          md += `\n## \u2B50 Feature Seeds\n\n`;
+          md += `\n## ⭐ Feature Seeds\n\n`;
           starred.forEach((s, i) => { md += `${i + 1}. **"${s.title}":** ${s.wish}\n`; });
           md += `\n## PRD User Perspective Block\n\`\`\`\n### Job Stories (fill in outcomes)\n`;
           starred.forEach((s) => { md += `- When [at "${s.title}"], I want to [${s.wish}], so I can [___].\n`; });
@@ -660,13 +660,13 @@
         md += `\n---\n\n`;
         md += `## Instructions for Claude\n\n`;
         md += `When a student pastes this journey map into a conversation, use the Socratic method to deepen their thinking. Do not immediately generate PRD text or solutions. Instead:\n\n`;
-        md += `1. **Acknowledge what they've captured.** Briefly reflect back the 2\u20133 strongest friction points and wishes you see in their data.\n`;
+        md += `1. **Acknowledge what they've captured.** Briefly reflect back the 2–3 strongest friction points and wishes you see in their data.\n`;
         md += `2. **Ask probing questions.** For each high-yield friction point, ask one question that pushes the student to think more specifically:\n`;
-        md += `   - "You noted [friction]. Walk me through the last time that happened \u2014 what was the exact moment it broke down?"\n`;
+        md += `   - "You noted [friction]. Walk me through the last time that happened — what was the exact moment it broke down?"\n`;
         md += `   - "Your wish for [wish] is interesting. Who else besides you would benefit from that? How would a coach use it differently than a student?"\n`;
         md += `   - "I see [step] scored high on friction but you didn't star it. Is that a pain you've accepted, or one worth solving?"\n`;
         md += `3. **Surface hidden assumptions.** If a wish implies a specific technical solution, ask whether the underlying *need* could be met differently: "You wished for [X]. What if instead of [X], you could [alternative framing]?"\n`;
-        md += `4. **Connect to the PRD.** Once the student has refined their thinking through 2\u20133 rounds of questions, help them translate friction\u2192job stories\u2192features. Use the format: *When [situation], I want to [action], so I can [outcome].*\n`;
+        md += `4. **Connect to the PRD.** Once the student has refined their thinking through 2–3 rounds of questions, help them translate friction→job stories→features. Use the format: *When [situation], I want to [action], so I can [outcome].*\n`;
         md += `5. **Challenge scope.** Ask: "If you could only ship ONE feature from this journey map for the first version, which friction point would you attack? Why that one over the others?"\n\n`;
         md += `The goal is to help the student develop design judgment, not just generate a feature list. Push them to prioritize ruthlessly and justify their choices with evidence from the journey map.\n`;
         const blob = new Blob([md], { type: "text/markdown" });
@@ -676,7 +676,7 @@
 
       const handleCopy = () => {
         const starred = steps.filter((s) => s.starred && s.wish);
-        let t = `FCM Journey \u2014 ${perspective} Perspective (HDS 2026)\n`;
+        let t = `FCM Journey — ${perspective} Perspective (HDS 2026)\n`;
         if (session) t += `Session: ${session.label} (${session.date})\n`;
         t += "\n";
         t += "CONTEXT: This journey map captures real experiences from group discussions in the UVA Health Design Sprint. ";
@@ -687,11 +687,11 @@
           if (!s.isInvisible) vi++;
           if (s.actual || s.emotion !== null || s.friction || s.wish) {
             const em = s.emotion !== null ? EMOTIONS[s.emotion].emoji : "";
-            t += `${s.isInvisible ? "\uD83D\uDC7B" : vi}. ${s.title} ${em}\n`;
+            t += `${s.isInvisible ? "👻" : vi}. ${s.title} ${em}\n`;
             if (s.actual) t += `  What happens: ${s.actual}\n`;
             if (s.thinking) t += `  Thinking: ${s.thinking}\n`;
             if (s.friction) t += `  Friction: ${s.friction}\n`;
-            if (s.wish) t += `  Wish: ${s.wish}${s.starred ? " \u2B50" : ""}\n`;
+            if (s.wish) t += `  Wish: ${s.wish}${s.starred ? " ⭐" : ""}\n`;
             t += "\n";
           }
         });
@@ -723,13 +723,10 @@
 
           {showIntro && (
             <div style={{ background: BRAND.blueLight, borderRadius: 12, padding: 20, marginBottom: 24, border: `1px solid ${BRAND.blue}`, position: "relative" }}>
-              <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: BRAND.medGray }}>\u2715</button>
+              <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: BRAND.medGray }}>✕</button>
               <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 15 }}>How this works</h3>
-              <p style={{ fontSize: 14, color: BRAND.darkGray, margin: "0 0 8px 0", lineHeight: 1.6 }}>
-                Below are the "official" steps of an FCM case cycle. {selectedSession ? "This session has pre-populated insights from group discussion \u2014 review them and add your own perspective." : "For each one, tell us what actually happens."} Rate your emotion. Note friction. Write wishes and \u2B50 star the ones that matter most &mdash; those become features.
-              </p>
               <p style={{ fontSize: 14, color: BRAND.darkGray, margin: 0, lineHeight: 1.6 }}>
-                <strong>See a gap?</strong> Hit \uD83D\uDC7B to add invisible steps nobody documents. When done, export and paste into Claude for job stories and PRD specs.
+                We synthesized your Day 1 and Day 2 group discussions into a step-by-step FCM journey map. Each step is pre-populated with real insights from the cohort. Your job: review each step, rate the emotional experience, note friction points, and ⭐ star the wishes that matter most — those become your app's features. See a gap the official process misses? Hit 👻 to add invisible steps that nobody documents. When done, export and paste into Claude for job stories and PRD specs.
               </p>
             </div>
           )}
@@ -747,10 +744,10 @@
           {!isAdmin && (
             <>
               <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
-                <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\uD83D\uDCDD {filledCount}/{steps.length} annotated</div>
-                <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\u2B50 {starredCount} seeds</div>
-                <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\uD83D\uDC7B {steps.filter((s) => s.isInvisible).length} invisible</div>
-                {selectedSession && <div style={{ background: BRAND.blueLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>\uD83D\uDCC1 Session loaded</div>}
+                <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>📝 {filledCount}/{steps.length} annotated</div>
+                <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>⭐ {starredCount} seeds</div>
+                <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>👻 {steps.filter((s) => s.isInvisible).length} invisible</div>
+                {selectedSession && session && <div style={{ background: BRAND.blueLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>📁 Viewing: {session.label.replace(/—.*/, "").trim()} ({new Date(session.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })})</div>}
               </div>
 
               {steps.map((step) => {
@@ -790,8 +787,8 @@
           )}
 
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
-            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: MONO }}>\uD83D\uDCCB Export Markdown</button>
-            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>\uD83D\uDCCE Copy for Claude</button>
+            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: MONO }}>📋 Export Markdown</button>
+            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📎 Copy for Claude</button>
           </div>
 
           <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${BRAND.lightGray}` }}>
