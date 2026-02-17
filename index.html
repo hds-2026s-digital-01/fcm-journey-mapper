@@ -20,6 +20,8 @@
       .perspective-tabs { overflow-x: auto !important; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
       .perspective-tabs button { flex-shrink: 0; }
       .admin-card { min-width: 0 !important; }
+      .pl-evidence-grid { grid-template-columns: 1fr !important; }
+      .pl-builder-grid { grid-template-columns: 1fr !important; }
     }
   </style>
   <script src="sessions-data.js"></script>
@@ -630,6 +632,601 @@
       );
     }
 
+    /* ── Product Lab: Data ─────────────────────────────────────── */
+
+    const PL_EVIDENCE = {
+      student: {
+        label: "M1 Student", emoji: "🎓",
+        painPoints: [
+          { id: "s1", text: "Week-long gap between submitting differential and FCM session — lose your thinking" },
+          { id: "s2", text: "Passive observation when another student interviews — no way to actively participate" },
+          { id: "s3", text: "No individual feedback on knowledge gaps vs strengths across cases" },
+          { id: "s4", text: "Differential list feels like busywork without understanding why you're wrong" },
+          { id: "s5", text: "No way to practice illness scripts between sessions" },
+          { id: "s6", text: "Group discussion dominated by confident voices — quieter students don't get reps" },
+          { id: "s7", text: "Walking into session cold — forgot what you were thinking a week ago" },
+        ],
+        wishes: [
+          { id: "sw1", text: "Quick pre-session recap that reignites my thinking in 10 minutes" },
+          { id: "sw2", text: "See where my reasoning diverged from the actual diagnosis path" },
+          { id: "sw3", text: "Gamified confidence calibration — am I getting better over time?" },
+          { id: "sw4", text: "Signal to instructor what I want to discuss without raising hand in group" },
+          { id: "sw5", text: "Practice chief complaint exploration at my own pace" },
+        ],
+      },
+      instructor: {
+        label: "FCM Coach", emoji: "🩺",
+        painPoints: [
+          { id: "i1", text: "Can't see student prep quality before session — flying blind on who's ready" },
+          { id: "i2", text: "Hard to tailor discussion to group's actual gaps vs assumed curriculum sequence" },
+          { id: "i3", text: "No longitudinal view of individual student progress across cases" },
+          { id: "i4", text: "Session time wasted on students who didn't prepare" },
+          { id: "i5", text: "Want to focus on clinical reasoning but get pulled into logistics" },
+        ],
+        wishes: [
+          { id: "iw1", text: "Dashboard showing student prep status + areas of confusion before I walk in" },
+          { id: "iw2", text: "See aggregated 'what the group got wrong' to target my teaching" },
+          { id: "iw3", text: "Quick feedback tool — annotate student reasoning in real-time or post-session" },
+          { id: "iw4", text: "Student signals: 'I want to discuss this' flags I can see before session" },
+        ],
+      },
+      admin: {
+        label: "Curriculum Admin", emoji: "🏛️",
+        painPoints: [
+          { id: "a1", text: "No standardized data on whether FCM is meeting AAMC competency standards" },
+          { id: "a2", text: "Coach quality varies enormously — no visibility into session consistency" },
+          { id: "a3", text: "Can't identify struggling students until exam performance drops" },
+          { id: "a4", text: "FCM compliance logging is manual and incomplete" },
+        ],
+        wishes: [
+          { id: "aw1", text: "Automated competency mapping — which skills are each student developing?" },
+          { id: "aw2", text: "Early warning system for students falling behind" },
+          { id: "aw3", text: "Aggregate analytics across all FCM sections for curriculum improvement" },
+        ],
+      },
+    };
+
+    const PL_FEATURES = [
+      { id: "gap-refresh", name: "Gamified Case Refresh", icon: "🎮", description: "10-15 min mobile experience before FCM. Quick-fire differential review, confidence check, 'here's what to listen for.'", cost: 2, requires: ["mobile-ui", "case-content"], stakeholders: ["student"] },
+      { id: "reasoning-capture", name: "Reasoning Capture", icon: "🧠", description: "Replace VINDICATE worksheet. Capture WHY students think each diagnosis — structured reasoning prompts, not checkboxes.", cost: 3, requires: ["database", "case-content"], stakeholders: ["student", "instructor"] },
+      { id: "confidence-cal", name: "Confidence Calibration", icon: "🎯", description: "Rank differentials by likelihood + confidence. After session, see how calibrated you were. Track improvement over time.", cost: 2, requires: ["database"], stakeholders: ["student"] },
+      { id: "student-signal", name: "Student → Instructor Signal", icon: "📡", description: "Before session: flag confusion areas, discussion topics. Instructor sees aggregate + individual. Quiet students get a voice.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["student", "instructor"] },
+      { id: "instructor-dashboard", name: "Instructor Prep Dashboard", icon: "👁️", description: "Pre-session view: who prepared, common errors, areas of confusion. Target teaching to actual gaps.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["instructor"] },
+      { id: "ai-patient", name: "AI Patient Encounter", icon: "🤖", description: "Voice/chat AI standardized patient. Unlimited history-taking practice. Real-time differential adjustment feedback.", cost: 4, requires: ["ai-llm", "case-content", "mobile-ui"], stakeholders: ["student"] },
+      { id: "progress-tracker", name: "Longitudinal Progress Tracker", icon: "📈", description: "Track reasoning quality across cases over a semester. Growth patterns, persistent gaps. Student + coach view.", cost: 3, requires: ["database", "auth", "analytics"], stakeholders: ["student", "instructor", "admin"] },
+      { id: "spaced-review", name: "Spaced Repetition Review", icon: "🔁", description: "Post-session review cards. 'What would you do differently?' Builds cumulative knowledge case-over-case.", cost: 2, requires: ["database", "case-content"], stakeholders: ["student"] },
+      { id: "compliance-dash", name: "Compliance & Analytics", icon: "🏛️", description: "Admin dashboard: AAMC competency mapping, session quality metrics, coach consistency, early warning for struggling students.", cost: 2, requires: ["database", "auth", "admin-view", "analytics"], stakeholders: ["admin"] },
+      { id: "peer-compare", name: "Anonymous Peer Comparison", icon: "👥", description: "See how your differential compares to anonymized group. 'Most students identified PE — you focused on anxiety.'", cost: 1, requires: ["database"], stakeholders: ["student"] },
+    ];
+
+    const PL_TECH_REQS = {
+      "database": { label: "Database", icon: "🗄️", description: "Persistent storage — Supabase or similar. User data, case content, reasoning logs." },
+      "auth": { label: "User Auth", icon: "🔐", description: "Login system with roles (student/instructor/admin). UVA SSO or email." },
+      "mobile-ui": { label: "Mobile-First UI", icon: "📱", description: "Touch-optimized, works on phone screens. PWA or responsive web." },
+      "case-content": { label: "Case Content", icon: "📚", description: "Structured clinical cases — chief complaints, differentials, findings. Need content pipeline." },
+      "ai-llm": { label: "AI / LLM", icon: "🤖", description: "Anthropic API for AI patient simulation, reasoning feedback. Usage costs." },
+      "instructor-view": { label: "Instructor View", icon: "👁️", description: "Separate interface for coaches. Role-based access. Dashboard design." },
+      "admin-view": { label: "Admin Portal", icon: "🏛️", description: "Curriculum-level analytics and compliance reporting." },
+      "analytics": { label: "Analytics Engine", icon: "📊", description: "Aggregation, trends, cohort comparison. Charts and reports." },
+    };
+
+    const PL_SYNERGIES = [
+      { id: "reasoning-loop", name: "The Reasoning Loop", icon: "🔄", description: "Student reasoning → coach visibility → targeted feedback. The core two-sided value.", features: ["reasoning-capture", "student-signal", "instructor-dashboard"] },
+      { id: "engagement-loop", name: "The Engagement Loop", icon: "🔥", description: "Keep the case alive before and after sessions. Fight the fade.", features: ["gap-refresh", "spaced-review"] },
+      { id: "growth-loop", name: "The Growth Loop", icon: "📈", description: "Track metacognition and development over time. Make learning visible.", features: ["confidence-cal", "progress-tracker"] },
+    ];
+
+    const PL_BUDGET = 10;
+
+    /* ── Product Lab: Components ────────────────────────────────── */
+
+    function PLVoteItem({ item, active, onClick, isWish, custom }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const activeBg = isWish ? theme.blueLight : (isDark ? "#78350F" : "#FFF7ED");
+      const activeBorder = isWish ? theme.blue : "#EA580C";
+      return (
+        <button onClick={onClick} style={{ display: "flex", alignItems: "flex-start", gap: 8, width: "100%", padding: "8px 10px", marginBottom: 6, fontSize: 12, fontFamily: SANS, lineHeight: 1.5, textAlign: "left", background: active ? activeBg : theme.offWhite, border: `1px solid ${active ? activeBorder : theme.lightGray}`, borderRadius: 6, cursor: "pointer", color: theme.black, transition: "all 0.15s" }}>
+          <span style={{ fontSize: 14, flexShrink: 0, marginTop: -1 }}>{active ? (isWish ? "⭐" : "🔥") : "○"}</span>
+          <span>{custom && <span style={{ fontSize: 10, color: theme.blue, fontWeight: 600 }}>ADDED </span>}{item.text}</span>
+        </button>
+      );
+    }
+
+    function PLStakeholderColumn({ sKey, data, customPoints, newPoint, setNewPoint, votes, toggleVote, addPoint, setCustomPoints, sc }) {
+      const theme = useTheme();
+      return (
+        <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, overflow: "hidden" }}>
+          <div style={{ background: sc.bg, padding: "14px 16px", borderBottom: `1px solid ${theme.lightGray}` }}>
+            <div style={{ fontSize: 18, marginBottom: 2 }}>{data.emoji}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: sc.color, fontFamily: MONO }}>{data.label}</div>
+          </div>
+          <div style={{ padding: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Pain Points</div>
+            {data.painPoints.map(item => (
+              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} />
+            ))}
+            {customPoints.map(item => (
+              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} custom />
+            ))}
+            <div style={{ display: "flex", gap: 6, marginTop: 8, marginBottom: 16 }}>
+              <input type="text" value={newPoint} onChange={e => setNewPoint(e.target.value)} onKeyDown={e => e.key === "Enter" && addPoint()} placeholder="Add pain point..." style={{ flex: 1, padding: "6px 10px", fontSize: 12, fontFamily: MONO, border: `1px solid ${theme.lightGray}`, borderRadius: 6, background: theme.offWhite, color: theme.black, outline: "none" }} />
+              <button onClick={addPoint} style={{ padding: "6px 12px", fontSize: 12, fontFamily: MONO, fontWeight: 700, background: theme.black, color: theme.white, border: "none", borderRadius: 6, cursor: "pointer" }}>+</button>
+            </div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Wishes</div>
+            {data.wishes.map(item => (
+              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} isWish />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function PLEvidenceWall({ votes, toggleVote, customPainPoints, setCustomPainPoints, newPainPoint, setNewPainPoint, addPainPoint, stColors }) {
+      const theme = useTheme();
+      return (
+        <div>
+          <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Everything your team has surfaced across two days of journey mapping, brainstorming, and building.{" "}
+            <strong style={{ color: theme.black }}>Click items to prioritize them</strong> — your votes flow directly into the PRD.
+          </p>
+          <div className="pl-evidence-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
+            {Object.entries(PL_EVIDENCE).map(([key, data]) => (
+              <PLStakeholderColumn key={key} sKey={key} data={data} customPoints={customPainPoints[key]} newPoint={newPainPoint[key]} setNewPoint={val => setNewPainPoint(prev => ({ ...prev, [key]: val }))} votes={votes} toggleVote={toggleVote} addPoint={() => addPainPoint(key)} setCustomPoints={pts => setCustomPainPoints(prev => ({ ...prev, [key]: pts }))} sc={stColors[key]} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function PLFeatureCard({ feature, selected, onToggle, overBudget }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const stColors = { student: theme.emerald, instructor: isDark ? "#A78BFA" : "#7C3AED", admin: theme.red };
+      return (
+        <button onClick={onToggle} style={{ display: "flex", alignItems: "flex-start", gap: 10, width: "100%", padding: "12px 14px", marginBottom: 8, textAlign: "left", fontFamily: SANS, background: selected ? (isDark ? "#374151" : "#F0FDF4") : theme.white, border: `2px solid ${selected ? theme.emerald : theme.lightGray}`, borderRadius: 8, cursor: overBudget && !selected ? "not-allowed" : "pointer", opacity: overBudget && !selected ? 0.5 : 1, transition: "all 0.15s" }}>
+          <span style={{ fontSize: 22, flexShrink: 0 }}>{feature.icon}</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: theme.black, fontFamily: MONO }}>{feature.name}</span>
+              <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: isDark ? "#78350F" : "#FFF7ED", color: isDark ? "#F59E0B" : "#EA580C", fontFamily: MONO }}>{feature.cost} pt{feature.cost !== 1 ? "s" : ""}</span>
+            </div>
+            <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 6 }}>{feature.description}</div>
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              {feature.stakeholders.map(s => (
+                <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: 3, color: stColors[s], background: s === "student" ? theme.emeraldLight : s === "instructor" ? (isDark ? "#4C1D95" : "#F5F3FF") : theme.redLight, fontFamily: MONO, textTransform: "uppercase" }}>{s}</span>
+              ))}
+            </div>
+          </div>
+          <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>{selected ? "✅" : "○"}</span>
+        </button>
+      );
+    }
+
+    function PLBudgetLens({ selectedFeatures }) {
+      const theme = useTheme();
+      const totalCost = selectedFeatures.reduce((sum, f) => sum + f.cost, 0);
+      const overBudget = totalCost > PL_BUDGET;
+      const pct = Math.min(100, (totalCost / PL_BUDGET) * 100);
+      return (
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 16, fontFamily: MONO }}>Budget Lens</div>
+          <div style={{ background: theme.offWhite, borderRadius: 8, padding: 16, marginBottom: 16 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: overBudget ? theme.red : theme.emerald }}>{totalCost}</span>
+              <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: theme.medGray }}>/ {PL_BUDGET}</span>
+            </div>
+            <div style={{ height: 8, background: theme.lightGray, borderRadius: 4, overflow: "hidden", marginBottom: 8 }}>
+              <div style={{ height: "100%", width: `${pct}%`, background: overBudget ? theme.red : pct > 80 ? theme.amber : theme.emerald, borderRadius: 4, transition: "all 0.3s" }} />
+            </div>
+            {overBudget && <div style={{ fontSize: 12, color: theme.red, fontWeight: 600, fontFamily: MONO }}>Over budget by {totalCost - PL_BUDGET} points! Remove features to ship.</div>}
+            {!overBudget && totalCost > 0 && <div style={{ fontSize: 12, color: theme.emerald, fontFamily: MONO }}>{PL_BUDGET - totalCost} points remaining</div>}
+          </div>
+          {selectedFeatures.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: theme.medGray, marginBottom: 8, fontFamily: MONO }}>COST BREAKDOWN</div>
+              {[...selectedFeatures].sort((a, b) => b.cost - a.cost).map(f => (
+                <div key={f.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: `1px solid ${theme.lightGray}` }}>
+                  <span style={{ fontSize: 12, color: theme.black }}>{f.icon} {f.name}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: MONO, color: theme.black }}>{f.cost} pt{f.cost !== 1 ? "s" : ""}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {selectedFeatures.length === 0 && <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic", textAlign: "center", padding: 20 }}>Select features on the left to see budget impact</div>}
+        </div>
+      );
+    }
+
+    function PLTechLens({ selectedFeatures }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const reqCounts = {};
+      selectedFeatures.forEach(f => { (f.requires || []).forEach(r => { reqCounts[r] = (reqCounts[r] || 0) + 1; }); });
+      const activeReqs = Object.entries(reqCounts).sort((a, b) => b[1] - a[1]);
+      return (
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 16, fontFamily: MONO }}>Tech Stack Lens</div>
+          {activeReqs.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {activeReqs.map(([reqId, count]) => {
+                const req = PL_TECH_REQS[reqId];
+                if (!req) return null;
+                const featsUsing = selectedFeatures.filter(f => (f.requires || []).includes(reqId));
+                return (
+                  <div key={reqId} style={{ background: theme.offWhite, borderRadius: 8, padding: 14, border: `1px solid ${theme.lightGray}` }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.black }}>{req.icon} {req.label}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: count >= 3 ? theme.emeraldLight : (isDark ? "#1E3A5F" : theme.blueLight), color: count >= 3 ? theme.emerald : theme.blue, fontFamily: MONO }}>used by {count}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 6 }}>{req.description}</div>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {featsUsing.map(f => (
+                        <span key={f.id} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 3, background: theme.white, border: `1px solid ${theme.lightGray}`, color: theme.black, fontFamily: MONO }}>{f.icon} {f.name}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic", textAlign: "center", padding: 20 }}>Select features on the left to see tech requirements</div>
+          )}
+        </div>
+      );
+    }
+
+    function PLProductLens({ selectedFeatures }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const activeSynergies = PL_SYNERGIES.filter(s => s.features.filter(fId => selectedFeatures.some(f => f.id === fId)).length >= 2);
+      const completeSynergies = activeSynergies.filter(s => s.features.every(fId => selectedFeatures.some(f => f.id === fId)));
+
+      const hasInstructor = selectedFeatures.some(f => f.stakeholders.includes("instructor"));
+      const hasAdmin = selectedFeatures.some(f => f.stakeholders.includes("admin"));
+      const hasAI = selectedFeatures.some(f => f.requires.includes("ai-llm"));
+      const studentCount = selectedFeatures.filter(f => f.stakeholders.includes("student")).length;
+
+      let archetype = "Select features to see your product take shape";
+      let archetypeDesc = "";
+      if (selectedFeatures.length >= 2) {
+        if (hasAI && studentCount >= 3) { archetype = "AI-Powered Learning Companion"; archetypeDesc = "A technology-forward tool that uses AI to create practice opportunities and personalized feedback at scale."; }
+        else if (hasInstructor && studentCount >= 2) { archetype = "Two-Sided Teaching Platform"; archetypeDesc = "A system that creates a feedback loop between student preparation and instructor teaching. Value multiplies when both sides engage."; }
+        else if (hasAdmin) { archetype = "Institutional Learning System"; archetypeDesc = "An enterprise tool with compliance tracking and institutional analytics. More complex to build, but addresses program-level needs."; }
+        else if (studentCount >= 3) { archetype = "Student Practice Tool"; archetypeDesc = "A focused student-facing app for clinical reasoning practice. Simpler to build, highest adoption potential, but misses the instructor feedback loop."; }
+        else { archetype = "Focused Experiment"; archetypeDesc = "A lightweight tool testing a specific hypothesis about the FCM experience."; }
+      }
+
+      return (
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 16, fontFamily: MONO }}>Product Shape Lens</div>
+          <div style={{ background: isDark ? "#064E3B" : "#F0FDF4", border: `1px solid ${theme.emerald}`, borderRadius: 10, padding: 18, marginBottom: 16 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: theme.black, marginBottom: 6 }}>{archetype}</div>
+            {archetypeDesc && <div style={{ fontSize: 12, color: theme.medGray, lineHeight: 1.6 }}>{archetypeDesc}</div>}
+          </div>
+          {activeSynergies.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: theme.medGray, marginBottom: 8, fontFamily: MONO }}>DETECTED SYNERGIES</div>
+              {activeSynergies.map(s => {
+                const complete = completeSynergies.includes(s);
+                const matched = s.features.filter(fId => selectedFeatures.some(f => f.id === fId));
+                return (
+                  <div key={s.id} style={{ background: complete ? (isDark ? "#064E3B" : "#F0FDF4") : theme.offWhite, border: `1px solid ${complete ? theme.emerald : theme.lightGray}`, borderRadius: 8, padding: 14, marginBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.black }}>{s.icon} {s.name}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, fontFamily: MONO, color: complete ? theme.emerald : theme.amber }}>{complete ? "Complete" : `${matched.length}/${s.features.length}`}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 6 }}>{s.description}</div>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {s.features.map(fId => {
+                        const feat = PL_FEATURES.find(f => f.id === fId);
+                        const has = selectedFeatures.some(f => f.id === fId);
+                        return feat ? (
+                          <span key={fId} style={{ fontSize: 9, padding: "2px 6px", borderRadius: 3, background: has ? theme.emeraldLight : theme.white, border: `1px solid ${has ? theme.emerald : theme.lightGray}`, color: has ? theme.emerald : theme.medGray, fontFamily: MONO }}>{has ? "✓" : "○"} {feat.name}</span>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {selectedFeatures.length >= 2 && (
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: theme.medGray, marginBottom: 8, fontFamily: MONO }}>SUGGESTED BUILD ORDER</div>
+              {[...selectedFeatures].sort((a, b) => {
+                const aShared = selectedFeatures.filter(f => f.id !== a.id && f.requires.some(r => a.requires.includes(r))).length;
+                const bShared = selectedFeatures.filter(f => f.id !== b.id && f.requires.some(r => b.requires.includes(r))).length;
+                return bShared - aShared || a.cost - b.cost;
+              }).map((f, i) => (
+                <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: `1px solid ${theme.lightGray}` }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: MONO, color: theme.medGray, width: 24 }}>#{i + 1}</span>
+                  <span style={{ fontSize: 12, color: theme.black }}>{f.icon} {f.name}</span>
+                  <span style={{ fontSize: 10, color: theme.medGray, fontFamily: MONO, marginLeft: "auto" }}>{f.cost}pt</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {selectedFeatures.length === 0 && <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic", textAlign: "center", padding: 20 }}>Select features on the left to see your product take shape</div>}
+        </div>
+      );
+    }
+
+    function PLProductBuilder({ selectedIds, toggleFeature }) {
+      const theme = useTheme();
+      const [activeLens, setActiveLens] = useState("budget");
+      const selectedFeatures = PL_FEATURES.filter(f => selectedIds.includes(f.id));
+      const totalCost = selectedFeatures.reduce((sum, f) => sum + f.cost, 0);
+      const overBudget = totalCost > PL_BUDGET;
+
+      const lenses = [
+        { id: "budget", label: "Budget", icon: "💰" },
+        { id: "tech", label: "Tech Stack", icon: "🔧" },
+        { id: "product", label: "Product Shape", icon: "🏗️" },
+      ];
+
+      return (
+        <div>
+          <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            You have <strong style={{ color: theme.black }}>{PL_BUDGET} build points</strong>. Choose features that address the pain points you prioritized.{" "}
+            <strong style={{ color: theme.black }}>Toggle lenses on the right</strong> to see how your choices shape the product.
+          </p>
+          <div className="pl-builder-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>
+                Feature Wishlist — {totalCost}/{PL_BUDGET} pts used
+              </div>
+              {PL_FEATURES.map(f => (
+                <PLFeatureCard key={f.id} feature={f} selected={selectedIds.includes(f.id)} onToggle={() => toggleFeature(f.id)} overBudget={overBudget} />
+              ))}
+            </div>
+            <div>
+              <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${theme.lightGray}`, marginBottom: 16 }}>
+                {lenses.map(lens => (
+                  <button key={lens.id} onClick={() => setActiveLens(lens.id)} style={{ padding: "6px 12px", fontSize: 11, fontWeight: activeLens === lens.id ? 700 : 500, fontFamily: MONO, color: activeLens === lens.id ? theme.black : theme.medGray, background: "none", border: "none", borderBottom: activeLens === lens.id ? `2px solid ${theme.blue}` : "2px solid transparent", cursor: "pointer", marginBottom: -1 }}>
+                    {lens.icon} {lens.label}
+                  </button>
+                ))}
+              </div>
+              <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, minHeight: 300, position: "sticky", top: 20 }}>
+                {activeLens === "budget" && <PLBudgetLens selectedFeatures={selectedFeatures} />}
+                {activeLens === "tech" && <PLTechLens selectedFeatures={selectedFeatures} />}
+                {activeLens === "product" && <PLProductLens selectedFeatures={selectedFeatures} />}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function PLPRDDraft({ voted, selectedFeatureIds, notBuilding, setNotBuilding, newNotBuilding, setNewNotBuilding, prdNotes, setPrdNotes, generatePRDMarkdown, stColors }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const [copied, setCopied] = useState(false);
+      const [showPreview, setShowPreview] = useState(false);
+      const selectedFeatures = PL_FEATURES.filter(f => selectedFeatureIds.includes(f.id));
+      const totalCost = selectedFeatures.reduce((sum, f) => sum + f.cost, 0);
+      const overBudget = totalCost > PL_BUDGET;
+      const reqSet = new Set();
+      selectedFeatures.forEach(f => (f.requires || []).forEach(r => reqSet.add(r)));
+      const activeSynergies = PL_SYNERGIES.filter(s => s.features.every(fId => selectedFeatures.some(f => f.id === fId)));
+      const handleCopy = () => {
+        navigator.clipboard.writeText(generatePRDMarkdown()).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+      };
+      const handleDownload = () => {
+        const blob = new Blob([generatePRDMarkdown()], { type: "text/markdown" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `fcm-prd-draft-${new Date().toISOString().slice(0,10)}.md`; a.click();
+      };
+      return (
+        <div>
+          <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Your feature selections and priorities assembled into a draft PRD.{" "}
+            <strong style={{ color: theme.black }}>Copy to Claude</strong> for refinement, or export as markdown for your repo.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16, marginBottom: 20 }}>
+            <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>Prioritized Pain Points ({voted.painPoints.length})</div>
+              {voted.painPoints.length === 0 ? (
+                <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic" }}>Go to Evidence Wall and click items to prioritize</div>
+              ) : voted.painPoints.map(p => (
+                <div key={p.id} style={{ fontSize: 12, lineHeight: 1.5, marginBottom: 6, display: "flex", gap: 8 }}>
+                  <span style={{ fontSize: 10, fontWeight: 600, padding: "1px 6px", borderRadius: 3, flexShrink: 0, background: stColors[p.stakeholder]?.bg, color: stColors[p.stakeholder]?.color, fontFamily: MONO }}>{p.stakeholderLabel}</span>
+                  <span style={{ color: theme.black }}>{p.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>Prioritized Wishes ({voted.wishes.length})</div>
+              {voted.wishes.length === 0 ? (
+                <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic" }}>Go to Evidence Wall and click wish items to prioritize</div>
+              ) : voted.wishes.map(w => (
+                <div key={w.id} style={{ fontSize: 12, lineHeight: 1.5, marginBottom: 6, display: "flex", gap: 8 }}>
+                  <span style={{ fontSize: 10, fontWeight: 600, padding: "1px 6px", borderRadius: 3, flexShrink: 0, background: stColors[w.stakeholder]?.bg, color: stColors[w.stakeholder]?.color, fontFamily: MONO }}>{w.stakeholderLabel}</span>
+                  <span style={{ color: theme.black }}>{w.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>Selected Features ({selectedFeatures.length}) — {totalCost}/{PL_BUDGET} pts</div>
+            {selectedFeatures.length === 0 ? (
+              <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic" }}>Go to Product Builder and select features</div>
+            ) : (
+              <div>
+                {overBudget && <div style={{ fontSize: 12, color: theme.red, fontWeight: 600, fontFamily: MONO, marginBottom: 12, padding: "8px 12px", background: theme.redLight, borderRadius: 6 }}>Over budget by {totalCost - PL_BUDGET} points — trim features before building</div>}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10 }}>
+                  {selectedFeatures.map(f => (
+                    <div key={f.id} style={{ padding: "10px 12px", borderRadius: 6, background: theme.offWhite, border: `1px solid ${theme.lightGray}` }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: theme.black, fontFamily: MONO, marginBottom: 2 }}>{f.icon} {f.name}</div>
+                      <div style={{ fontSize: 10, color: theme.medGray, fontFamily: MONO }}>{f.cost} pt{f.cost !== 1 ? "s" : ""} · {f.stakeholders.join(", ")}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          {reqSet.size > 0 && (
+            <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>Required Tech Stack ({reqSet.size})</div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {[...reqSet].map(rId => {
+                  const req = PL_TECH_REQS[rId];
+                  return req ? <span key={rId} style={{ fontSize: 11, padding: "4px 10px", borderRadius: 6, background: theme.offWhite, border: `1px solid ${theme.lightGray}`, color: theme.black, fontFamily: MONO }}>{req.icon} {req.label}</span> : null;
+                })}
+              </div>
+            </div>
+          )}
+          {activeSynergies.length > 0 && (
+            <div style={{ background: isDark ? "#064E3B" : "#F0FDF4", border: `1px solid ${theme.emerald}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.emerald, marginBottom: 8, fontFamily: MONO }}>Active Synergy Loops ({activeSynergies.length})</div>
+              {activeSynergies.map(s => (
+                <div key={s.id} style={{ fontSize: 12, color: theme.black, marginBottom: 4 }}>{s.icon} <strong>{s.name}</strong> — {s.description}</div>
+              ))}
+            </div>
+          )}
+          <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>What We're NOT Building</div>
+            <p style={{ fontSize: 12, color: theme.medGray, lineHeight: 1.5, margin: "0 0 10px 0" }}>Just as important as what you build. Saying "no" to good ideas keeps scope tight.</p>
+            {notBuilding.map((item, idx) => (
+              <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: 12, lineHeight: 1.5, flex: 1, color: theme.black }}>• {item}</span>
+                <button onClick={() => setNotBuilding(prev => prev.filter((_, i) => i !== idx))} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: theme.medGray, padding: "2px 6px" }}>×</button>
+              </div>
+            ))}
+            <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+              <input type="text" value={newNotBuilding} onChange={e => setNewNotBuilding(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && newNotBuilding.trim()) { setNotBuilding(prev => [...prev, newNotBuilding.trim()]); setNewNotBuilding(""); } }} placeholder="Add scope exclusion..." style={{ flex: 1, padding: "6px 10px", fontSize: 12, fontFamily: MONO, border: `1px solid ${theme.lightGray}`, borderRadius: 6, background: theme.offWhite, color: theme.black, outline: "none" }} />
+            </div>
+          </div>
+          <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Additional Notes</div>
+            <textarea value={prdNotes} onChange={e => setPrdNotes(e.target.value)} placeholder="Anything else the PRD should capture? Design preferences, technical constraints, questions for the team..." style={{ width: "100%", minHeight: 80, padding: 12, fontSize: 12, fontFamily: SANS, border: `1px solid ${theme.lightGray}`, borderRadius: 6, background: theme.offWhite, color: theme.black, outline: "none", resize: "vertical", lineHeight: 1.6, boxSizing: "border-box" }} />
+          </div>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 8, border: "none", background: theme.black, color: theme.white, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: MONO }}>{copied ? "Copied!" : "Copy PRD to Clipboard"}</button>
+            <button onClick={() => setShowPreview(!showPreview)} style={{ padding: "12px 24px", borderRadius: 8, border: `1px solid ${theme.lightGray}`, background: theme.white, color: theme.black, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>{showPreview ? "Hide Preview" : "Preview Markdown"}</button>
+            <button onClick={handleDownload} style={{ padding: "12px 24px", borderRadius: 8, border: `1px solid ${theme.lightGray}`, background: theme.white, color: theme.black, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>Download .md</button>
+          </div>
+          {showPreview && (
+            <div style={{ marginTop: 16, padding: 20, background: isDark ? "#111" : "#1a1a1a", borderRadius: 8, fontFamily: MONO, fontSize: 11, color: "#e0e0e0", lineHeight: 1.7, whiteSpace: "pre-wrap", overflow: "auto", maxHeight: 500 }}>
+              {generatePRDMarkdown()}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function ProductLab() {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const stColors = useMemo(() => ({
+        student: { color: theme.emerald, bg: theme.emeraldLight },
+        instructor: { color: isDark ? "#A78BFA" : "#7C3AED", bg: isDark ? "#4C1D95" : "#F5F3FF" },
+        admin: { color: theme.red, bg: theme.redLight },
+      }), [theme, isDark]);
+
+      const saved = useMemo(() => {
+        try { return JSON.parse(localStorage.getItem("fcm-product-lab")) || {}; } catch { return {}; }
+      }, []);
+
+      const [plTab, setPlTab] = useState("evidence");
+      const [votes, setVotes] = useState(saved.votes || {});
+      const [selectedFeatures, setSelectedFeatures] = useState(saved.selectedFeatures || []);
+      const [customPainPoints, setCustomPainPoints] = useState(saved.customPainPoints || { student: [], instructor: [], admin: [] });
+      const [notBuilding, setNotBuilding] = useState(saved.notBuilding || ["Full EMR integration", "Graded assessments (this is practice, not evaluation)", "Replacing FCM sessions entirely"]);
+      const [prdNotes, setPrdNotes] = useState(saved.prdNotes || "");
+      const [newPainPoint, setNewPainPoint] = useState({ student: "", instructor: "", admin: "" });
+      const [newNotBuilding, setNewNotBuilding] = useState("");
+
+      useEffect(() => {
+        try { localStorage.setItem("fcm-product-lab", JSON.stringify({ votes, selectedFeatures, customPainPoints, notBuilding, prdNotes })); } catch {}
+      }, [votes, selectedFeatures, customPainPoints, notBuilding, prdNotes]);
+
+      const toggleVote = useCallback((id) => { setVotes(prev => ({ ...prev, [id]: prev[id] ? 0 : 1 })); }, []);
+
+      const toggleFeature = useCallback((id) => {
+        setSelectedFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+      }, []);
+
+      const addPainPoint = useCallback((stakeholder) => {
+        if (!newPainPoint[stakeholder].trim()) return;
+        setCustomPainPoints(prev => ({ ...prev, [stakeholder]: [...prev[stakeholder], { id: `custom-${Date.now()}`, text: newPainPoint[stakeholder].trim(), custom: true }] }));
+        setNewPainPoint(prev => ({ ...prev, [stakeholder]: "" }));
+      }, [newPainPoint]);
+
+      const getVotedItems = useCallback(() => {
+        const result = { painPoints: [], wishes: [] };
+        Object.entries(PL_EVIDENCE).forEach(([key, data]) => {
+          data.painPoints.filter(p => votes[p.id]).forEach(p => result.painPoints.push({ ...p, stakeholder: key, stakeholderLabel: data.label }));
+          data.wishes.filter(w => votes[w.id]).forEach(w => result.wishes.push({ ...w, stakeholder: key, stakeholderLabel: data.label }));
+        });
+        Object.entries(customPainPoints).forEach(([key, points]) => {
+          points.filter(p => votes[p.id]).forEach(p => result.painPoints.push({ ...p, stakeholder: key, stakeholderLabel: PL_EVIDENCE[key].label }));
+        });
+        return result;
+      }, [votes, customPainPoints]);
+
+      const generatePRDMarkdown = useCallback(() => {
+        const v = getVotedItems();
+        const selFeats = PL_FEATURES.filter(f => selectedFeatures.includes(f.id));
+        const totalCost = selFeats.reduce((sum, f) => sum + f.cost, 0);
+        const reqSet = new Set();
+        selFeats.forEach(f => (f.requires || []).forEach(r => reqSet.add(r)));
+        const synergies = PL_SYNERGIES.filter(s => s.features.every(fId => selFeats.some(f => f.id === fId)));
+
+        const featMd = selFeats.length > 0
+          ? selFeats.map(f => `- **${f.name}** ${f.icon} (${f.cost}pt) — ${f.description}`).join("\n")
+          : "*No features selected yet*";
+        const techMd = reqSet.size > 0
+          ? [...reqSet].map(rId => { const r = PL_TECH_REQS[rId]; return r ? `- ${r.icon} **${r.label}** — ${r.description}` : null; }).filter(Boolean).join("\n")
+          : "*No tech requirements (select features first)*";
+        const synMd = synergies.length > 0
+          ? synergies.map(s => `- ${s.icon} **${s.name}** — ${s.description}`).join("\n")
+          : "";
+        const painMd = v.painPoints.length > 0 ? v.painPoints.map(p => `- [${p.stakeholderLabel}] ${p.text}`).join("\n") : "*No pain points prioritized yet*";
+        const wishMd = v.wishes.length > 0 ? v.wishes.map(w => `- [${w.stakeholderLabel}] ${w.text}`).join("\n") : "*No wishes prioritized yet*";
+
+        return `# FCM App — Product Requirements Document (Draft)\n*Generated from Product Lab — HDS 2026*\n*Date: ${new Date().toLocaleDateString()}*\n\n## 1. Vision\nA digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice, gives instructors visibility into student readiness, and generates learning analytics for curriculum compliance.\n\n## 2. Users\n- **Primary:** M1 medical students in Foundations of Clinical Medicine\n- **Secondary:** FCM Coaches / Clinical Instructors\n- **Tertiary:** Curriculum Administrators\n\n## 3. Prioritized Pain Points\n${painMd}\n\n## 4. Prioritized Wishes\n${wishMd}\n\n## 5. Selected Features (${totalCost}/${PL_BUDGET} build points)\n${featMd}\n\n## 6. Required Tech Stack\n${techMd}\n${synMd ? `\n## 7. Detected Synergy Loops\n${synMd}\n` : ""}\n## ${synMd ? "8" : "7"}. What We're NOT Building\n${notBuilding.map(n => `- ${n}`).join("\n")}\n\n## ${synMd ? "9" : "8"}. Additional Notes\n${prdNotes || "*None yet*"}\n\n---\n*Export this to Claude Chat for refinement. Paste with: "Here's our Product Lab PRD draft. Help us refine this into a buildable PRD, focusing on the features we selected within our build-point budget."*\n`;
+      }, [selectedFeatures, notBuilding, prdNotes, getVotedItems]);
+
+      const voted = getVotedItems();
+      const totalVoted = voted.painPoints.length + voted.wishes.length;
+      const featCost = PL_FEATURES.filter(f => selectedFeatures.includes(f.id)).reduce((s, f) => s + f.cost, 0);
+      const overBudget = featCost > PL_BUDGET;
+      const plTabs = [
+        { id: "evidence", label: "Evidence Wall", icon: "📌" },
+        { id: "builder", label: "Product Builder", icon: "🔧" },
+        { id: "prd", label: "PRD Draft", icon: "📄" },
+      ];
+
+      return (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${theme.lightGray}` }}>
+              {plTabs.map(tab => (
+                <button key={tab.id} onClick={() => setPlTab(tab.id)} style={{ padding: "8px 16px", fontSize: 13, fontWeight: plTab === tab.id ? 700 : 500, fontFamily: MONO, color: plTab === tab.id ? theme.black : theme.medGray, background: "none", border: "none", borderBottom: plTab === tab.id ? `2px solid ${theme.blue}` : "2px solid transparent", cursor: "pointer", marginBottom: -1 }}>
+                  {tab.icon} {tab.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: MONO, color: theme.black }}>{totalVoted}</div>
+                <div style={{ fontSize: 10, color: theme.medGray, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: MONO }}>prioritized</div>
+              </div>
+              <div style={{ width: 1, height: 28, background: theme.lightGray }} />
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: MONO, color: overBudget ? theme.red : theme.black }}>{featCost}/{PL_BUDGET}</div>
+                <div style={{ fontSize: 10, color: theme.medGray, textTransform: "uppercase", letterSpacing: "0.08em", fontFamily: MONO }}>build pts</div>
+              </div>
+            </div>
+          </div>
+          {plTab === "evidence" && <PLEvidenceWall votes={votes} toggleVote={toggleVote} customPainPoints={customPainPoints} setCustomPainPoints={setCustomPainPoints} newPainPoint={newPainPoint} setNewPainPoint={setNewPainPoint} addPainPoint={addPainPoint} stColors={stColors} />}
+          {plTab === "builder" && <PLProductBuilder selectedIds={selectedFeatures} toggleFeature={toggleFeature} />}
+          {plTab === "prd" && <PLPRDDraft voted={voted} selectedFeatureIds={selectedFeatures} notBuilding={notBuilding} setNotBuilding={setNotBuilding} newNotBuilding={newNotBuilding} setNewNotBuilding={setNewNotBuilding} prdNotes={prdNotes} setPrdNotes={setPrdNotes} generatePRDMarkdown={generatePRDMarkdown} stColors={stColors} />}
+        </div>
+      );
+    }
+
     /* ── FCMJourneyMapper (main) ───────────────────────────────── */
     function getDefaultSession() {
       if (!SESSION_DATA || !SESSION_DATA.sessions.length) return null;
@@ -647,6 +1244,7 @@
       const [darkMode, setDarkMode] = useState(() => {
         try { return localStorage.getItem("fcm-dark-mode") === "true"; } catch { return false; }
       });
+      const [mainTab, setMainTab] = useState("journey");
       const theme = darkMode ? BRAND_DARK : BRAND;
       useEffect(() => { document.body.style.background = theme.offWhite; }, [theme.offWhite]);
       const toggleDarkMode = () => {
@@ -991,14 +1589,27 @@
 
       return (
         <ThemeContext.Provider value={theme}>
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh" }}>
+        <div style={{ maxWidth: mainTab === "productlab" ? 1100 : 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh", transition: "max-width 0.3s" }}>
           <div style={{ textAlign: "center", marginBottom: 32, position: "relative" }}>
             <button onClick={toggleDarkMode} style={{ position: "absolute", top: 0, right: 0, background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1 }} title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>{darkMode ? "☀️" : "🌙"}</button>
             <div style={{ fontFamily: MONO, fontSize: 13, color: theme.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
             <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: theme.black, fontFamily: MONO }}>FCM Journey Mapper</h1>
-            <p style={{ color: theme.medGray, fontSize: 15, margin: 0 }}>Map the <em>real</em> experience &mdash; not the official version.</p>
+            <p style={{ color: theme.medGray, fontSize: 15, margin: 0 }}>
+              {mainTab === "productlab"
+                ? "Evidence → Build Points → PRD. Choose what ships."
+                : <>Map the <em>real</em> experience &mdash; not the official version.</>}
+            </p>
           </div>
 
+          <div style={{ display: "flex", gap: 0, marginBottom: 24, borderBottom: `1px solid ${theme.lightGray}` }}>
+            {[{ id: "journey", label: "Journey Map", icon: "🗺️" }, { id: "productlab", label: "Product Lab", icon: "⚗️" }].map(tab => (
+              <button key={tab.id} onClick={() => setMainTab(tab.id)} style={{ padding: "10px 20px", fontSize: 14, fontWeight: mainTab === tab.id ? 700 : 500, fontFamily: MONO, color: mainTab === tab.id ? theme.black : theme.medGray, background: "none", border: "none", borderBottom: mainTab === tab.id ? `2px solid ${theme.emerald}` : "2px solid transparent", cursor: "pointer", marginBottom: -1 }}>
+                {tab.icon} {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {mainTab === "journey" && <>
           {showIntro && (
             <div style={{ background: theme.blueLight, borderRadius: 12, padding: 20, marginBottom: 24, border: `1px solid ${theme.blue}`, position: "relative" }}>
               <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: theme.medGray }}>✕</button>
@@ -1089,6 +1700,9 @@
             <button onClick={() => fileInputRef.current?.click()} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${theme.blue}`, background: theme.blueLight, color: theme.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📂 Import Annotations</button>
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportAnnotations} style={{ display: "none" }} />
           </div>
+          </>}
+
+          {mainTab === "productlab" && <ProductLab />}
 
           <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${theme.lightGray}` }}>
             <p style={{ fontSize: 12, color: theme.medGray, fontFamily: MONO }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
