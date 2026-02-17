@@ -118,16 +118,16 @@
 
       return (
         <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "block", marginBottom: 6, fontFamily: MONO }}>Session Data</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "block", marginBottom: 6, fontFamily: MONO }}>Session Progression &mdash; see how focus sharpened day to day</label>
           <select
             value={selectedSession || ""}
             onChange={e => onSelect(e.target.value || null)}
             style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1px solid ${BRAND.lightGray}`, fontSize: 14, fontFamily: SANS, background: BRAND.white, cursor: "pointer", appearance: "auto" }}
           >
-            <option value="">Blank Template</option>
             {sessions.map(s => (
               <option key={s.id} value={s.id}>{s.label} ({s.date})</option>
             ))}
+            <option value="">Blank Template (start from scratch)</option>
           </select>
           {selectedSession && (() => {
             const session = getSessionById(selectedSession);
@@ -505,8 +505,13 @@
     }
 
     /* ── FCMJourneyMapper (main) ───────────────────────────────── */
+    function getDefaultSession() {
+      if (!SESSION_DATA || !SESSION_DATA.sessions.length) return null;
+      return SESSION_DATA.sessions[SESSION_DATA.sessions.length - 1].id;
+    }
+
     function FCMJourneyMapper() {
-      const [selectedSession, setSelectedSession] = useState(null);
+      const [selectedSession, setSelectedSession] = useState(getDefaultSession);
       const [steps, setSteps] = useState(DEFAULT_STEPS);
       const [perspective, setPerspective] = useState("Student");
       const [showIntro, setShowIntro] = useState(true);
@@ -618,6 +623,15 @@
           md += `*Session: ${session.label} (${session.date}) \u00b7 ${session.participantCount} participants*\n`;
         }
         md += `\n`;
+        md += `## Context\n\n`;
+        md += `This journey map was produced as part of the UVA Health Design Sprint (HDS) 2026, where medical students are designing an AI-native tool to improve the Foundations of Clinical Medicine (FCM) case cycle. `;
+        md += `FCM is a multi-year pre-clerkship program where students receive clinical cases, build differentials, attend small-group sessions with standardized patients, and receive coach feedback.\n\n`;
+        md += `**How to use this document:** This journey map captures real student/coach/administrator experiences and friction points from group discussion sessions. `;
+        md += `It should be integrated with the team's Product Requirements Document (PRD) and other design artifacts. `;
+        md += `When used with Claude or another AI assistant, combine this with the PRD to ground feature decisions in actual user evidence. `;
+        md += `The friction points and wishes below are direct inputs for user stories, job stories, and feature specifications.\n\n`;
+        md += `---\n\n`;
+        md += `## Journey Steps\n\n`;
         md += `| # | Step | Emotion | What Actually Happens | Friction | Wish |\n|---|------|---------|----------------------|---------|------|\n`;
         let vi = 0;
         steps.forEach((s) => {
@@ -628,7 +642,8 @@
         if (session) {
           const yieldOpps = getYieldOpps();
           if (yieldOpps && yieldOpps.length > 0) {
-            md += `\n## Yield Analysis\n`;
+            md += `\n## Yield Analysis\n\n`;
+            md += `Ranked improvement opportunities from session data, scored 1\u201310.\n\n`;
             yieldOpps.forEach((opp, i) => {
               const status = yieldApprovals[`${opp.stepId}-${i}`] || "pending";
               md += `- **${opp.yieldScore}/10** ${opp.title} [${status}]: ${opp.rationale}\n`;
@@ -636,12 +651,24 @@
           }
         }
         if (starred.length > 0) {
-          md += `\n## \u2B50 Feature Seeds\n`;
+          md += `\n## \u2B50 Feature Seeds\n\n`;
           starred.forEach((s, i) => { md += `${i + 1}. **"${s.title}":** ${s.wish}\n`; });
           md += `\n## PRD User Perspective Block\n\`\`\`\n### Job Stories (fill in outcomes)\n`;
           starred.forEach((s) => { md += `- When [at "${s.title}"], I want to [${s.wish}], so I can [___].\n`; });
           md += `\`\`\`\n`;
         }
+        md += `\n---\n\n`;
+        md += `## Instructions for Claude\n\n`;
+        md += `When a student pastes this journey map into a conversation, use the Socratic method to deepen their thinking. Do not immediately generate PRD text or solutions. Instead:\n\n`;
+        md += `1. **Acknowledge what they've captured.** Briefly reflect back the 2\u20133 strongest friction points and wishes you see in their data.\n`;
+        md += `2. **Ask probing questions.** For each high-yield friction point, ask one question that pushes the student to think more specifically:\n`;
+        md += `   - "You noted [friction]. Walk me through the last time that happened \u2014 what was the exact moment it broke down?"\n`;
+        md += `   - "Your wish for [wish] is interesting. Who else besides you would benefit from that? How would a coach use it differently than a student?"\n`;
+        md += `   - "I see [step] scored high on friction but you didn't star it. Is that a pain you've accepted, or one worth solving?"\n`;
+        md += `3. **Surface hidden assumptions.** If a wish implies a specific technical solution, ask whether the underlying *need* could be met differently: "You wished for [X]. What if instead of [X], you could [alternative framing]?"\n`;
+        md += `4. **Connect to the PRD.** Once the student has refined their thinking through 2\u20133 rounds of questions, help them translate friction\u2192job stories\u2192features. Use the format: *When [situation], I want to [action], so I can [outcome].*\n`;
+        md += `5. **Challenge scope.** Ask: "If you could only ship ONE feature from this journey map for the first version, which friction point would you attack? Why that one over the others?"\n\n`;
+        md += `The goal is to help the student develop design judgment, not just generate a feature list. Push them to prioritize ruthlessly and justify their choices with evidence from the journey map.\n`;
         const blob = new Blob([md], { type: "text/markdown" });
         const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
         a.download = `fcm-journey-${perspective.toLowerCase().replace(/\s/g, "-")}${session ? `-${session.id}` : ""}.md`; a.click();
@@ -649,9 +676,12 @@
 
       const handleCopy = () => {
         const starred = steps.filter((s) => s.starred && s.wish);
-        let t = `FCM Journey \u2014 ${perspective}\n`;
-        if (session) t += `Session: ${session.label}\n`;
+        let t = `FCM Journey \u2014 ${perspective} Perspective (HDS 2026)\n`;
+        if (session) t += `Session: ${session.label} (${session.date})\n`;
         t += "\n";
+        t += "CONTEXT: This journey map captures real experiences from group discussions in the UVA Health Design Sprint. ";
+        t += "Students are designing an AI-native tool to improve the FCM (Foundations of Clinical Medicine) case cycle. ";
+        t += "Use this alongside the team PRD to ground feature decisions in user evidence.\n\n";
         let vi = 0;
         steps.forEach((s) => {
           if (!s.isInvisible) vi++;
@@ -665,7 +695,14 @@
             t += "\n";
           }
         });
-        if (starred.length > 0) { t += "FEATURE SEEDS:\n"; starred.forEach((s, i) => { t += `${i + 1}. "${s.title}": ${s.wish}\n`; }); }
+        if (starred.length > 0) { t += "FEATURE SEEDS:\n"; starred.forEach((s, i) => { t += `${i + 1}. "${s.title}": ${s.wish}\n`; }); t += "\n"; }
+        t += "---\nINSTRUCTIONS FOR CLAUDE: Do not jump to solutions. Use the Socratic method:\n";
+        t += "1. Reflect back the 2-3 strongest friction points you see.\n";
+        t += "2. Ask probing questions: 'Walk me through the last time [friction] happened. What was the exact moment it broke down?'\n";
+        t += "3. Challenge wishes: 'Who else besides you would benefit? How would a coach use this differently?'\n";
+        t += "4. Surface hidden assumptions: 'What if instead of [wish], you could [alternative]?'\n";
+        t += "5. After 2-3 rounds of questions, help translate friction into job stories: When [situation], I want to [action], so I can [outcome].\n";
+        t += "6. Push for ruthless prioritization: 'If you ship ONE feature, which friction point do you attack? Why?'\n";
         navigator.clipboard.writeText(t).then(() => {
           alert("Copied to clipboard! Paste into Claude.");
         });
