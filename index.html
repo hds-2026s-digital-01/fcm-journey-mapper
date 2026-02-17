@@ -30,7 +30,10 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useCallback, useEffect, useMemo, useRef } = React;
+    const { useState, useCallback, useEffect, useMemo, useRef, createContext, useContext } = React;
+
+    const ThemeContext = createContext(null);
+    function useTheme() { return useContext(ThemeContext) || BRAND; }
 
     /* ── Brand tokens ─────────────────────────────────────────── */
     const BRAND = {
@@ -48,6 +51,23 @@
       redLight: "#FEE2E2",
       blue: "#3B82F6",
       blueLight: "#DBEAFE",
+    };
+
+    const BRAND_DARK = {
+      black: "#F9FAFB",
+      darkGray: "#E5E7EB",
+      medGray: "#6B7280",
+      lightGray: "#374151",
+      offWhite: "#1A1A1A",
+      white: "#2D2D2D",
+      emerald: "#10B981",
+      emeraldLight: "#064E3B",
+      amber: "#F59E0B",
+      amberLight: "#78350F",
+      red: "#EF4444",
+      redLight: "#7F1D1D",
+      blue: "#3B82F6",
+      blueLight: "#1E3A5F",
     };
 
     const MONO = "'JetBrains Mono', 'Consolas', monospace";
@@ -121,15 +141,16 @@
 
     /* ── SessionSelector ──────────────────────────────────────── */
     function SessionSelector({ selectedSession, onSelect }) {
+      const theme = useTheme();
       const sessions = SESSION_DATA ? SESSION_DATA.sessions : [];
 
       return (
         <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "block", marginBottom: 6, fontFamily: MONO }}>Session Progression &mdash; see how focus sharpened day to day</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: theme.darkGray, display: "block", marginBottom: 6, fontFamily: MONO }}>Session Progression &mdash; see how focus sharpened day to day</label>
           <select
             value={selectedSession || ""}
             onChange={e => onSelect(e.target.value || null)}
-            style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1px solid ${BRAND.lightGray}`, fontSize: 14, fontFamily: SANS, background: BRAND.white, cursor: "pointer", appearance: "auto" }}
+            style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: `1px solid ${theme.lightGray}`, fontSize: 14, fontFamily: SANS, background: theme.white, color: theme.black, cursor: "pointer", appearance: "auto" }}
           >
             {sessions.map(s => (
               <option key={s.id} value={s.id}>{s.label} ({s.date})</option>
@@ -140,7 +161,7 @@
             const session = getSessionById(selectedSession);
             if (!session) return null;
             return (
-              <div style={{ marginTop: 8, padding: "10px 14px", background: BRAND.blueLight, borderRadius: 8, fontSize: 13, color: BRAND.darkGray, lineHeight: 1.5 }}>
+              <div style={{ marginTop: 8, padding: "10px 14px", background: theme.blueLight, borderRadius: 8, fontSize: 13, color: theme.darkGray, lineHeight: 1.5 }}>
                 {session.description} &middot; {session.participantCount} participants
               </div>
             );
@@ -151,11 +172,12 @@
 
     /* ── StabilityBadge ───────────────────────────────────────── */
     function StabilityBadge({ stability, prevStability }) {
+      const theme = useTheme();
       if (!stability) return null;
       const config = {
-        stable: { bg: BRAND.emeraldLight, color: BRAND.emerald, label: "Stable" },
-        emerging: { bg: BRAND.amberLight, color: BRAND.amber, label: "Emerging" },
-        tentative: { bg: "#F3F4F6", color: BRAND.medGray, label: "Tentative" },
+        stable: { bg: theme.emeraldLight, color: theme.emerald, label: "Stable" },
+        emerging: { bg: theme.amberLight, color: theme.amber, label: "Emerging" },
+        tentative: { bg: theme.lightGray, color: theme.medGray, label: "Tentative" },
       };
       const c = config[stability.level] || config.tentative;
       const showArrow = prevStability && prevStability.level !== stability.level;
@@ -172,12 +194,13 @@
 
     /* ── HighYieldBadge ───────────────────────────────────────── */
     function HighYieldBadge({ yieldOpps, stepId }) {
+      const theme = useTheme();
       const opp = yieldOpps && yieldOpps.find(o => o.stepId === stepId && o.yieldScore >= 7);
       if (!opp) return null;
       return (
         <span
           title={`High yield (${opp.yieldScore}/10): ${opp.title}`}
-          style={{ padding: "2px 10px", borderRadius: 12, background: BRAND.redLight, color: BRAND.red, fontSize: 11, fontWeight: 700, fontFamily: MONO, cursor: "help", whiteSpace: "nowrap" }}
+          style={{ padding: "2px 10px", borderRadius: 12, background: theme.redLight, color: theme.red, fontSize: 11, fontWeight: 700, fontFamily: MONO, cursor: "help", whiteSpace: "nowrap" }}
         >
           High Yield
         </span>
@@ -186,10 +209,11 @@
 
     /* ── DiffBadge ──────────────────────────────────────────────── */
     function DiffBadge({ type }) {
+      const theme = useTheme();
       const config = {
-        new: { bg: BRAND.emeraldLight, color: BRAND.emerald, label: "New" },
-        changed: { bg: BRAND.amberLight, color: BRAND.amber, label: "Changed" },
-        upgraded: { bg: BRAND.blueLight, color: BRAND.blue, label: "Upgraded" },
+        new: { bg: theme.emeraldLight, color: theme.emerald, label: "New" },
+        changed: { bg: theme.amberLight, color: theme.amber, label: "Changed" },
+        upgraded: { bg: theme.blueLight, color: theme.blue, label: "Upgraded" },
       };
       const c = config[type] || config.changed;
       return (
@@ -199,18 +223,19 @@
 
     /* ── PrefilledInsights ────────────────────────────────────── */
     function PrefilledInsights({ stepData, diffData }) {
+      const theme = useTheme();
       if (!stepData) return null;
       const { summary, themes, keyQuotes, contextNotes } = stepData;
       if (!summary && (!themes || themes.length === 0) && (!keyQuotes || keyQuotes.length === 0)) return null;
 
       return (
-        <div style={{ marginBottom: 16, padding: "14px 16px", background: "#EFF6FF", borderRadius: 8, borderLeft: `3px solid ${BRAND.blue}` }}>
-          <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.blue, fontWeight: 700, marginBottom: 8, fontFamily: MONO }}>Session Insights</div>
-          {summary && <p style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, margin: "0 0 10px 0" }}>{summary}</p>}
+        <div style={{ marginBottom: 16, padding: "14px 16px", background: theme.blueLight, borderRadius: 8, borderLeft: `3px solid ${theme.blue}` }}>
+          <div style={{ fontSize: 11, textTransform: "uppercase", color: theme.blue, fontWeight: 700, marginBottom: 8, fontFamily: MONO }}>Session Insights</div>
+          {summary && <p style={{ fontSize: 13, color: theme.darkGray, lineHeight: 1.6, margin: "0 0 10px 0" }}>{summary}</p>}
           {themes && themes.length > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
               {themes.map((t, i) => (
-                <span key={i} style={{ padding: "3px 10px", borderRadius: 12, background: BRAND.blueLight, color: BRAND.blue, fontSize: 11, fontWeight: 600, fontFamily: MONO }}>
+                <span key={i} style={{ padding: "3px 10px", borderRadius: 12, background: theme.blueLight, color: theme.blue, fontSize: 11, fontWeight: 600, fontFamily: MONO }}>
                   {t}
                   {diffData && diffData.newThemes && diffData.newThemes.includes(t) && <DiffBadge type="new" />}
                 </span>
@@ -222,45 +247,47 @@
               {keyQuotes.map((q, i) => {
                 const isNew = diffData && diffData.newQuotes && diffData.newQuotes.includes(q.text);
                 return (
-                  <div key={i} style={{ padding: "8px 12px", background: BRAND.white, borderRadius: 6, marginBottom: i < keyQuotes.length - 1 ? 6 : 0, borderLeft: `2px solid ${isNew ? BRAND.emerald : BRAND.blue}` }}>
-                    <div style={{ fontSize: 13, color: BRAND.darkGray, fontStyle: "italic", lineHeight: 1.5 }}>
+                  <div key={i} style={{ padding: "8px 12px", background: theme.white, borderRadius: 6, marginBottom: i < keyQuotes.length - 1 ? 6 : 0, borderLeft: `2px solid ${isNew ? theme.emerald : theme.blue}` }}>
+                    <div style={{ fontSize: 13, color: theme.darkGray, fontStyle: "italic", lineHeight: 1.5 }}>
                       "{q.text}"
                       {isNew && <DiffBadge type="new" />}
                     </div>
-                    <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>— {q.speaker}{q.context ? ` · ${q.context}` : ""}</div>
+                    <div style={{ fontSize: 11, color: theme.medGray, marginTop: 4 }}>— {q.speaker}{q.context ? ` · ${q.context}` : ""}</div>
                   </div>
                 );
               })}
             </div>
           )}
-          {contextNotes && <p style={{ fontSize: 12, color: BRAND.medGray, lineHeight: 1.5, margin: 0, fontStyle: "italic" }}>{contextNotes}</p>}
+          {contextNotes && <p style={{ fontSize: 12, color: theme.medGray, lineHeight: 1.5, margin: 0, fontStyle: "italic" }}>{contextNotes}</p>}
         </div>
       );
     }
 
     /* ── Field ─────────────────────────────────────────────────── */
     function Field({ label, value, onChange, placeholder, borderColor, labelColor, fromSession }) {
+      const theme = useTheme();
       return (
         <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: labelColor || BRAND.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 4, fontFamily: MONO }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: labelColor || theme.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 4, fontFamily: MONO }}>
             {label}
-            {fromSession && <span style={{ fontSize: 10, fontWeight: 500, color: BRAND.blue, fontStyle: "italic" }}>(from session)</span>}
+            {fromSession && <span style={{ fontSize: 10, fontWeight: 500, color: theme.blue, fontStyle: "italic" }}>(from session)</span>}
           </label>
-          <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={2} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${borderColor || BRAND.lightGray}`, fontSize: 14, fontFamily: SANS, resize: "vertical", boxSizing: "border-box" }} />
+          <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={2} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${borderColor || theme.lightGray}`, fontSize: 14, fontFamily: SANS, resize: "vertical", boxSizing: "border-box", background: theme.white, color: theme.black }} />
         </div>
       );
     }
 
     /* ── StepCard (enhanced) ───────────────────────────────────── */
     function StepCard({ step, index, onUpdate, onAddInvisibleAfter, sessionStepData, stability, yieldOpps, expandSignal, diffData, prevStability }) {
+      const theme = useTheme();
       const [expanded, setExpanded] = useState(false);
       const isFirstRender = useRef(true);
       useEffect(() => {
         if (isFirstRender.current) { isFirstRender.current = false; return; }
         setExpanded(expandSignal % 2 === 1);
       }, [expandSignal]);
-      const borderColor = step.isInvisible ? BRAND.amber : step.starred ? BRAND.emerald : BRAND.lightGray;
-      const bgColor = step.isInvisible ? BRAND.amberLight : BRAND.white;
+      const borderColor = step.isInvisible ? theme.amber : step.starred ? theme.emerald : theme.lightGray;
+      const bgColor = step.isInvisible ? theme.amberLight : theme.white;
 
       const isFromSession = (field) => {
         if (!sessionStepData) return false;
@@ -271,7 +298,7 @@
       return (
         <div style={{ border: `2px solid ${borderColor}`, borderRadius: 12, background: bgColor, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden" }}>
           <div
-            style={{ background: step.isInvisible ? BRAND.amber : BRAND.black, color: step.isInvisible ? BRAND.black : BRAND.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontFamily: MONO }}
+            style={{ background: step.isInvisible ? theme.amber : theme.black, color: step.isInvisible ? theme.offWhite : theme.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontFamily: MONO }}
             onClick={() => setExpanded(!expanded)}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -286,37 +313,37 @@
           </div>
           {expanded && (
             <div style={{ padding: "16px 20px" }}>
-              <div style={{ marginBottom: 16, padding: "10px 14px", background: BRAND.offWhite, borderRadius: 8, borderLeft: `3px solid ${BRAND.medGray}` }}>
-                <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Official Version</div>
-                <div style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.5 }}>{step.official}</div>
-                <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>📄 {step.artifact}</div>
+              <div style={{ marginBottom: 16, padding: "10px 14px", background: theme.offWhite, borderRadius: 8, borderLeft: `3px solid ${theme.medGray}` }}>
+                <div style={{ fontSize: 11, textTransform: "uppercase", color: theme.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Official Version</div>
+                <div style={{ fontSize: 13, color: theme.darkGray, lineHeight: 1.5 }}>{step.official}</div>
+                <div style={{ fontSize: 11, color: theme.medGray, marginTop: 4 }}>📄 {step.artifact}</div>
               </div>
               <PrefilledInsights stepData={sessionStepData} diffData={diffData} />
               <Field label="What ACTUALLY happens?" value={step.actual} onChange={(v) => onUpdate({ actual: v })} placeholder="Not what you're supposed to do — what you actually did..." fromSession={isFromSession("actual")} />
               <Field label="What were you thinking?" value={step.thinking} onChange={(v) => onUpdate({ thinking: v })} placeholder="The internal monologue — about the case, your grade, what the coach thinks..." />
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 8, fontFamily: MONO }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: theme.darkGray, display: "flex", alignItems: "center", gap: 6, marginBottom: 8, fontFamily: MONO }}>
                   How did this feel?
                   {sessionStepData && sessionStepData.suggestedEmotion !== undefined && step.emotion === sessionStepData.suggestedEmotion && (
-                    <span style={{ fontSize: 10, fontWeight: 500, color: BRAND.blue, fontStyle: "italic" }}>(from session)</span>
+                    <span style={{ fontSize: 10, fontWeight: 500, color: theme.blue, fontStyle: "italic" }}>(from session)</span>
                   )}
                 </label>
                 <div className="emotion-buttons" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {EMOTIONS.map((em, i) => (
-                    <button key={i} onClick={() => onUpdate({ emotion: step.emotion === i ? null : i })} style={{ padding: "6px 12px", borderRadius: 20, border: step.emotion === i ? `2px solid ${em.color}` : `1px solid ${BRAND.lightGray}`, background: step.emotion === i ? em.color + "18" : BRAND.white, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}>
+                    <button key={i} onClick={() => onUpdate({ emotion: step.emotion === i ? null : i })} style={{ padding: "6px 12px", borderRadius: 20, border: step.emotion === i ? `2px solid ${em.color}` : `1px solid ${theme.lightGray}`, background: step.emotion === i ? em.color + "18" : theme.white, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}>
                       <span style={{ fontSize: 18 }}>{em.emoji}</span>
-                      <span style={{ color: BRAND.darkGray }}>{em.label}</span>
+                      <span style={{ color: theme.darkGray }}>{em.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
-              <Field label="🔴 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={BRAND.redLight} labelColor={BRAND.red} fromSession={isFromSession("friction")} />
-              <Field label="⭐ Wishlist — I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible — just describe the help you'd want..." borderColor={BRAND.emeraldLight} labelColor={BRAND.emerald} fromSession={isFromSession("wish")} />
+              <Field label="🔴 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={theme.redLight} labelColor={theme.red} fromSession={isFromSession("friction")} />
+              <Field label="⭐ Wishlist — I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible — just describe the help you'd want..." borderColor={theme.emeraldLight} labelColor={theme.emerald} fromSession={isFromSession("wish")} />
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <button onClick={() => onUpdate({ starred: !step.starred })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: step.starred ? BRAND.emerald : BRAND.lightGray, color: step.starred ? BRAND.white : BRAND.darkGray, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: MONO }}>
+                <button onClick={() => onUpdate({ starred: !step.starred })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: step.starred ? theme.emerald : theme.lightGray, color: step.starred ? theme.white : theme.darkGray, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: MONO }}>
                   {step.starred ? "⭐ Starred" : "☆ Star This"}
                 </button>
-                <button onClick={onAddInvisibleAfter} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${BRAND.amber}`, background: BRAND.amberLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>
+                <button onClick={onAddInvisibleAfter} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${theme.amber}`, background: theme.amberLight, color: theme.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>
                   👻 Add Invisible Step After
                 </button>
               </div>
@@ -328,9 +355,10 @@
 
     /* ── AdminDashboard ───────────────────────────────────────── */
     function AdminDashboard({ session, allSessions }) {
+      const theme = useTheme();
       if (!session) {
         return (
-          <div style={{ padding: 24, background: BRAND.offWhite, borderRadius: 12, textAlign: "center", color: BRAND.medGray }}>
+          <div style={{ padding: 24, background: theme.offWhite, borderRadius: 12, textAlign: "center", color: theme.medGray }}>
             <p style={{ fontFamily: MONO, fontSize: 14 }}>Select a session to view administrator insights.</p>
             <p style={{ fontSize: 13 }}>The Administrator view shows macro jobs-to-be-done rather than the step-by-step journey.</p>
           </div>
@@ -341,48 +369,48 @@
       if (!adminData || !adminData.macroJobs) return null;
 
       const statusColor = (status) => {
-        if (status.toLowerCase().includes("functional")) return BRAND.amber;
-        if (status.toLowerCase().includes("invisible") || status.toLowerCase().includes("aspirational")) return BRAND.red;
-        return BRAND.emerald;
+        if (status.toLowerCase().includes("functional")) return theme.amber;
+        if (status.toLowerCase().includes("invisible") || status.toLowerCase().includes("aspirational")) return theme.red;
+        return theme.emerald;
       };
 
       return (
         <div>
-          <div style={{ marginBottom: 20, padding: "12px 16px", background: BRAND.blueLight, borderRadius: 8, borderLeft: `3px solid ${BRAND.blue}` }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: BRAND.blue, fontFamily: MONO }}>ADMINISTRATOR VIEW</div>
-            <div style={{ fontSize: 13, color: BRAND.darkGray, marginTop: 4 }}>Macro jobs-to-be-done — how well does the system support administrative needs?</div>
+          <div style={{ marginBottom: 20, padding: "12px 16px", background: theme.blueLight, borderRadius: 8, borderLeft: `3px solid ${theme.blue}` }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: theme.blue, fontFamily: MONO }}>ADMINISTRATOR VIEW</div>
+            <div style={{ fontSize: 13, color: theme.darkGray, marginTop: 4 }}>Macro jobs-to-be-done — how well does the system support administrative needs?</div>
           </div>
 
           {adminData.macroJobs.map(job => (
-            <div key={job.id} className="admin-card" style={{ background: BRAND.white, borderRadius: 12, border: `2px solid ${BRAND.lightGray}`, marginBottom: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-              <div style={{ background: BRAND.black, color: BRAND.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: MONO }}>
+            <div key={job.id} className="admin-card" style={{ background: theme.white, borderRadius: 12, border: `2px solid ${theme.lightGray}`, marginBottom: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+              <div style={{ background: theme.black, color: theme.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: MONO }}>
                 <span style={{ fontWeight: 700, fontSize: 15 }}>{job.title}</span>
                 <span style={{ padding: "3px 12px", borderRadius: 12, background: statusColor(job.status) + "30", color: statusColor(job.status), fontSize: 11, fontWeight: 700 }}>{job.status}</span>
               </div>
               <div style={{ padding: "16px 20px" }}>
                 {job.keyInsights && job.keyInsights.length > 0 && (
                   <div style={{ marginBottom: 14 }}>
-                    <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.emerald, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Key Insights</div>
+                    <div style={{ fontSize: 11, textTransform: "uppercase", color: theme.emerald, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Key Insights</div>
                     {job.keyInsights.map((insight, i) => (
-                      <div key={i} style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, paddingLeft: 12, borderLeft: `2px solid ${BRAND.emeraldLight}`, marginBottom: 6 }}>{insight}</div>
+                      <div key={i} style={{ fontSize: 13, color: theme.darkGray, lineHeight: 1.6, paddingLeft: 12, borderLeft: `2px solid ${theme.emeraldLight}`, marginBottom: 6 }}>{insight}</div>
                     ))}
                   </div>
                 )}
                 {job.keyQuotes && job.keyQuotes.length > 0 && (
                   <div style={{ marginBottom: 14 }}>
                     {job.keyQuotes.map((q, i) => (
-                      <div key={i} style={{ padding: "8px 12px", background: BRAND.offWhite, borderRadius: 6, marginBottom: 4, borderLeft: `2px solid ${BRAND.blue}` }}>
-                        <div style={{ fontSize: 13, color: BRAND.darkGray, fontStyle: "italic" }}>"{q.text}"</div>
-                        <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 2 }}>— {q.speaker}{q.context ? ` · ${q.context}` : ""}</div>
+                      <div key={i} style={{ padding: "8px 12px", background: theme.offWhite, borderRadius: 6, marginBottom: 4, borderLeft: `2px solid ${theme.blue}` }}>
+                        <div style={{ fontSize: 13, color: theme.darkGray, fontStyle: "italic" }}>"{q.text}"</div>
+                        <div style={{ fontSize: 11, color: theme.medGray, marginTop: 2 }}>— {q.speaker}{q.context ? ` · ${q.context}` : ""}</div>
                       </div>
                     ))}
                   </div>
                 )}
                 {job.frictionPoints && job.frictionPoints.length > 0 && (
                   <div>
-                    <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.red, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Friction Points</div>
+                    <div style={{ fontSize: 11, textTransform: "uppercase", color: theme.red, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Friction Points</div>
                     {job.frictionPoints.map((fp, i) => (
-                      <div key={i} style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, paddingLeft: 12, borderLeft: `2px solid ${BRAND.redLight}`, marginBottom: 6 }}>{fp}</div>
+                      <div key={i} style={{ fontSize: 13, color: theme.darkGray, lineHeight: 1.6, paddingLeft: 12, borderLeft: `2px solid ${theme.redLight}`, marginBottom: 6 }}>{fp}</div>
                     ))}
                   </div>
                 )}
@@ -391,9 +419,9 @@
           ))}
 
           {allSessions && allSessions.length >= 2 && SESSION_DATA?.cumulative?.trendNotes && (
-            <div style={{ background: BRAND.amberLight, borderRadius: 12, padding: 20, marginTop: 8, border: `1px solid ${BRAND.amber}` }}>
-              <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 14, color: BRAND.darkGray }}>Cross-Session Trends</h3>
-              <p style={{ fontSize: 13, color: BRAND.darkGray, margin: 0, lineHeight: 1.6 }}>{SESSION_DATA.cumulative.trendNotes}</p>
+            <div style={{ background: theme.amberLight, borderRadius: 12, padding: 20, marginTop: 8, border: `1px solid ${theme.amber}` }}>
+              <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 14, color: theme.darkGray }}>Cross-Session Trends</h3>
+              <p style={{ fontSize: 13, color: theme.darkGray, margin: 0, lineHeight: 1.6 }}>{SESSION_DATA.cumulative.trendNotes}</p>
             </div>
           )}
         </div>
@@ -402,6 +430,7 @@
 
     /* ── YieldAnalysis ─────────────────────────────────────────── */
     function YieldAnalysis({ opportunities, approvals, onApprovalChange, steps, diffYield }) {
+      const theme = useTheme();
       if (!opportunities || opportunities.length === 0) return null;
 
       const sorted = [...opportunities].sort((a, b) => b.yieldScore - a.yieldScore);
@@ -412,61 +441,61 @@
       };
 
       const approvalStyles = {
-        approved: { bg: BRAND.emeraldLight, border: BRAND.emerald, label: "Approved" },
-        discuss: { bg: BRAND.amberLight, border: BRAND.amber, label: "Needs Discussion" },
-        dismissed: { bg: "#F3F4F6", border: BRAND.medGray, label: "Dismissed" },
+        approved: { bg: theme.emeraldLight, border: theme.emerald, label: "Approved" },
+        discuss: { bg: theme.amberLight, border: theme.amber, label: "Needs Discussion" },
+        dismissed: { bg: theme.lightGray, border: theme.medGray, label: "Dismissed" },
       };
 
       return (
-        <div style={{ background: BRAND.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.lightGray}` }}>
-          <h3 style={{ margin: "0 0 4px 0", fontFamily: MONO, color: BRAND.black, fontSize: 16 }}>Yield Analysis</h3>
-          <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Ranked improvement opportunities from session data. Review and triage.</p>
+        <div style={{ background: theme.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${theme.lightGray}` }}>
+          <h3 style={{ margin: "0 0 4px 0", fontFamily: MONO, color: theme.black, fontSize: 16 }}>Yield Analysis</h3>
+          <p style={{ fontSize: 13, color: theme.medGray, margin: "0 0 16px 0" }}>Ranked improvement opportunities from session data. Review and triage.</p>
           {sorted.map((opp, i) => {
             const status = approvals[`${opp.stepId}-${i}`];
             const style = status ? approvalStyles[status] : null;
             return (
-              <div key={i} style={{ border: `1px solid ${style ? style.border : BRAND.lightGray}`, borderRadius: 10, padding: "14px 16px", marginBottom: 12, background: style ? style.bg : BRAND.offWhite }}>
+              <div key={i} style={{ border: `1px solid ${style ? style.border : theme.lightGray}`, borderRadius: 10, padding: "14px 16px", marginBottom: 12, background: style ? style.bg : theme.offWhite }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 22, color: opp.yieldScore >= 8 ? BRAND.red : opp.yieldScore >= 6 ? BRAND.amber : BRAND.medGray }}>
+                    <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 22, color: opp.yieldScore >= 8 ? theme.red : opp.yieldScore >= 6 ? theme.amber : theme.medGray }}>
                       {opp.yieldScore}
                       {diffYield && diffYield.scoreChanges[opp.title] && (
-                        <span style={{ fontSize: 11, fontWeight: 600, color: diffYield.scoreChanges[opp.title] > 0 ? BRAND.emerald : BRAND.red, marginLeft: 4 }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: diffYield.scoreChanges[opp.title] > 0 ? theme.emerald : theme.red, marginLeft: 4 }}>
                           {diffYield.scoreChanges[opp.title] > 0 ? "+" : ""}{diffYield.scoreChanges[opp.title]}
                         </span>
                       )}
                     </span>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: 14, color: BRAND.darkGray }}>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: theme.darkGray }}>
                         {opp.title}
                         {diffYield && diffYield.newTitles.includes(opp.title) && <DiffBadge type="new" />}
                       </div>
-                      <div style={{ fontSize: 11, color: BRAND.medGray, fontFamily: MONO }}>at: {stepTitle(opp.stepId)}</div>
+                      <div style={{ fontSize: 11, color: theme.medGray, fontFamily: MONO }}>at: {stepTitle(opp.stepId)}</div>
                     </div>
                   </div>
                   {status && <span style={{ padding: "3px 10px", borderRadius: 12, background: style.border + "20", color: style.border, fontSize: 11, fontWeight: 700, fontFamily: MONO }}>{style.label}</span>}
                 </div>
-                <p style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.6, margin: "0 0 10px 0" }}>{opp.rationale}</p>
+                <p style={{ fontSize: 13, color: theme.darkGray, lineHeight: 1.6, margin: "0 0 10px 0" }}>{opp.rationale}</p>
                 {opp.suggestedInterventions && opp.suggestedInterventions.length > 0 && (
                   <div className="yield-card-interventions" style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Suggested Interventions</div>
+                    <div style={{ fontSize: 11, textTransform: "uppercase", color: theme.medGray, fontWeight: 700, marginBottom: 4, fontFamily: MONO }}>Suggested Interventions</div>
                     {opp.suggestedInterventions.map((int, j) => (
-                      <div key={j} style={{ fontSize: 12, color: BRAND.darkGray, padding: "4px 0 4px 12px", borderLeft: `2px solid ${BRAND.lightGray}` }}>{int}</div>
+                      <div key={j} style={{ fontSize: 12, color: theme.darkGray, padding: "4px 0 4px 12px", borderLeft: `2px solid ${theme.lightGray}` }}>{int}</div>
                     ))}
                   </div>
                 )}
                 <div className="yield-card-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {[
-                    { key: "approved", label: "✅ Approve", bg: BRAND.emerald },
-                    { key: "discuss", label: "💬 Needs Discussion", bg: BRAND.amber },
-                    { key: "dismissed", label: "✕ Dismiss", bg: BRAND.medGray },
+                    { key: "approved", label: "✅ Approve", bg: theme.emerald },
+                    { key: "discuss", label: "💬 Needs Discussion", bg: theme.amber },
+                    { key: "dismissed", label: "✕ Dismiss", bg: theme.medGray },
                   ].map(btn => (
                     <button
                       key={btn.key}
                       onClick={() => onApprovalChange(`${opp.stepId}-${i}`, status === btn.key ? null : btn.key)}
                       style={{
-                        padding: "6px 14px", borderRadius: 6, border: status === btn.key ? `2px solid ${btn.bg}` : `1px solid ${BRAND.lightGray}`,
-                        background: status === btn.key ? btn.bg + "18" : BRAND.white, color: BRAND.darkGray,
+                        padding: "6px 14px", borderRadius: 6, border: status === btn.key ? `2px solid ${btn.bg}` : `1px solid ${theme.lightGray}`,
+                        background: status === btn.key ? btn.bg + "18" : theme.white, color: theme.darkGray,
                         cursor: "pointer", fontSize: 12, fontWeight: status === btn.key ? 700 : 500, fontFamily: MONO
                       }}
                     >
@@ -483,6 +512,7 @@
 
     /* ── EmotionalArc ──────────────────────────────────────────── */
     function EmotionalArc({ steps }) {
+      const theme = useTheme();
       const withEmotions = steps.filter((s) => s.emotion !== null);
       if (withEmotions.length < 2) return null;
       const valMap = { 0: 1, 6: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 };
@@ -490,20 +520,20 @@
       const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
 
       return (
-        <div style={{ background: BRAND.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.lightGray}` }}>
-          <h3 style={{ margin: "0 0 16px 0", fontFamily: MONO, color: BRAND.black }}>📈 Emotional Arc</h3>
+        <div style={{ background: theme.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${theme.lightGray}` }}>
+          <h3 style={{ margin: "0 0 16px 0", fontFamily: MONO, color: theme.black }}>📈 Emotional Arc</h3>
           <svg viewBox="-5 -10 110 120" style={{ width: "100%", height: 160 }}>
-            <line x1="0" y1="50" x2="100" y2="50" stroke={BRAND.lightGray} strokeWidth="0.3" strokeDasharray="2" />
-            <path d={pathD} fill="none" stroke={BRAND.emerald} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <line x1="0" y1="50" x2="100" y2="50" stroke={theme.lightGray} strokeWidth="0.3" strokeDasharray="2" />
+            <path d={pathD} fill="none" stroke={theme.emerald} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             {points.map((p, i) => (
               <g key={i}>
-                <circle cx={p.x} cy={p.y} r="3" fill={EMOTIONS[p.step.emotion]?.color || BRAND.medGray} />
+                <circle cx={p.x} cy={p.y} r="3" fill={EMOTIONS[p.step.emotion]?.color || theme.medGray} />
                 <text x={p.x} y={p.y - 8} textAnchor="middle" fontSize="8">{EMOTIONS[p.step.emotion]?.emoji}</text>
-                <text x={p.x} y={p.y + 14} textAnchor="middle" fontSize="3.5" fill={BRAND.medGray}>{p.step.title.length > 12 ? p.step.title.slice(0, 12) + "…" : p.step.title}</text>
+                <text x={p.x} y={p.y + 14} textAnchor="middle" fontSize="3.5" fill={theme.medGray}>{p.step.title.length > 12 ? p.step.title.slice(0, 12) + "…" : p.step.title}</text>
               </g>
             ))}
-            <text x="0" y="-4" fontSize="3.5" fill={BRAND.emerald}>😁 Energized</text>
-            <text x="0" y="108" fontSize="3.5" fill={BRAND.red}>😰 Anxious</text>
+            <text x="0" y="-4" fontSize="3.5" fill={theme.emerald}>😁 Energized</text>
+            <text x="0" y="108" fontSize="3.5" fill={theme.red}>😰 Anxious</text>
           </svg>
         </div>
       );
@@ -511,16 +541,17 @@
 
     /* ── WishlistSummary ───────────────────────────────────────── */
     function WishlistSummary({ steps }) {
+      const theme = useTheme();
       const starred = steps.filter((s) => s.starred && s.wish);
       if (starred.length === 0) return null;
       return (
-        <div style={{ background: BRAND.emeraldLight, borderRadius: 12, padding: 20, marginTop: 24, border: `2px solid ${BRAND.emerald}` }}>
-          <h3 style={{ margin: "0 0 12px 0", fontFamily: MONO }}>⭐ Feature Seeds ({starred.length})</h3>
-          <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Starred wishes → features for your app. Copy into your PRD.</p>
+        <div style={{ background: theme.emeraldLight, borderRadius: 12, padding: 20, marginTop: 24, border: `2px solid ${theme.emerald}` }}>
+          <h3 style={{ margin: "0 0 12px 0", fontFamily: MONO, color: theme.black }}>⭐ Feature Seeds ({starred.length})</h3>
+          <p style={{ fontSize: 13, color: theme.medGray, margin: "0 0 16px 0" }}>Starred wishes → features for your app. Copy into your PRD.</p>
           {starred.map((s) => (
-            <div key={s.id} style={{ background: BRAND.white, borderRadius: 8, padding: "12px 16px", marginBottom: 8, borderLeft: `3px solid ${BRAND.emerald}` }}>
-              <div style={{ fontSize: 12, color: BRAND.emerald, fontWeight: 700, fontFamily: MONO }}>At: {s.title}</div>
-              <div style={{ fontSize: 14, color: BRAND.darkGray, marginTop: 4 }}>{s.wish}</div>
+            <div key={s.id} style={{ background: theme.white, borderRadius: 8, padding: "12px 16px", marginBottom: 8, borderLeft: `3px solid ${theme.emerald}` }}>
+              <div style={{ fontSize: 12, color: theme.emerald, fontWeight: 700, fontFamily: MONO }}>At: {s.title}</div>
+              <div style={{ fontSize: 14, color: theme.darkGray, marginTop: 4 }}>{s.wish}</div>
             </div>
           ))}
         </div>
@@ -529,18 +560,19 @@
 
     /* ── CumulativeAnalysis ────────────────────────────────────── */
     function CumulativeAnalysis({ sessionCount }) {
+      const theme = useTheme();
       if (!SESSION_DATA?.cumulative || sessionCount < 2) return null;
       const { trendNotes, yieldOpportunities } = SESSION_DATA.cumulative;
 
       return (
-        <div style={{ background: BRAND.amberLight, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.amber}` }}>
-          <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 14, color: BRAND.darkGray }}>Cumulative Analysis ({sessionCount} sessions)</h3>
-          {trendNotes && <p style={{ fontSize: 13, color: BRAND.darkGray, margin: "0 0 12px 0", lineHeight: 1.6 }}>{trendNotes}</p>}
+        <div style={{ background: theme.amberLight, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${theme.amber}` }}>
+          <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 14, color: theme.darkGray }}>Cumulative Analysis ({sessionCount} sessions)</h3>
+          {trendNotes && <p style={{ fontSize: 13, color: theme.darkGray, margin: "0 0 12px 0", lineHeight: 1.6 }}>{trendNotes}</p>}
           {yieldOpportunities && yieldOpportunities.length > 0 && (
             <div>
-              <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.amber, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Top Opportunities Across Sessions</div>
+              <div style={{ fontSize: 11, textTransform: "uppercase", color: theme.amber, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>Top Opportunities Across Sessions</div>
               {yieldOpportunities.slice(0, 3).map((opp, i) => (
-                <div key={i} style={{ fontSize: 13, color: BRAND.darkGray, padding: "4px 0 4px 12px", borderLeft: `2px solid ${BRAND.amber}`, marginBottom: 4 }}>
+                <div key={i} style={{ fontSize: 13, color: theme.darkGray, padding: "4px 0 4px 12px", borderLeft: `2px solid ${theme.amber}`, marginBottom: 4 }}>
                   <strong>{opp.yieldScore}/10</strong> — {opp.title} ({opp.sessions.length} session{opp.sessions.length > 1 ? "s" : ""})
                 </div>
               ))}
@@ -552,6 +584,7 @@
 
     /* ── LeadingOpportunities ──────────────────────────────────── */
     function LeadingOpportunities() {
+      const theme = useTheme();
       const opps = SESSION_DATA?.cumulative?.yieldOpportunities;
       if (!opps || opps.length === 0) return null;
 
@@ -566,16 +599,16 @@
       };
 
       const top3 = opps.slice(0, 3);
-      const scoreColor = (s) => s >= 9 ? BRAND.red : s >= 7 ? BRAND.amber : BRAND.medGray;
+      const scoreColor = (s) => s >= 9 ? theme.red : s >= 7 ? theme.amber : theme.medGray;
 
       return (
-        <div style={{ marginBottom: 20, background: BRAND.white, borderRadius: 12, border: `1px solid ${BRAND.lightGray}`, overflow: "hidden" }}>
-          <div onClick={toggleCollapse} style={{ padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", background: BRAND.offWhite }}>
+        <div style={{ marginBottom: 20, background: theme.white, borderRadius: 12, border: `1px solid ${theme.lightGray}`, overflow: "hidden" }}>
+          <div onClick={toggleCollapse} style={{ padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", background: theme.offWhite }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, textTransform: "uppercase", fontWeight: 700, color: BRAND.red, fontFamily: MONO }}>Leading Opportunities</span>
-              <span style={{ fontSize: 11, color: BRAND.medGray, fontFamily: MONO }}>Top 3 across all sessions</span>
+              <span style={{ fontSize: 11, textTransform: "uppercase", fontWeight: 700, color: theme.red, fontFamily: MONO }}>Leading Opportunities</span>
+              <span style={{ fontSize: 11, color: theme.medGray, fontFamily: MONO }}>Top 3 across all sessions</span>
             </div>
-            <span style={{ fontSize: 14, color: BRAND.medGray }}>{collapsed ? "▼" : "▲"}</span>
+            <span style={{ fontSize: 14, color: theme.medGray }}>{collapsed ? "▼" : "▲"}</span>
           </div>
           {!collapsed && (
             <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -583,8 +616,8 @@
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
                   <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 20, color: scoreColor(opp.yieldScore), minWidth: 32, textAlign: "center" }}>{opp.yieldScore}</span>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, color: BRAND.darkGray }}>{opp.title}</div>
-                    <div style={{ fontSize: 12, color: BRAND.medGray, marginTop: 2 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: theme.darkGray }}>{opp.title}</div>
+                    <div style={{ fontSize: 12, color: theme.medGray, marginTop: 2 }}>
                       {opp.sessions.length} session{opp.sessions.length > 1 ? "s" : ""}
                       {opp.rationale ? ` · ${opp.rationale}` : ""}
                     </div>
@@ -611,6 +644,18 @@
       const [yieldApprovals, setYieldApprovals] = useState({});
       const [expandSignal, setExpandSignal] = useState(0);
       const [showDiff, setShowDiff] = useState(false);
+      const [darkMode, setDarkMode] = useState(() => {
+        try { return localStorage.getItem("fcm-dark-mode") === "true"; } catch { return false; }
+      });
+      const theme = darkMode ? BRAND_DARK : BRAND;
+      useEffect(() => { document.body.style.background = theme.offWhite; }, [theme.offWhite]);
+      const toggleDarkMode = () => {
+        setDarkMode(prev => {
+          const next = !prev;
+          try { localStorage.setItem("fcm-dark-mode", String(next)); } catch {}
+          return next;
+        });
+      };
 
       const session = useMemo(() => getSessionById(selectedSession), [selectedSession]);
       const pKey = perspectiveKey(perspective);
@@ -945,18 +990,20 @@
       const yieldOpps = getYieldOpps();
 
       return (
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS }}>
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ fontFamily: MONO, fontSize: 13, color: BRAND.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
-            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: BRAND.black, fontFamily: MONO }}>FCM Journey Mapper</h1>
-            <p style={{ color: BRAND.medGray, fontSize: 15, margin: 0 }}>Map the <em>real</em> experience &mdash; not the official version.</p>
+        <ThemeContext.Provider value={theme}>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh" }}>
+          <div style={{ textAlign: "center", marginBottom: 32, position: "relative" }}>
+            <button onClick={toggleDarkMode} style={{ position: "absolute", top: 0, right: 0, background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1 }} title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>{darkMode ? "☀️" : "🌙"}</button>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: theme.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
+            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: theme.black, fontFamily: MONO }}>FCM Journey Mapper</h1>
+            <p style={{ color: theme.medGray, fontSize: 15, margin: 0 }}>Map the <em>real</em> experience &mdash; not the official version.</p>
           </div>
 
           {showIntro && (
-            <div style={{ background: BRAND.blueLight, borderRadius: 12, padding: 20, marginBottom: 24, border: `1px solid ${BRAND.blue}`, position: "relative" }}>
-              <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: BRAND.medGray }}>✕</button>
-              <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 15 }}>How this works</h3>
-              <p style={{ fontSize: 14, color: BRAND.darkGray, margin: 0, lineHeight: 1.6 }}>
+            <div style={{ background: theme.blueLight, borderRadius: 12, padding: 20, marginBottom: 24, border: `1px solid ${theme.blue}`, position: "relative" }}>
+              <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: theme.medGray }}>✕</button>
+              <h3 style={{ margin: "0 0 8px 0", fontFamily: MONO, fontSize: 15, color: theme.black }}>How this works</h3>
+              <p style={{ fontSize: 14, color: theme.darkGray, margin: 0, lineHeight: 1.6 }}>
                 We synthesized your Day 1 and Day 2 group discussions into a step-by-step FCM journey map. Each step is pre-populated with real insights from the cohort. Your job: review each step, rate the emotional experience, note friction points, and ⭐ star the wishes that matter most — those become your app's features. See a gap the official process misses? Hit 👻 to add invisible steps that nobody documents. When done, export and paste into Claude for job stories and PRD specs.
               </p>
             </div>
@@ -966,9 +1013,9 @@
 
           {canShowDiff && (
             <div style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 10 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: BRAND.medGray, fontFamily: MONO, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-                <span onClick={() => setShowDiff(!showDiff)} style={{ display: "inline-block", width: 36, height: 20, borderRadius: 10, background: showDiff ? BRAND.emerald : BRAND.lightGray, position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
-                  <span style={{ display: "inline-block", width: 16, height: 16, borderRadius: 8, background: BRAND.white, position: "absolute", top: 2, left: showDiff ? 18 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+              <label style={{ fontSize: 12, fontWeight: 600, color: theme.medGray, fontFamily: MONO, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+                <span onClick={() => setShowDiff(!showDiff)} style={{ display: "inline-block", width: 36, height: 20, borderRadius: 10, background: showDiff ? theme.emerald : theme.lightGray, position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
+                  <span style={{ display: "inline-block", width: 16, height: 16, borderRadius: 8, background: theme.white, position: "absolute", top: 2, left: showDiff ? 18 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                 </span>
                 Show changes from {prevSession?.label?.replace(/—.*/, "").trim() || "previous session"}
               </label>
@@ -979,7 +1026,7 @@
 
           <div className="perspective-tabs" style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
             {["Student", "Coach / Faculty", "Administrator"].map((p) => (
-              <button key={p} onClick={() => setPerspective(p)} style={{ padding: "8px 20px", borderRadius: 8, border: perspective === p ? `2px solid ${BRAND.emerald}` : `1px solid ${BRAND.lightGray}`, background: perspective === p ? BRAND.emeraldLight : BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: perspective === p ? 700 : 500, fontSize: 14, fontFamily: MONO }}>
+              <button key={p} onClick={() => setPerspective(p)} style={{ padding: "8px 20px", borderRadius: 8, border: perspective === p ? `2px solid ${theme.emerald}` : `1px solid ${theme.lightGray}`, background: perspective === p ? theme.emeraldLight : theme.white, color: theme.darkGray, cursor: "pointer", fontWeight: perspective === p ? 700 : 500, fontSize: 14, fontFamily: MONO }}>
                 {p}
               </button>
             ))}
@@ -988,11 +1035,11 @@
           {!isAdmin && (
             <>
               <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
-                <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>📝 {filledCount}/{steps.length} annotated</div>
-                <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>⭐ {starredCount} seeds</div>
-                <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>👻 {steps.filter((s) => s.isInvisible).length} invisible</div>
-                {selectedSession && session && <div style={{ background: BRAND.blueLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO }}>📁 Viewing: {session.label.replace(/—.*/, "").trim()} ({new Date(session.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })})</div>}
-                <button onClick={() => setExpandSignal(s => s + 1)} style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, border: `1px solid ${BRAND.lightGray}`, cursor: "pointer", fontWeight: 600, color: BRAND.darkGray }}>{expandSignal % 2 === 1 ? "▲ Collapse All" : "▼ Expand All"}</button>
+                <div style={{ background: theme.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, color: theme.darkGray }}>📝 {filledCount}/{steps.length} annotated</div>
+                <div style={{ background: starredCount > 0 ? theme.emeraldLight : theme.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, color: theme.darkGray }}>⭐ {starredCount} seeds</div>
+                <div style={{ background: theme.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, color: theme.darkGray }}>👻 {steps.filter((s) => s.isInvisible).length} invisible</div>
+                {selectedSession && session && <div style={{ background: theme.blueLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, color: theme.darkGray }}>📁 Viewing: {session.label.replace(/—.*/, "").trim()} ({new Date(session.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })})</div>}
+                <button onClick={() => setExpandSignal(s => s + 1)} style={{ background: theme.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: MONO, border: `1px solid ${theme.lightGray}`, cursor: "pointer", fontWeight: 600, color: theme.darkGray }}>{expandSignal % 2 === 1 ? "▲ Collapse All" : "▼ Expand All"}</button>
               </div>
 
               {steps.map((step) => {
@@ -1036,17 +1083,18 @@
           )}
 
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
-            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: MONO }}>📋 Export Markdown</button>
-            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📎 Copy for Claude</button>
-            <button onClick={handleExportAnnotations} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.emerald}`, background: BRAND.emeraldLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>💾 Export Annotations</button>
-            <button onClick={() => fileInputRef.current?.click()} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.blue}`, background: BRAND.blueLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📂 Import Annotations</button>
+            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: theme.black, color: theme.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: MONO }}>📋 Export Markdown</button>
+            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${theme.lightGray}`, background: theme.white, color: theme.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📎 Copy for Claude</button>
+            <button onClick={handleExportAnnotations} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${theme.emerald}`, background: theme.emeraldLight, color: theme.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>💾 Export Annotations</button>
+            <button onClick={() => fileInputRef.current?.click()} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${theme.blue}`, background: theme.blueLight, color: theme.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📂 Import Annotations</button>
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportAnnotations} style={{ display: "none" }} />
           </div>
 
-          <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${BRAND.lightGray}` }}>
-            <p style={{ fontSize: 12, color: BRAND.medGray, fontFamily: MONO }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
+          <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${theme.lightGray}` }}>
+            <p style={{ fontSize: 12, color: theme.medGray, fontFamily: MONO }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
           </div>
         </div>
+        </ThemeContext.Provider>
       );
     }
 
