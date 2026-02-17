@@ -768,6 +768,87 @@
         });
       };
 
+      const handleExportAnnotations = () => {
+        const annotations = {};
+        const yieldApprovalData = {};
+        // Gather all localStorage keys for annotations and yield approvals
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key.startsWith("fcm-annotations-")) {
+            const sessionKey = key.replace("fcm-annotations-", "");
+            try { annotations[sessionKey] = JSON.parse(localStorage.getItem(key)); } catch {}
+          }
+          if (key.startsWith("fcm-yield-")) {
+            const sessionKey = key.replace("fcm-yield-", "");
+            try { yieldApprovalData[sessionKey] = JSON.parse(localStorage.getItem(key)); } catch {}
+          }
+        }
+        const payload = {
+          meta: { exportedAt: new Date().toISOString(), tool: "FCM Journey Mapper" },
+          annotations,
+          yieldApprovals: yieldApprovalData,
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `fcm-annotations-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+      };
+
+      const fileInputRef = useRef(null);
+      const handleImportAnnotations = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const data = JSON.parse(ev.target.result);
+            if (!data.meta || data.meta.tool !== "FCM Journey Mapper") {
+              alert("Invalid file — not an FCM Journey Mapper export.");
+              return;
+            }
+            let count = 0;
+            if (data.annotations) {
+              Object.entries(data.annotations).forEach(([sessionKey, ann]) => {
+                localStorage.setItem(`fcm-annotations-${sessionKey}`, JSON.stringify(ann));
+                count += Object.keys(ann).length;
+              });
+            }
+            if (data.yieldApprovals) {
+              Object.entries(data.yieldApprovals).forEach(([sessionKey, approvals]) => {
+                localStorage.setItem(`fcm-yield-${sessionKey}`, JSON.stringify(approvals));
+              });
+            }
+            // Reload current session state from localStorage
+            const saved = loadAnnotations(selectedSession);
+            const perspData = session?.perspectives?.[pKey];
+            const stepsData = perspData?.steps;
+            const merged = DEFAULT_STEPS.map(s => {
+              const sd = stepsData?.[s.id];
+              const ann = saved[s.id] || {};
+              if (!sd) return { ...s, ...ann };
+              return {
+                ...s,
+                actual: ann.actual ?? sd.suggestedActual ?? s.actual,
+                emotion: ann.emotion !== undefined ? ann.emotion : (sd.suggestedEmotion !== undefined ? sd.suggestedEmotion : s.emotion),
+                friction: ann.friction ?? sd.suggestedFriction ?? s.friction,
+                wish: ann.wish ?? sd.suggestedWish ?? s.wish,
+                thinking: ann.thinking ?? s.thinking,
+                starred: ann.starred !== undefined ? ann.starred : s.starred,
+              };
+            });
+            setSteps(merged);
+            setYieldApprovals(loadYieldApprovals(selectedSession));
+            alert(`Imported ${count} annotations successfully.`);
+          } catch (err) {
+            alert("Failed to parse import file: " + err.message);
+          }
+          // Reset file input so the same file can be re-imported
+          e.target.value = "";
+        };
+        reader.readAsText(file);
+      };
+
       const filledCount = steps.filter((s) => s.actual || s.emotion !== null || s.friction || s.wish).length;
       const starredCount = steps.filter((s) => s.starred).length;
       let visibleIdx = 0;
@@ -853,6 +934,9 @@
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
             <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: MONO }}>📋 Export Markdown</button>
             <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📎 Copy for Claude</button>
+            <button onClick={handleExportAnnotations} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.emerald}`, background: BRAND.emeraldLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>💾 Export Annotations</button>
+            <button onClick={() => fileInputRef.current?.click()} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.blue}`, background: BRAND.blueLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: MONO }}>📂 Import Annotations</button>
+            <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportAnnotations} style={{ display: "none" }} />
           </div>
 
           <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${BRAND.lightGray}` }}>
