@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FCM Journey Mapper · HDS 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #F9FAFB; -webkit-font-smoothing: antialiased; }
+    textarea:focus, button:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }
+    @media (max-width: 600px) {
+      h1 { font-size: 22px !important; }
+    }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useCallback } = React;
+
+    const BRAND = {
+      black: "#1A1A1A",
+      darkGray: "#2D2D2D",
+      medGray: "#6B7280",
+      lightGray: "#E5E7EB",
+      offWhite: "#F9FAFB",
+      white: "#FFFFFF",
+      emerald: "#10B981",
+      emeraldLight: "#D1FAE5",
+      amber: "#F59E0B",
+      amberLight: "#FEF3C7",
+      red: "#EF4444",
+      redLight: "#FEE2E2",
+      blue: "#3B82F6",
+      blueLight: "#DBEAFE",
+    };
+
+    const EMOTIONS = [
+      { emoji: "😰", label: "Anxious", color: BRAND.red },
+      { emoji: "😟", label: "Uncertain", color: BRAND.amber },
+      { emoji: "😐", label: "Going through motions", color: BRAND.medGray },
+      { emoji: "🤔", label: "Engaged", color: BRAND.blue },
+      { emoji: "😊", label: "Confident", color: BRAND.emerald },
+      { emoji: "😁", label: "Energized", color: "#059669" },
+      { emoji: "😤", label: "Frustrated", color: BRAND.red },
+    ];
+
+    const DEFAULT_STEPS = [
+      { id: "1", title: "Get the Assignment", official: 'Receive one-line chief concern (e.g., "43 y/o male, 1-week worsening SOB")', artifact: "Posted to VMED", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "2", title: "Build Your Differential", official: "Broad differential using anatomical/systems reasoning. Rank top 3. Select 5 history Qs, 3-5 PE maneuvers with likelihood ratios.", artifact: "Pre-Class Differential Worksheet", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "gap1", title: "\u23F3 The Gap", official: "Days or a week pass. You study other things. The case goes cold.", artifact: "No artifact \u2014 this gap is real", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true },
+      { id: "3", title: "Small Group Session", official: "4-hour session with coach and ~6 students. You present or observe peers presenting.", artifact: "In-person, coach-led", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "4", title: "Patient Encounter", official: "Interview standardized patient: setting stage \u2192 open-ended Qs \u2192 focusing \u2192 HPI (7 components) \u2192 PMH/PSH/Meds/Allergies/FH/SH/ROS \u2192 PE \u2192 assessment & plan.", artifact: "Communication Checklist", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "5", title: "Coach Feedback", official: "Verbal feedback during/after encounter. Quality varies.", artifact: "Verbal, sometimes noted", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "6", title: "Write the Note", official: "Synthesize encounter: pertinent history, PE findings, up to 3 ranked diagnoses with evidence, diagnostic studies.", artifact: "Illness Script Template", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "7", title: "Get Written Feedback", official: "Coach reviews illness script in LMS. Feedback may be detailed or cursory. Often delayed.", artifact: "VMED comments", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+      { id: "gap2", title: "\u23F3 The Fade", official: "You may never revisit this case. Learning from feedback is self-directed. No structured follow-up.", artifact: "Nothing", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true },
+      { id: "8", title: "Next Case", official: "Cycle repeats with a new chief concern.", artifact: "New worksheet posted", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: false },
+    ];
+
+    function StepCard({ step, index, onUpdate, onAddInvisibleAfter }) {
+      const [expanded, setExpanded] = useState(false);
+      const borderColor = step.isInvisible ? BRAND.amber : step.starred ? BRAND.emerald : BRAND.lightGray;
+      const bgColor = step.isInvisible ? BRAND.amberLight : BRAND.white;
+
+      return (
+        <div style={{ border: `2px solid ${borderColor}`, borderRadius: 12, background: bgColor, marginBottom: 16, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+          <div
+            style={{ background: step.isInvisible ? BRAND.amber : BRAND.black, color: step.isInvisible ? BRAND.black : BRAND.white, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontFamily: "'JetBrains Mono', 'Consolas', monospace" }}
+            onClick={() => setExpanded(!expanded)}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 13, opacity: 0.7 }}>{step.isInvisible ? "\uD83D\uDC7B" : `${index}.`}</span>
+              <span style={{ fontWeight: 700, fontSize: 15 }}>{step.title}</span>
+              {step.emotion !== null && <span style={{ fontSize: 20 }}>{EMOTIONS[step.emotion]?.emoji}</span>}
+              {step.starred && <span style={{ fontSize: 18 }}>\u2B50</span>}
+            </div>
+            <span style={{ fontSize: 18, opacity: 0.6 }}>{expanded ? "\u25B2" : "\u25BC"}</span>
+          </div>
+          {expanded && (
+            <div style={{ padding: "16px 20px" }}>
+              <div style={{ marginBottom: 16, padding: "10px 14px", background: BRAND.offWhite, borderRadius: 8, borderLeft: `3px solid ${BRAND.medGray}` }}>
+                <div style={{ fontSize: 11, textTransform: "uppercase", color: BRAND.medGray, fontWeight: 700, marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>Official Version</div>
+                <div style={{ fontSize: 13, color: BRAND.darkGray, lineHeight: 1.5 }}>{step.official}</div>
+                <div style={{ fontSize: 11, color: BRAND.medGray, marginTop: 4 }}>\uD83D\uDCC4 {step.artifact}</div>
+              </div>
+              <Field label="What ACTUALLY happens?" value={step.actual} onChange={(v) => onUpdate({ actual: v })} placeholder="Not what you're supposed to do \u2014 what you actually did..." />
+              <Field label="What were you thinking?" value={step.thinking} onChange={(v) => onUpdate({ thinking: v })} placeholder="The internal monologue \u2014 about the case, your grade, what the coach thinks..." />
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: BRAND.darkGray, display: "block", marginBottom: 8, fontFamily: "'JetBrains Mono', monospace" }}>How did this feel?</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {EMOTIONS.map((em, i) => (
+                    <button key={i} onClick={() => onUpdate({ emotion: step.emotion === i ? null : i })} style={{ padding: "6px 12px", borderRadius: 20, border: step.emotion === i ? `2px solid ${em.color}` : `1px solid ${BRAND.lightGray}`, background: step.emotion === i ? em.color + "18" : BRAND.white, cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 4 }}>
+                      <span style={{ fontSize: 18 }}>{em.emoji}</span>
+                      <span style={{ color: BRAND.darkGray }}>{em.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Field label="\uD83D\uDD34 Friction / Pain" value={step.friction} onChange={(v) => onUpdate({ friction: v })} placeholder="What went wrong? What was hard? What took too long?" borderColor={BRAND.redLight} labelColor={BRAND.red} />
+              <Field label="\u2B50 Wishlist \u2014 I wish a tool existed that..." value={step.wish} onChange={(v) => onUpdate({ wish: v })} placeholder="Don't worry if it's possible \u2014 just describe the help you'd want..." borderColor={BRAND.emeraldLight} labelColor={BRAND.emerald} />
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button onClick={() => onUpdate({ starred: !step.starred })} style={{ padding: "8px 16px", borderRadius: 8, border: "none", background: step.starred ? BRAND.emerald : BRAND.lightGray, color: step.starred ? BRAND.white : BRAND.darkGray, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+                  {step.starred ? "\u2B50 Starred" : "\u2606 Star This"}
+                </button>
+                <button onClick={onAddInvisibleAfter} style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${BRAND.amber}`, background: BRAND.amberLight, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+                  \uD83D\uDC7B Add Invisible Step After
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function Field({ label, value, onChange, placeholder, borderColor, labelColor }) {
+      return (
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: labelColor || BRAND.darkGray, display: "block", marginBottom: 4, fontFamily: "'JetBrains Mono', monospace" }}>{label}</label>
+          <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={2} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${borderColor || BRAND.lightGray}`, fontSize: 14, fontFamily: "Inter, sans-serif", resize: "vertical", boxSizing: "border-box" }} />
+        </div>
+      );
+    }
+
+    function EmotionalArc({ steps }) {
+      const withEmotions = steps.filter((s) => s.emotion !== null);
+      if (withEmotions.length < 2) return null;
+      const valMap = { 0: 1, 6: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 };
+      const points = withEmotions.map((s, i) => ({ x: (i / (withEmotions.length - 1)) * 100, y: 100 - ((valMap[s.emotion] ?? 3) / 6) * 100, step: s }));
+      const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
+
+      return (
+        <div style={{ background: BRAND.white, borderRadius: 12, padding: 20, marginTop: 24, border: `1px solid ${BRAND.lightGray}` }}>
+          <h3 style={{ margin: "0 0 16px 0", fontFamily: "'JetBrains Mono', monospace", color: BRAND.black }}>\uD83D\uDCC8 Emotional Arc</h3>
+          <svg viewBox="-5 -10 110 120" style={{ width: "100%", height: 160 }}>
+            <line x1="0" y1="50" x2="100" y2="50" stroke={BRAND.lightGray} strokeWidth="0.3" strokeDasharray="2" />
+            <path d={pathD} fill="none" stroke={BRAND.emerald} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            {points.map((p, i) => (
+              <g key={i}>
+                <circle cx={p.x} cy={p.y} r="3" fill={EMOTIONS[p.step.emotion]?.color || BRAND.medGray} />
+                <text x={p.x} y={p.y - 8} textAnchor="middle" fontSize="8">{EMOTIONS[p.step.emotion]?.emoji}</text>
+                <text x={p.x} y={p.y + 14} textAnchor="middle" fontSize="3.5" fill={BRAND.medGray}>{p.step.title.length > 12 ? p.step.title.slice(0, 12) + "\u2026" : p.step.title}</text>
+              </g>
+            ))}
+            <text x="0" y="-4" fontSize="3.5" fill={BRAND.emerald}>\uD83D\uDE01 Energized</text>
+            <text x="0" y="108" fontSize="3.5" fill={BRAND.red}>\uD83D\uDE30 Anxious</text>
+          </svg>
+        </div>
+      );
+    }
+
+    function WishlistSummary({ steps }) {
+      const starred = steps.filter((s) => s.starred && s.wish);
+      if (starred.length === 0) return null;
+      return (
+        <div style={{ background: BRAND.emeraldLight, borderRadius: 12, padding: 20, marginTop: 24, border: `2px solid ${BRAND.emerald}` }}>
+          <h3 style={{ margin: "0 0 12px 0", fontFamily: "'JetBrains Mono', monospace" }}>\u2B50 Feature Seeds ({starred.length})</h3>
+          <p style={{ fontSize: 13, color: BRAND.medGray, margin: "0 0 16px 0" }}>Starred wishes \u2192 features for your app. Copy into your PRD.</p>
+          {starred.map((s) => (
+            <div key={s.id} style={{ background: BRAND.white, borderRadius: 8, padding: "12px 16px", marginBottom: 8, borderLeft: `3px solid ${BRAND.emerald}` }}>
+              <div style={{ fontSize: 12, color: BRAND.emerald, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>At: {s.title}</div>
+              <div style={{ fontSize: 14, color: BRAND.darkGray, marginTop: 4 }}>{s.wish}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function FCMJourneyMapper() {
+      const [steps, setSteps] = useState(DEFAULT_STEPS);
+      const [perspective, setPerspective] = useState("Student");
+      const [showIntro, setShowIntro] = useState(true);
+
+      const updateStep = useCallback((id, updates) => {
+        setSteps((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
+      }, []);
+
+      const addInvisibleAfter = useCallback((afterId) => {
+        setSteps((prev) => {
+          const idx = prev.findIndex((s) => s.id === afterId);
+          const newStep = { id: `inv-${Date.now()}`, title: "\uD83D\uDC7B [Name this step]", official: "You discovered this \u2014 it's not in any official document.", artifact: "None", actual: "", thinking: "", emotion: null, friction: "", wish: "", starred: false, isInvisible: true };
+          const next = [...prev];
+          next.splice(idx + 1, 0, newStep);
+          return next;
+        });
+      }, []);
+
+      const handleExport = () => {
+        const starred = steps.filter((s) => s.starred && s.wish);
+        let md = `# FCM Journey Map \u2014 ${perspective} Perspective\n*Generated ${new Date().toLocaleDateString()} \u00b7 HDS 2026*\n\n`;
+        md += `| # | Step | Emotion | What Actually Happens | Friction | Wish |\n|---|------|---------|----------------------|---------|------|\n`;
+        let vi = 0;
+        steps.forEach((s) => {
+          if (!s.isInvisible) vi++;
+          const em = s.emotion !== null ? EMOTIONS[s.emotion].emoji + " " + EMOTIONS[s.emotion].label : "\u2014";
+          md += `| ${s.isInvisible ? "\uD83D\uDC7B" : vi} | ${s.title} | ${em} | ${s.actual || "\u2014"} | ${s.friction || "\u2014"} | ${s.wish || "\u2014"} |\n`;
+        });
+        if (starred.length > 0) {
+          md += `\n## \u2B50 Feature Seeds\n`;
+          starred.forEach((s, i) => { md += `${i + 1}. **"${s.title}":** ${s.wish}\n`; });
+          md += `\n## PRD User Perspective Block\n\`\`\`\n### Job Stories (fill in outcomes)\n`;
+          starred.forEach((s) => { md += `- When [at "${s.title}"], I want to [${s.wish}], so I can [___].\n`; });
+          md += `\`\`\`\n`;
+        }
+        const blob = new Blob([md], { type: "text/markdown" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = `fcm-journey-${perspective.toLowerCase().replace(/\s/g, "-")}.md`; a.click();
+      };
+
+      const handleCopy = () => {
+        const starred = steps.filter((s) => s.starred && s.wish);
+        let t = `FCM Journey \u2014 ${perspective}\n\n`;
+        let vi = 0;
+        steps.forEach((s) => {
+          if (!s.isInvisible) vi++;
+          if (s.actual || s.emotion !== null || s.friction || s.wish) {
+            const em = s.emotion !== null ? EMOTIONS[s.emotion].emoji : "";
+            t += `${s.isInvisible ? "\uD83D\uDC7B" : vi}. ${s.title} ${em}\n`;
+            if (s.actual) t += `  What happens: ${s.actual}\n`;
+            if (s.thinking) t += `  Thinking: ${s.thinking}\n`;
+            if (s.friction) t += `  Friction: ${s.friction}\n`;
+            if (s.wish) t += `  Wish: ${s.wish}${s.starred ? " \u2B50" : ""}\n`;
+            t += "\n";
+          }
+        });
+        if (starred.length > 0) { t += "FEATURE SEEDS:\n"; starred.forEach((s, i) => { t += `${i + 1}. "${s.title}": ${s.wish}\n`; }); }
+        navigator.clipboard.writeText(t).then(() => {
+          alert("Copied to clipboard! Paste into Claude.");
+        });
+      };
+
+      const filledCount = steps.filter((s) => s.actual || s.emotion !== null || s.friction || s.wish).length;
+      const starredCount = steps.filter((s) => s.starred).length;
+      let visibleIdx = 0;
+
+      return (
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px", fontFamily: "Inter, -apple-system, sans-serif" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: BRAND.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
+            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: BRAND.black, fontFamily: "'JetBrains Mono', monospace" }}>FCM Journey Mapper</h1>
+            <p style={{ color: BRAND.medGray, fontSize: 15, margin: 0 }}>Map the <em>real</em> experience &mdash; not the official version.</p>
+          </div>
+
+          {showIntro && (
+            <div style={{ background: BRAND.blueLight, borderRadius: 12, padding: 20, marginBottom: 24, border: `1px solid ${BRAND.blue}`, position: "relative" }}>
+              <button onClick={() => setShowIntro(false)} style={{ position: "absolute", top: 8, right: 12, border: "none", background: "none", fontSize: 18, cursor: "pointer", color: BRAND.medGray }}>\u2715</button>
+              <h3 style={{ margin: "0 0 8px 0", fontFamily: "'JetBrains Mono', monospace", fontSize: 15 }}>How this works</h3>
+              <p style={{ fontSize: 14, color: BRAND.darkGray, margin: "0 0 8px 0", lineHeight: 1.6 }}>
+                Below are the "official" steps of an FCM case cycle. For each one, tell us what <strong>actually happens</strong>. Rate your emotion. Note friction. Write wishes and \u2B50 star the ones that matter most &mdash; those become features.
+              </p>
+              <p style={{ fontSize: 14, color: BRAND.darkGray, margin: 0, lineHeight: 1.6 }}>
+                <strong>See a gap?</strong> Hit \uD83D\uDC7B to add invisible steps nobody documents. When done, export and paste into Claude for job stories and PRD specs.
+              </p>
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+            {["Student", "Coach / Faculty", "Administrator"].map((p) => (
+              <button key={p} onClick={() => setPerspective(p)} style={{ padding: "8px 20px", borderRadius: 8, border: perspective === p ? `2px solid ${BRAND.emerald}` : `1px solid ${BRAND.lightGray}`, background: perspective === p ? BRAND.emeraldLight : BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: perspective === p ? 700 : 500, fontSize: 14, fontFamily: "'JetBrains Mono', monospace" }}>
+                {p}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
+            <div style={{ background: BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDCDD {filledCount}/{steps.length} annotated</div>
+            <div style={{ background: starredCount > 0 ? BRAND.emeraldLight : BRAND.offWhite, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>\u2B50 {starredCount} seeds</div>
+            <div style={{ background: BRAND.amberLight, borderRadius: 8, padding: "8px 16px", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDC7B {steps.filter((s) => s.isInvisible).length} invisible</div>
+          </div>
+
+          {steps.map((step) => {
+            if (!step.isInvisible) visibleIdx++;
+            return <StepCard key={step.id} step={step} index={visibleIdx} onUpdate={(u) => updateStep(step.id, u)} onAddInvisibleAfter={() => addInvisibleAfter(step.id)} />;
+          })}
+
+          <EmotionalArc steps={steps} />
+          <WishlistSummary steps={steps} />
+
+          <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
+            <button onClick={handleExport} style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: BRAND.black, color: BRAND.white, cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDCCB Export Markdown</button>
+            <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 10, border: `1px solid ${BRAND.lightGray}`, background: BRAND.white, color: BRAND.darkGray, cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: "'JetBrains Mono', monospace" }}>\uD83D\uDCCE Copy for Claude</button>
+          </div>
+
+          <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${BRAND.lightGray}` }}>
+            <p style={{ fontSize: 12, color: BRAND.medGray, fontFamily: "'JetBrains Mono', monospace" }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<FCMJourneyMapper />);
+  </script>
+</body>
+</html>
