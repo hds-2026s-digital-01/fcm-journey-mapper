@@ -106,7 +106,7 @@ Replaced placeholder session data with two real sessions processed from 6 transc
 - Instructor deep dive produced the "reasoning over checkboxes" breakthrough — the single most actionable design insight across all sessions
 - Social loafing named explicitly with the "coercive mechanism" framing
 
-**Named student contributors:** Danielle, Derek, Matt, Jocelyn, Kevin, Farah, Matty, Matthew Trowbridge (instructor)
+**Named student contributors:** Danielle, Derek, Matt, Jocelyn, Kevin, Farah, Maddie, Matthew Trowbridge (instructor)
 
 **Key findings crystallized in cumulative analysis:**
 | Opportunity | Yield Score | Sessions |

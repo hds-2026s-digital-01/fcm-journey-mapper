@@ -40,9 +40,9 @@ window.FCM_SESSION_DATA = {
               summary: "Students receive a one-line chief complaint on VMED with minimal context. The brevity encourages box-checking rather than clinical thinking. Students described this as feeling disconnected from clinical reality — no patient interaction, no stakes, no urgency.",
               themes: ["Minimal context creates artificial broadness", "Assignment feels disconnected from clinical urgency", "Timing varies widely — night before vs. week prior"],
               keyQuotes: [
-                { text: "you get a cheap complaint, and then we have a form that we fill out, which is vindicates, and you come up with all the possible diagnoses that it could be", speaker: "Danielle", context: "Describing the literal first step of FCM case delivery" },
-                { text: "you just come up with a differential, and then you kind of put random things just to fill out, like, whatever acronym you're using. And it's kind of like random things that like, oh, pregnancy. And there's like, no reason at all to expect pregnancy, but Oh, I did have to put something down.", speaker: "Danielle", context: "How the VINDICATE worksheet encourages filler over reasoning" },
-                { text: "everything was more like theoretical, and there was no like, I know, sense of urgency attached to the information", speaker: "Danielle", context: "Contrasting preclinical FCM with clerkship urgency" }
+                { text: "You get a chief complaint, and then we have a form — VINDICATE — and you come up with all the possible diagnoses it could be", speaker: "Danielle", context: "Describing the literal first step of FCM case delivery" },
+                { text: "You come up with a differential, then put random things to fill out whatever acronym you're using. Random things — 'oh, pregnancy' — and there's no reason at all to expect pregnancy, but I had to put something down.", speaker: "Danielle", context: "How the VINDICATE worksheet encourages filler over reasoning" },
+                { text: "Everything was theoretical, and there was no sense of urgency attached to the information", speaker: "Danielle", context: "Contrasting preclinical FCM with clerkship urgency" }
               ],
               contextNotes: "The assignment is delivered through VMED. Students fill out a VINDICATE(S) mnemonic-based differential diagnosis form. The form structure encourages breadth over depth — students pad with implausible diagnoses to fill the template. No coach engagement at this stage.",
               suggestedEmotion: 2,
@@ -54,9 +54,9 @@ window.FCM_SESSION_DATA = {
               summary: "Students use the VINDICATE(S) mnemonic framework to build a broad differential. This is where the bulk of pre-session independent work happens, but students described it as formulaic — the goal becomes filling out the form rather than developing genuine clinical reasoning. Multiple students noted they take a path-of-least-resistance approach.",
               themes: ["Template rewards completion over reasoning quality", "Path of least resistance — students fill the answer key", "Differential generated in isolation without feedback", "No structured use of evidence-based resources"],
               keyQuotes: [
-                { text: "medical students try to be as efficient as possible and find the path of least resistance, and therefore, we'll go about just filling out the answer key, as opposed to actually trying to ingrain the system in their head", speaker: "Matt (student)", context: "Why the VINDICATE worksheet fails to build real clinical reasoning" },
-                { text: "a lot of time our classes were trying to fill out a templated format. And I get that you're trying the exercises to teach us to have some sort of system in our mind, but there you can easily get... we just fill out the vindicates key", speaker: "Matt (student)", context: "Shared experience from his and Danielle's FCM group" },
-                { text: "when I do the differential form, then it's not until a week later that we're looking at the X ray", speaker: "Danielle", context: "Temporal disconnect between building differential and getting clinical data" }
+                { text: "Medical students try to be as efficient as possible and find the path of least resistance — we'll just fill out the answer key, as opposed to actually trying to ingrain the system", speaker: "Matt (student)", context: "Why the VINDICATE worksheet fails to build real clinical reasoning" },
+                { text: "Most of the time we were trying to fill out a templated format. I get that the exercises are trying to teach us a systematic approach, but... we just fill out the VINDICATE key", speaker: "Matt (student)", context: "Shared experience from his and Danielle's FCM group" },
+                { text: "When I do the differential form, it's not until a week later that we're looking at the X-ray", speaker: "Danielle", context: "Temporal disconnect between building differential and getting clinical data" }
               ],
               contextNotes: "VINDICATE(S) = Vascular, Infectious, Neoplastic, Degenerative, Iatrogenic, Congenital, Autoimmune, Traumatic, Endocrine/metabolic, Structural. Students recognized the pedagogical intent but described execution as counterproductive — teaches form-filling, not reasoning.",
               suggestedEmotion: 2,
@@ -68,9 +68,9 @@ window.FCM_SESSION_DATA = {
               summary: "One of the most emotionally charged pain points. Multiple students described the days-long gap between completing the differential and the FCM session as a major structural flaw. During the gap, students attend other classes, study other material, and the case fades from memory. Students described arriving at the session with completely stale thinking.",
               themes: ["Temporal disconnect erases cognitive engagement", "Other coursework crowds out FCM", "No re-engagement mechanism exists", "Gap converts iterative learning into fragmented experience"],
               keyQuotes: [
-                { text: "if you go ahead and, like, get it done the week prior, then a week goes by and you've just done this differential, and it's like, probably plus or minus helpful. But then there's a lag between that and then... you don't really get closure on whatever this patient case is until the next week.", speaker: "Danielle", context: "The structural gap between assignment and session" },
-                { text: "sometimes with FCM, when there's such a huge break and lag and like, this piece is here and that piece is there, it's like, hard to learn. Or like, it's not hard to learn, but it just makes it, like convoluted for no reason.", speaker: "Jocelyn", context: "Reacting to fragmented delivery of case information" },
-                { text: "it's also you're in class, like every day, and you may be discussing other things, so it's just a lag", speaker: "Danielle", context: "Why the gap is especially damaging for preclinical students with packed schedules" }
+                { text: "If you get it done the week prior, a week goes by and you've done this differential — probably plus or minus helpful. There's a lag, and you don't really get closure on the patient case until the next week.", speaker: "Danielle", context: "The structural gap between assignment and session" },
+                { text: "With FCM, there's such a huge break and lag — this piece is here and that piece is there. It's not that it's hard to learn, but it makes it convoluted for no reason.", speaker: "Jocelyn", context: "Reacting to fragmented delivery of case information" },
+                { text: "You're in class every day discussing other things, so it's just a lag", speaker: "Danielle", context: "Why the gap is especially damaging for preclinical students with packed schedules" }
               ],
               contextNotes: "Matt Trowbridge identified this as a central design flaw: 'the space between... it's like, by the time you get back to it, stale, and so you kind of have no chance.' The gap is structural — built into the weekly FCM cadence.",
               suggestedEmotion: 2,
@@ -82,9 +82,9 @@ window.FCM_SESSION_DATA = {
               summary: "The 4-hour small group session was the core in-person experience but was heavily criticized for length, pacing, and format. Group dynamics allow students to hide behind peers. The format focuses too much on information gathering rather than synthesis and presentation. Quality varies dramatically by coach.",
               themes: ["Four hours is universally too long", "Group dynamic allows hiding behind peers", "Heavy on gathering, light on synthesis", "Format feels antiquated"],
               keyQuotes: [
-                { text: "I wasn't a huge fan of FCM, of the weekly four hour kind of like clinical type of thing, I felt like it was kind of clunky and not super useful", speaker: "Danielle", context: "Opening statement in Session 3 brainstorm — set the tone for the entire FCM critique" },
-                { text: "during the FCM cases, everyone in the group in the room comes up with questions that we want to ask the patient. So I think that aspect of trying to figure out how to incorporate that into this idea would definitely like be pleasing to everyone", speaker: "Jocelyn", context: "Identifying collaborative questioning as the valuable kernel within the bloated session" },
-                { text: "you can oftentimes, like, lean on your fellow classmates, since, like, you know, one person's going to bring up like a zebra, another person's going to bring up, like, a more common diagnosis... But it's not really reflective of your own individualized thinking.", speaker: "Derek", context: "Group dynamic masks individual reasoning gaps" }
+                { text: "I wasn't a huge fan of FCM — the weekly four-hour clinical thing felt clunky and not super useful", speaker: "Danielle", context: "Opening statement in Session 3 brainstorm — set the tone for the entire FCM critique" },
+                { text: "During FCM cases, everyone in the room comes up with questions to ask the patient. Incorporating that collaborative questioning aspect would definitely be valuable", speaker: "Jocelyn", context: "Identifying collaborative questioning as the valuable kernel within the bloated session" },
+                { text: "You can lean on your fellow classmates — one person brings up a zebra, another brings up a more common diagnosis. But it's not really reflective of your own individualized thinking.", speaker: "Derek", context: "Group dynamic masks individual reasoning gaps" }
               ],
               contextNotes: "Kevin provided strong clerkship perspective: different FCM groups had wildly different starting points when they hit the wards. Session includes reviewing case/differential, questioning standardized patient, reviewing imaging/labs, discussing diagnosis.",
               suggestedEmotion: 6,
@@ -96,8 +96,8 @@ window.FCM_SESSION_DATA = {
               summary: "The standardized patient encounter happens within the 4-hour session. Students take turns interviewing the actor. The encounter is the most valued part of FCM in concept but severely limited in practice — each student gets only 2-3 turns across an entire semester. The real challenge is not the interview but real-time differential adjustment.",
               themes: ["Extremely limited individual practice — 2-3 encounters per semester", "Observing peers is a poor substitute", "Real-time differential adjustment is the hard part, not the interview"],
               keyQuotes: [
-                { text: "my FCM was every week one person practice doing history, and so throughout the whole semester, you'd only do, like one, two or three, like two or three histories, and you really didn't get any reps in, which is the whole point of FCM", speaker: "Kevin", context: "Quantifying the scarcity of actual patient encounter practice" },
-                { text: "I think it's not necessarily like, in my opinion, hard for most people to learn how to interview patients, but it's difficult to like, generate like a differential just based on like, a chief complaint, and then, like, you get information from your patient or the chart, and then you have to quickly, like, adjust your differential automatically", speaker: "Farah", context: "Distinguishing interview skill (easier) from real-time differential adjustment (harder)" }
+                { text: "My FCM was every week one person practices the history, so throughout the whole semester you'd only do two or three histories. You really didn't get any reps in, which is the whole point of FCM", speaker: "Kevin", context: "Quantifying the scarcity of actual patient encounter practice" },
+                { text: "It's not hard for most people to learn how to interview patients, but it's difficult to generate a differential from a chief complaint, then get information from your patient or the chart, and quickly adjust your differential in real time", speaker: "Farah", context: "Distinguishing interview skill (easier) from real-time differential adjustment (harder)" }
               ],
               contextNotes: "Farah made an important distinction: the interview itself is not the hard part — it's the real-time cognitive work of adjusting your differential based on incoming information. This hidden cognitive complexity is not addressed by the current format.",
               suggestedEmotion: 1,
@@ -109,9 +109,9 @@ window.FCM_SESSION_DATA = {
               summary: "Coach feedback during and after the encounter was described as limited, inconsistent, and poorly individualized. There is no formalized feedback on the pre-session differential. In-session feedback is often group-level rather than individual. Coach quality varies dramatically.",
               themes: ["Feedback addresses the group, not the student", "No formalized feedback on the differential", "Coach quality varies creating unequal experiences", "Presentation feedback is minimal or absent"],
               keyQuotes: [
-                { text: "there's not really formalized feedback on that, necessarily. And second, when you're actually in class going over the case, you can oftentimes, like, lean on your fellow classmates... But it's not really reflective of your own individualized thinking", speaker: "Derek", context: "Absence of individualized feedback as a key gap" },
-                { text: "part of the problem I think you're getting to is the fact that there is, like, very limited room for feedback in FCM", speaker: "Derek", context: "Opening his feedback analysis" },
-                { text: "some people like, absolutely no practice and had no idea what they're doing, whereas other people were, like, fairly polished for starting. So I think there's a big variability in what each FCM coach focuses on", speaker: "Kevin", context: "Downstream effect of inconsistent coaching on clerkship readiness" }
+                { text: "There's no formalized feedback. And when you're in class going over the case, you can lean on your classmates... but it's not really reflective of your own individualized thinking", speaker: "Derek", context: "Absence of individualized feedback as a key gap" },
+                { text: "Part of the problem is that there is very limited room for feedback in FCM", speaker: "Derek", context: "Opening his feedback analysis" },
+                { text: "Some people had absolutely no practice and no idea what they're doing, whereas others were fairly polished. There's a big variability in what each FCM coach focuses on", speaker: "Kevin", context: "Downstream effect of inconsistent coaching on clerkship readiness" }
               ],
               contextNotes: "Derek made the most sophisticated observation: the real value would be capturing individual reasoning data over time so coaches could provide targeted feedback and students could track development. He explicitly called out the dual audience: useful for coaches AND students.",
               suggestedEmotion: 6,
@@ -123,8 +123,8 @@ window.FCM_SESSION_DATA = {
               summary: "The illness script / note-writing step was not directly discussed in Day 1 transcripts. However, Farah's commentary about the gap between gathering and synthesizing information strongly implies this step is under-emphasized. She noted FCM focuses too much on gathering information rather than synthesizing and communicating it — 'the big gap between pre clinicals and clinicals.'",
               themes: ["Synthesis and presentation under-emphasized", "Note-writing not experienced as a distinct memorable step", "Transition from gathering to communicating is the real skill needed"],
               keyQuotes: [
-                { text: "FCM time wise, they focused a lot on gathering information rather than synthesizing and communicating information, which is actually the big gap between pre clinicals and clinicals", speaker: "Farah", context: "Identifying the synthesis/communication gap as the core missed opportunity in FCM" },
-                { text: "it's not necessarily like, in my opinion, hard for most people to learn how to interview patients, but it's difficult to like, generate like a differential just based on like, a chief complaint, and then... you have to quickly, like, adjust your differential automatically. And then it's like, what do you do next?", speaker: "Farah", context: "The cognitive challenge of real-time synthesis" }
+                { text: "FCM focused a lot on gathering information rather than synthesizing and communicating it, which is actually the big gap between preclinicals and clinicals", speaker: "Farah", context: "Identifying the synthesis/communication gap as the core missed opportunity in FCM" },
+                { text: "It's not hard for most people to learn how to interview patients, but it's difficult to generate a differential from a chief complaint, get new information, and quickly adjust your differential. And then — what do you do next?", speaker: "Farah", context: "The cognitive challenge of real-time synthesis" }
               ],
               contextNotes: "Evidence is thin. No student described a note-writing or illness script exercise. The synthesis step appears to happen informally during group discussion rather than through a formal written deliverable. This may indicate step 6 is poorly formalized or not experienced as distinct.",
               suggestedEmotion: 1,
@@ -136,8 +136,8 @@ window.FCM_SESSION_DATA = {
               summary: "Written feedback was not described in detail. The broader feedback inadequacy theme (Step 5) extends here. The pass/fail nature of FCM was cited as reducing the incentive for coaches to write and students to read detailed feedback. Jocelyn noted that individualized feedback is being implemented for clerkships but not yet for pre-clerkship.",
               themes: ["Written feedback appears absent or inconsequential", "Pass/fail grading reduces motivation for both sides", "Individualized feedback is a clerkship-era innovation not yet in pre-clerkship"],
               keyQuotes: [
-                { text: "especially not during pre clerkships. I know, like during clerkships, they're trying to implement more like individualized feedback, but during pre clerkships is still kind of like a do your best.", speaker: "Jocelyn", context: "Confirming absence of individualized feedback systems in pre-clerkship" },
-                { text: "the fact that all of FCM and the CPS exam we take at the end of FCM is all pass fail. If we can make this as low stakes as possible, to just kind of like introduce the material in a cohesive way, I think that would be important.", speaker: "Danielle", context: "Proposing the app maintain low-stakes feel consistent with pass/fail FCM" }
+                { text: "Especially not during preclinicals. During clerkships they're trying to implement more individualized feedback, but during preclinicals it's still 'do your best'", speaker: "Jocelyn", context: "Confirming absence of individualized feedback systems in pre-clerkship" },
+                { text: "All of FCM and the CPS exam at the end is pass/fail. If we can make this as low-stakes as possible — just introduce the material in a cohesive way — I think that would be important", speaker: "Danielle", context: "Proposing the app maintain low-stakes feel consistent with pass/fail FCM" }
               ],
               contextNotes: "Written feedback was not directly discussed as a distinct step. The pass/fail structure suggests detailed written commentary simply doesn't happen. This step needs more exploration in future sessions.",
               suggestedEmotion: 2,
@@ -149,7 +149,7 @@ window.FCM_SESSION_DATA = {
               summary: "No structured follow-up after the session was described. Jocelyn noted that students end up learning all the cases at the end of the semester right before the Clinical Performance Exam, rather than building knowledge cumulatively. The case-by-case format prevents pattern recognition across cases.",
               themes: ["No structured review after case concludes", "Knowledge is not cumulative — students cram before the final", "No spaced repetition or longitudinal reinforcement"],
               keyQuotes: [
-                { text: "even though, in theory, we're supposed to be preparing for that exam throughout the semester, through the FCM cases. Really, it doesn't even feel like you're doing that, because the cases are so kind of disorganized. So everybody ends up learning the cases at the end, right before the exam.", speaker: "Jocelyn", context: "How lack of cumulative learning leads to end-of-semester cramming" },
+                { text: "In theory, we're supposed to be preparing for that exam throughout the semester through the FCM cases. But it doesn't feel like you're doing that — the cases are so disorganized. So everybody ends up learning the cases at the end, right before the exam.", speaker: "Jocelyn", context: "How lack of cumulative learning leads to end-of-semester cramming" },
                 { text: "you don't really get closure on whatever this patient case is until the next week", speaker: "Danielle", context: "Delayed closure — but even that closure is transient" }
               ],
               contextNotes: "The fade is implicit rather than explicitly named. Students described FCM as fragmented and non-cumulative. The Clinical Performance Exam (CPS) is the only accountability checkpoint — suggesting individual case learning does not persist.",
@@ -162,7 +162,7 @@ window.FCM_SESSION_DATA = {
               summary: "The cycle-repeats nature of FCM was implicit throughout. Students described FCM as a weekly cadence with the same structural problems repeating. No student described a mechanism by which learning from one case informs the approach to the next.",
               themes: ["Each case is standalone — no cumulative building", "Same structural frustrations repeat weekly", "No mechanism for iteration between cases"],
               keyQuotes: [
-                { text: "I think it was very aimed at, like, getting the right answers. But when you go to clerkships, you're very much on, like, Okay, well, what else can we, you know, brainstorm. What else do you think is going on?", speaker: "Danielle", context: "Contrasting FCM's case-by-case mindset with open-ended clerkship reasoning" }
+                { text: "It was very aimed at getting the right answers. But in clerkships, you're very much 'What else could be going on? What else can we brainstorm?'", speaker: "Danielle", context: "Contrasting FCM's case-by-case mindset with open-ended clerkship reasoning" }
               ],
               contextNotes: "This step was not discussed as a distinct moment — it is the structural repetition. The key insight is that repetition without iteration means the same problems persist across every case.",
               suggestedEmotion: 2,
@@ -189,8 +189,8 @@ window.FCM_SESSION_DATA = {
               summary: "Coaches run the session but quality varies dramatically. Kevin noted students from different FCM groups arrived at clerkships with very different skill levels, implying inconsistent coaching.",
               themes: ["Coaching quality varies enormously", "No standardized rubric", "No pre-session data on individual students"],
               keyQuotes: [
-                { text: "there's a big variability in what each FCM coach focuses on, and I think that's been one of my issues. FCM is just the standardized component is just not standardized at all", speaker: "Kevin", context: "Naming the core teaching quality problem" },
-                { text: "I started my rotations on I am... you could tell, like, people from different FCM had very different starting points, where, like, some people like, absolutely no practice and had no idea what they're doing, whereas other people were, like, fairly polished for starting", speaker: "Kevin", context: "Direct clerkship-entry evidence of FCM quality variation" }
+                { text: "There's a big variability in what each FCM coach focuses on. FCM's standardized component is just not standardized at all", speaker: "Kevin", context: "Naming the core teaching quality problem" },
+                { text: "When I started rotations, you could tell people from different FCM groups had very different starting points — some had absolutely no practice, while others were fairly polished", speaker: "Kevin", context: "Direct clerkship-entry evidence of FCM quality variation" }
               ],
               contextNotes: "Kevin's clerkship perspective is the strongest evidence: variable outcomes prove variable coaching quality.",
               suggestedEmotion: 2,
@@ -202,7 +202,7 @@ window.FCM_SESSION_DATA = {
               summary: "Coaches lack tools for individualized assessment. No pre-session visibility into student reasoning and no standardized framework for feedback delivery.",
               themes: ["Coaches lack data for individualized feedback", "No standardized feedback framework", "Feedback is ad hoc and coach-dependent"],
               keyQuotes: [
-                { text: "that data is sent to the FCM coach, so you can't really fake it till you make it like, oh yeah, I knew it was a PE when you thought it was anxiety", speaker: "Danielle", context: "Proposing an interactive tool that captures and shares student reasoning with coaches" }
+                { text: "That data gets sent to the FCM coach, so you can't fake it — 'oh yeah, I knew it was a PE' when you actually thought it was anxiety", speaker: "Danielle", context: "Proposing an interactive tool that captures and shares student reasoning with coaches" }
               ],
               contextNotes: "Danielle envisioned a future where coaches receive reasoning data before the session, enabling them to say 'some of us were thinking anxiety — why is PE more likely?'",
               suggestedEmotion: 6,
@@ -235,7 +235,7 @@ window.FCM_SESSION_DATA = {
                 "No granular tracking of engagement or reasoning quality within the FCM cycle"
               ],
               keyQuotes: [
-                { text: "the fact that all of FCM and the CPS exam we take at the end of FCM is all pass fail", speaker: "Danielle", context: "Describing the low-stakes grading structure" }
+                { text: "All of FCM and the CPS exam at the end is pass/fail", speaker: "Danielle", context: "Describing the low-stakes grading structure" }
               ],
               frictionPoints: [
                 "Pass/fail provides minimal signal beyond attendance",
@@ -254,8 +254,8 @@ window.FCM_SESSION_DATA = {
                 "CPS exam is the only summative assessment, revealing no formative trajectory"
               ],
               keyQuotes: [
-                { text: "one of the advantages of Danielle's app idea here is being able to actually gather data on what each individual student's sticking points are and what their strengths are, so that they can look at that and kind of focus on that moving forward", speaker: "Derek", context: "Proposing individualized data capture for longitudinal tracking" },
-                { text: "especially not during pre clerkships. I know, like during clerkships, they're trying to implement more like individualized feedback, but during pre clerkships is still kind of like a do your best", speaker: "Jocelyn", context: "Confirming absence of progress monitoring in pre-clerkship" }
+                { text: "One of the advantages of Danielle's app is being able to gather data on each individual student's sticking points and strengths, so they can focus on that moving forward", speaker: "Derek", context: "Proposing individualized data capture for longitudinal tracking" },
+                { text: "Especially not during preclinicals. During clerkships they're trying to implement more individualized feedback, but during preclinicals it's still 'do your best'", speaker: "Jocelyn", context: "Confirming absence of progress monitoring in pre-clerkship" }
               ],
               frictionPoints: [
                 "No formative assessment data between start of semester and CPS exam",
@@ -275,7 +275,7 @@ window.FCM_SESSION_DATA = {
                 "The intended 'standardized' component is not standardized in practice"
               ],
               keyQuotes: [
-                { text: "there's a big variability in what each FCM coach focuses on, and I think that's been one of my issues. FCM is just the standardized component is just not standardized at all", speaker: "Kevin", context: "Naming the core teaching quality problem" }
+                { text: "There's a big variability in what each FCM coach focuses on. FCM's standardized component is just not standardized at all", speaker: "Kevin", context: "Naming the core teaching quality problem" }
               ],
               frictionPoints: [
                 "No calibration across FCM coaches",
@@ -399,7 +399,7 @@ window.FCM_SESSION_DATA = {
               summary: "Students receive a one-line chief concern with potential for engagement that quickly dissipates. Multiple students described immediately thinking about follow-up questions and 'can't miss' diagnoses, but the energy fades because there is no feedback loop or interactive element.",
               themes: ["Initial spark quickly fades", "Efficiency over depth", "Variable engagement across students"],
               keyQuotes: [
-                { text: "How did I start thinking about, like, some extra information I would want, like, past medical history, more qualifying factors in terms of what the shortness of breath is associated with... I'm also just kind of thinking of, like, what are some things that you like, don't want to miss", speaker: "Matty", context: "Describing initial reaction to receiving a case prompt" },
+                { text: "I started thinking about extra information I'd want — past medical history, qualifying factors for what the shortness of breath is associated with... and what are some things you don't want to miss", speaker: "Maddie", context: "Describing initial reaction to receiving a case prompt" },
                 { text: "I am just getting through this as fast as I possibly can... I am getting the diff generated and out the door, because I'm not gonna think about this for another week", speaker: "Matt Trowbridge (paraphrasing Matt/student)", context: "Characterizing the efficiency-first mindset" }
               ],
               contextNotes: "Trowbridge explicitly named this as a step 'everybody wishes were awesome' but currently falls flat. Day 2 sharpens Day 1 insight that this step has untapped potential for gamification.",
@@ -412,9 +412,9 @@ window.FCM_SESSION_DATA = {
               summary: "Students use systematic mnemonics (VINDICATE, head-to-toe) to build broad differentials. The process is solitary with no real-time feedback. Submission varies wildly by coach. Danielle's profound Day 2 insight: the system should evaluate reasoning quality, not just checkbox completion.",
               themes: ["Breadth over depth — exhaustive differentials including rare diagnoses", "Checkbox mentality — complete it to show you did it", "No standardized submission or feedback", "Reasoning quality invisible"],
               keyQuotes: [
-                { text: "I feel like a lot of kids like you, to use, like, one of the mnemonics. I think I used, like, vindicate, and then I would just go as broad as possible. Because usually when like end up in like class, like you like, I feel like the push is to have some like, even like the rare things", speaker: "Student", context: "Describing the mechanical process of building a differential using mnemonics" },
+                { text: "A lot of students use one of the mnemonics — I used VINDICATE, and I would just go as broad as possible. The push in class is to have everything listed, even the rare things", speaker: "Student", context: "Describing the mechanical process of building a differential using mnemonics" },
                 { text: "We just did it, showed that we did it, and then talk about it in class... We never got feedback on the differentials itself", speaker: "Jocelyn", context: "The differential was a completion exercise with no substantive feedback" },
-                { text: "maybe it's less important if they get the differential correct, but more important if their reasoning is correct... focusing more on analysis and less on just like check boxes", speaker: "Danielle", context: "Day 2 Session 2 — called 'profound' by Trowbridge" }
+                { text: "Maybe it's less important if they get the differential correct, but more important if their reasoning is correct — focusing more on analysis and less on checkboxes", speaker: "Danielle", context: "Day 2 Session 2 — called 'profound' by Trowbridge" }
               ],
               contextNotes: "Day 2 significantly deepens Day 1 here. Danielle's reasoning-vs-checkboxes insight is the single most actionable design principle from both days. Submission process variability (Box, email, bring to class) means learning experience is random depending on coach assignment.",
               suggestedEmotion: 2,
@@ -426,9 +426,9 @@ window.FCM_SESSION_DATA = {
               summary: "The most vividly discussed invisible step across both days. Every student who spoke confirmed complete knowledge decay during the gap. Days (often a full week) pass while students are consumed by physiology/anatomy coursework and exams. Most do not refresh before walking into the session.",
               themes: ["Submit it and forget it — universal experience", "Competing priorities dominate — exams crowd out FCM", "No re-engagement mechanism", "Low stakes = low persistence"],
               keyQuotes: [
-                { text: "I said it and forget it. I don't know. I was probably, like, one of the least engaged people in FCM... in that span of time, I was like, back to learning about, like, physiology, or whatever, step one Minjia, into my brain. So it felt like the actual, like clinically relevant stuff just got pushed to the wayside.", speaker: "Derek", context: "Complete displacement of FCM material by basic science coursework" },
-                { text: "our exam for always Friday through the weekend, and so like, I and then, like, completely forget about it... I wasn't gonna, like, Oh, let me keep up with this every day and be thinking about this every day, because it was just very low on the priority list.", speaker: "Danielle", context: "How exam timing makes FCM preparation a casualty of scheduling" },
-                { text: "I usually would just, like, pull up my sheet when I got in the room, honestly... I would do the differential on Tuesday, and then, like, worry about all the big things, and then walk in, like, Monday in the afternoon for FCM and be like, you know, I don't even remember what the one liner was.", speaker: "Student", context: "Reconstructing forgotten case knowledge right before the session" }
+                { text: "I said it and forget it. I was probably one of the least engaged people in FCM... in that span of time I was back to learning physiology, step one material into my brain. The clinically relevant stuff just got pushed to the wayside.", speaker: "Derek", context: "Complete displacement of FCM material by basic science coursework" },
+                { text: "Our exams were always Friday through the weekend, and I would just completely forget about it. I wasn't going to keep up with this every day — it was very low on the priority list.", speaker: "Danielle", context: "How exam timing makes FCM preparation a casualty of scheduling" },
+                { text: "I would usually just pull up my sheet when I got in the room. I'd do the differential on Tuesday, worry about all the big things, then walk in Monday afternoon for FCM not even remembering what the one-liner was.", speaker: "Student", context: "Reconstructing forgotten case knowledge right before the session" }
               ],
               contextNotes: "Already identified in Day 1, but Day 2 provides much richer personal accounts. Multiple students independently confirmed the exact same pattern. Trowbridge explicitly suggested this is a prime opportunity: 'maybe you play the game twice.'",
               suggestedEmotion: 2,
@@ -440,9 +440,9 @@ window.FCM_SESSION_DATA = {
               summary: "Day 2 made the social loafing dynamic explicit. A few vocal students carry the discussion while others disengage. 'No coercive mechanism' for individual participation became a running theme. The flipped-classroom model depends on quality preparation which doesn't happen.",
               themes: ["Social loafing is the norm", "No coercive mechanism for participation", "Generic group feedback", "Flipped classroom without the flip"],
               keyQuotes: [
-                { text: "the coach feedback is more generalized to the group, not individualized to the students... how the sessions are designed, there's not a coercive mechanism to have students really interact. So you might be relying on ideas from one or two and then the rest are social loafing.", speaker: "Matt (student)", context: "Identifying the fundamental engagement problem" },
-                { text: "I was just I was taking up space, and I knew that other people would be more vocal, and so it's like, I would eventually be refreshed once they started talking about what's on their differential.", speaker: "Danielle", context: "Candidly describing passive participation" },
-                { text: "it is generally a lower or stake environment. But I think that, like building something like this, where it is like, like, less friction to be engaged, I think is actually really valuable for that reason.", speaker: "Student", context: "Acknowledging FCM's low-stakes nature while arguing for technology-enabled engagement" }
+                { text: "Coach feedback is generalized to the group, not individualized to students. The way sessions are designed, there's no coercive mechanism to have students really interact. You might be relying on ideas from one or two and the rest are social loafing.", speaker: "Matt (student)", context: "Identifying the fundamental engagement problem" },
+                { text: "I was just taking up space. I knew other people would be more vocal, and I'd eventually be refreshed once they started talking about what's on their differential.", speaker: "Danielle", context: "Candidly describing passive participation" },
+                { text: "It is generally a lower-stakes environment. But building something with less friction to be engaged is actually really valuable for that reason.", speaker: "Student", context: "Acknowledging FCM's low-stakes nature while arguing for technology-enabled engagement" }
               ],
               contextNotes: "The 'coercive mechanism' phrase became a running theme (Trowbridge found it amusingly blunt). The insight that introverts 'probably know the most and just don't say it' was raised by Trowbridge based on student discussion.",
               suggestedEmotion: 2,
@@ -454,8 +454,8 @@ window.FCM_SESSION_DATA = {
               summary: "Less directly discussed on Day 2 but referenced through the lens of preparation quality. The encounter is where the gap becomes painfully visible. Jocelyn's app prototype directly targets this step, allowing individual practice.",
               themes: ["High-stakes moment with low preparation", "Observer vs. interviewer divide"],
               keyQuotes: [
-                { text: "you're able to actually practice by yourself, instead of kind of relying on, like, everyone in the room and not really having your own say if you're not the person interviewing", speaker: "Jocelyn", context: "Describing prototype app's value for individual patient encounter practice" },
-                { text: "early in FCM, how you are just kind of going through the motions of, like, how do I take a history, like, how do I perform a physical exam? And less emphasis on like the clinical reasoning, just because you don't know much", speaker: "Derek", context: "Developmental mismatch between what FCM asks and what students can deliver early on" }
+                { text: "You're able to actually practice by yourself, instead of relying on everyone in the room and not having your own say if you're not the person interviewing", speaker: "Jocelyn", context: "Describing prototype app's value for individual patient encounter practice" },
+                { text: "Early in FCM, you're just going through the motions — how do I take a history, how do I perform a physical exam? Less emphasis on clinical reasoning, because you don't know much yet", speaker: "Derek", context: "Developmental mismatch between what FCM asks and what students can deliver early on" }
               ],
               contextNotes: "The patient encounter is discussed less in isolation on Day 2 and more as the downstream consequence of poor preparation and the gap. Both team prototypes aim to better prepare students for this moment.",
               suggestedEmotion: 1,
@@ -467,9 +467,9 @@ window.FCM_SESSION_DATA = {
               summary: "Day 2 Session 2 delivers the richest data on this step. Coach feedback is generic, group-oriented, and often superficial. Danielle's key insight: feedback focuses on checkbox completion (did you fill out VINDICATE?) rather than reasoning quality. The shift from 'did you complete it?' to 'is your reasoning sound?' is the central design insight.",
               themes: ["Generic over individualized", "Superficial completion focus", "Real-time probing vs. post-hoc correction", "Anchor bias on vocal students"],
               keyQuotes: [
-                { text: "with the more individualized feedback, it prevents coaches from getting something that's like, superficial and that could just apply to everyone", speaker: "Derek", context: "Arguing for technology-enabled individualized feedback" },
-                { text: "some probing, like, as the process happens, I think is... part of it was, like, active feedback, in the sense that the coach would, like, probe if they saw that something was missed, so that you weren't like, you know, getting through your whole thing and then being like, Oh, you missed this red flag symptom. It's like, that doesn't really help", speaker: "Matt (student)", context: "Contrasting real-time probing (valuable) with after-the-fact correction (unhelpful)" },
-                { text: "instead of going through and checking to make sure everyone has vindicates fully filled out, you can just look to see, okay, this person thought like it was a PE because of these things. And so if this person is, like, completely off base, okay, we should touch on PE more specifically in class", speaker: "Danielle", context: "Proposing reasoning-based feedback — saves coach time while being more targeted" }
+                { text: "With more individualized feedback, it prevents coaches from giving something superficial that could just apply to everyone", speaker: "Derek", context: "Arguing for technology-enabled individualized feedback" },
+                { text: "Probing as the process happens — active feedback where the coach probes when they see something missed, so you're not getting through your whole thing and then hearing 'Oh, you missed this red flag symptom.' That doesn't really help.", speaker: "Matt (student)", context: "Contrasting real-time probing (valuable) with after-the-fact correction (unhelpful)" },
+                { text: "Instead of checking to make sure everyone has VINDICATE filled out, you can just see: this person thought it was a PE because of these things. If they're completely off base, you should touch on PE more specifically in class.", speaker: "Danielle", context: "Proposing reasoning-based feedback — saves coach time while being more targeted" }
               ],
               contextNotes: "This is where Day 2 Session 2 delivers the strongest data. The reasoning-over-checkboxes shift was called 'profound' by Trowbridge and is the single most actionable design insight across both days.",
               suggestedEmotion: 6,
@@ -481,7 +481,7 @@ window.FCM_SESSION_DATA = {
               summary: "Not directly discussed in Day 2 transcripts. Only obliquely referenced through the general discussion of skill progression — early FCM focuses on history/PE mechanics, not clinical reasoning or note quality.",
               themes: ["Under-discussed on Day 2", "Implied skill progression"],
               keyQuotes: [
-                { text: "early in FCM, how you are just kind of going through the motions of, like, how do I take a history, like, how do I perform a physical exam? And less emphasis on like the clinical reasoning", speaker: "Derek", context: "Implies note-writing is a later-developing skill not emphasized early" }
+                { text: "Early in FCM, you're just going through the motions — how do I take a history, how do I perform a physical exam? Less emphasis on clinical reasoning", speaker: "Derek", context: "Implies note-writing is a later-developing skill not emphasized early" }
               ],
               contextNotes: "Weak Day 2 data. The absence of discussion may itself be informative — students may not view note-writing as a memorable part of the cycle.",
               suggestedEmotion: 2,
@@ -493,8 +493,8 @@ window.FCM_SESSION_DATA = {
               summary: "Limited Day 2 discussion but structural issues are clear from context: reviewing and commenting on each student's work is a time burden with no tool support, leading to inconsistent follow-through. Whether you get written feedback depends entirely on your coach.",
               themes: ["Wildly inconsistent", "Delayed and disconnected"],
               keyQuotes: [
-                { text: "at least my FCM coach would like go through it and make comments. But I don't know if other FCM coaches would actually give feedback", speaker: "Matty", context: "Revealing complete inconsistency in whether written feedback exists" },
-                { text: "how we turned it in, like, varied so much based on who your coach was. We like for us, we just brought, either brought it to class or emailed the FCM coach.", speaker: "Jocelyn", context: "Lack of standardized submission and feedback process" }
+                { text: "At least my FCM coach would go through it and make comments. But I don't know if other FCM coaches would actually give feedback", speaker: "Maddie", context: "Revealing complete inconsistency in whether written feedback exists" },
+                { text: "How we turned it in varied so much based on who your coach was. We just brought it to class or emailed the FCM coach.", speaker: "Jocelyn", context: "Lack of standardized submission and feedback process" }
               ],
               contextNotes: "The key insight is variability — written feedback is not a reliable step for most students. Connects to administrator concern about ensuring teaching quality.",
               suggestedEmotion: 6,
@@ -506,7 +506,7 @@ window.FCM_SESSION_DATA = {
               summary: "Day 2 reinforces the Day 1 finding. Danielle's point about longitudinal tracking directly addresses the absence of structured follow-up. The idea that a coach tracks 6 students over 4 years with no systematic tools is a key structural insight.",
               themes: ["No structured revisitation", "Lost learning opportunity — no longitudinal tracking"],
               keyQuotes: [
-                { text: "some metric of helping the student visualize their own gaps, as well as, like tracking progression over time. Because I understand that it is a kind of a load for like one coach to track six people's progression over four years. Like, that's a lot", speaker: "Danielle", context: "Identifying absence of longitudinal tracking as a systemic gap" }
+                { text: "Some metric of helping students visualize their own gaps, as well as tracking progression over time. It's a load for one coach to track six people's progression over four years — that's a lot", speaker: "Danielle", context: "Identifying absence of longitudinal tracking as a systemic gap" }
               ],
               contextNotes: "Not as extensively discussed as gap1, but Danielle's longitudinal tracking point directly addresses it. One coach tracking 6 students over 4 years with no tools is a key structural insight.",
               suggestedEmotion: 2,
@@ -518,8 +518,8 @@ window.FCM_SESSION_DATA = {
               summary: "Day 2 adds the nuance that FCM demands are supposed to progress over time (from basic history-taking to labs/imaging/clinical reasoning) but this progression is coach-dependent and informal.",
               themes: ["Disconnected cycles", "Informal progression — coach discretion only"],
               keyQuotes: [
-                { text: "I know, like, the requirements for those progress throughout, like, the FCM years. And I'm trying to remember if, like, our daily case discussion also did the same thing... I think part of that is, like, the coach's discretion to, like, determine what reasonable demands are for analysis", speaker: "Matt (student)", context: "Questioning whether FCM case complexity intentionally progresses" },
-                { text: "if we could, like, tailor the app to early on and early on in the clinical cases, focus more on, like, hitting all the review of systems points, or, like, making sure that you're taking a complete HPI versus actual clinical reasoning. I think that would be important.", speaker: "Derek", context: "Proposing adaptive scaffolding that matches student development level" }
+                { text: "The requirements do progress throughout the FCM years. I'm trying to remember if daily case discussion did the same... I think part of it is the coach's discretion to determine what reasonable demands are for analysis", speaker: "Matt (student)", context: "Questioning whether FCM case complexity intentionally progresses" },
+                { text: "If we could tailor the app so early clinical cases focus more on hitting all the review of systems points, making sure you're taking a complete HPI — versus actual clinical reasoning later. That would be important.", speaker: "Derek", context: "Proposing adaptive scaffolding that matches student development level" }
               ],
               contextNotes: "The progression insight is important — FCM is supposed to develop students over years but cycle-to-cycle progression is informal and coach-dependent.",
               suggestedEmotion: 2,
@@ -536,7 +536,7 @@ window.FCM_SESSION_DATA = {
               summary: "Coaches assign a one-line chief concern with no visibility into how students engage with it or what preparation actually occurs.",
               themes: ["Visibility gap", "No pre-session data", "Assignment is one-size-fits-all"],
               keyQuotes: [
-                { text: "you literally, like, you know, teaching, even my design being class, which I'm passionate about, like, it all blurs together at some point. But I've done this like, 12 years, you know, like, kind of, you can get a little rote", speaker: "Matthew Trowbridge", context: "Describing the instructor experience applicable to FCM coaches" }
+                { text: "Teaching, even my design class which I'm passionate about — it all blurs together at some point. I've done this 12 years. You can get a little rote.", speaker: "Matthew Trowbridge", context: "Describing the instructor experience applicable to FCM coaches" }
               ],
               contextNotes: "Coaches have no data on student engagement with the assignment. Cannot differentiate between deep engagement and speed-running.",
               suggestedEmotion: 2,
@@ -548,8 +548,8 @@ window.FCM_SESSION_DATA = {
               summary: "Running the small group is rewarding but exhausting. Coaches anchor on the 1-2 vocal students, while introverts and less vocal students are invisible. The 'Jones Nguyen effect' — bright students disengaged in the back — is a known problem.",
               themes: ["Anchor on vocal students", "Introverts invisible", "No pre-session data", "Coach bandwidth extremely limited"],
               keyQuotes: [
-                { text: "there could be an opportunity for what some people may call the Jones Nguyen effect, you know, of like the the 15 minutes where some of your your super bright students are sitting in the back going like, oh, yeah, oh, that's right. FCM, you know. So can we get everybody a little bit more on the same page?", speaker: "Matthew Trowbridge", context: "Naming the problem of disengaged-but-capable students" },
-                { text: "it's keeping track of multiple students all the time, and kind of having pretty... you're honing in on little, tiny signals, because there's not, like, strong signals coming back to you all the time", speaker: "Matthew Trowbridge", context: "Describing the coach's information-poor environment" }
+                { text: "There could be an opportunity for what some people call the Jones Nguyen effect — the 15 minutes where your super bright students are sitting in the back going, 'oh yeah, that's right, FCM.' Can we get everybody a little more on the same page?", speaker: "Matthew Trowbridge", context: "Naming the problem of disengaged-but-capable students" },
+                { text: "It's keeping track of multiple students all the time, honing in on tiny signals because there aren't strong signals coming back to you", speaker: "Matthew Trowbridge", context: "Describing the coach's information-poor environment" }
               ],
               contextNotes: "Day 2 Session 2 explicitly names the information poverty coaches face. 'Negative 3% of their bandwidth' is allocated to FCM preparation.",
               suggestedEmotion: 2,
@@ -561,7 +561,7 @@ window.FCM_SESSION_DATA = {
               summary: "Day 2 Session 2 provides the richest coach-perspective data. Coaches want to give meaningful individualized feedback but lack the data and time. They default to generic group feedback. The ideal — real-time probing during the encounter — requires attention and expertise that varies by coach.",
               themes: ["Want to be specific but default to encouragement", "Pre-session reasoning data would transform feedback", "Reasoning-over-checkboxes is a dual win"],
               keyQuotes: [
-                { text: "on the instructor side... what you're desperately trying to find out, as we said yesterday... which of these students is struggling, and I don't even know it, right? They would love to know that and be able to do more pinpoint but they kind of end up doing generic feedback", speaker: "Matthew Trowbridge", context: "Core coach frustration with the information-poor feedback model" }
+                { text: "On the instructor side, what you're desperately trying to find out is: which of these students is struggling, and I don't even know it? They would love to know that and do more targeted feedback, but they end up doing generic feedback.", speaker: "Matthew Trowbridge", context: "Core coach frustration with the information-poor feedback model" }
               ],
               contextNotes: "The reasoning-over-checkboxes shift serves both students AND coaches. Coaches get actionable data; students get targeted feedback. This dual-win framing crystallized on Day 2.",
               suggestedEmotion: 6,
@@ -594,7 +594,7 @@ window.FCM_SESSION_DATA = {
                 "No centralized system captures what was actually taught vs. what was supposed to be covered"
               ],
               keyQuotes: [
-                { text: "there's probably the School of Medicine, that if they're honest, what they really need to do is show that they're compliant with whatever the recommendations are, and that they can show and document that they covered these things", speaker: "Matthew Trowbridge", context: "Identifying the administrator's core compliance job-to-be-done" }
+                { text: "The School of Medicine, if they're honest, really needs to show they're compliant with the recommendations — that they can document they covered these things", speaker: "Matthew Trowbridge", context: "Identifying the administrator's core compliance job-to-be-done" }
               ],
               frictionPoints: [
                 "No standardized submission process across coaches",
@@ -612,7 +612,7 @@ window.FCM_SESSION_DATA = {
                 "No way to identify struggling students until they fail an OSCE"
               ],
               keyQuotes: [
-                { text: "it is a kind of a load for like one coach to track six people's progression over four years. Like, that's a lot, but if we can kind of, like, summarize generally how they did in each case, and maybe, like, touch on high points, it would make it easier for the instructor, but also it would give insight to the student", speaker: "Danielle", context: "Identifying the absence of progress monitoring tools" }
+                { text: "It's a load for one coach to track six people's progression over four years — that's a lot. But if we can summarize how they did in each case and touch on high points, it would make it easier for the instructor and give insight to the student", speaker: "Danielle", context: "Identifying the absence of progress monitoring tools" }
               ],
               frictionPoints: [
                 "No longitudinal data collection",
@@ -631,7 +631,7 @@ window.FCM_SESSION_DATA = {
                 "Feedback quality, session engagement, and outcomes are all unmeasured"
               ],
               keyQuotes: [
-                { text: "if those jobs are not satisfied by whatever we met in the long run, then the app, the new the new thing, won't be accepted, right?", speaker: "Matthew Trowbridge", context: "Warning that solutions must satisfy institutional needs or be rejected" }
+                { text: "If those jobs are not satisfied by whatever we build, then the app — the new thing — won't be accepted.", speaker: "Matthew Trowbridge", context: "Warning that solutions must satisfy institutional needs or be rejected" }
               ],
               frictionPoints: [
                 "No quality metrics for FCM teaching",
@@ -753,14 +753,14 @@ window.FCM_SESSION_DATA = {
    * ================================================================ */
   cumulative: {
     stability: {
-      "1": { level: "stable", evidence: "Consistent across both days. Day 2 added nuance about variable engagement (Matty earnest vs. Matt speed-running).", supportCount: 5 },
+      "1": { level: "stable", evidence: "Consistent across both days. Day 2 added nuance about variable engagement (Maddie earnest vs. Matt speed-running).", supportCount: 5 },
       "2": { level: "stable", evidence: "Strongest evidence across both days. VINDICATE form-filling confirmed by 4+ students. Day 2 added the 'reasoning over checkboxes' design principle.", supportCount: 6 },
       "gap1": { level: "stable", evidence: "Highest-confidence finding in the entire dataset. Every student who spoke confirmed the pattern across both days. Identical experience across different FCM groups and schedules.", supportCount: 7 },
       "3": { level: "stable", evidence: "Heavily discussed both days. Day 1 focused on length and format; Day 2 named social loafing explicitly and proposed the 'coercive mechanism' framing.", supportCount: 6 },
       "4": { level: "emerging", evidence: "Day 1 provided Kevin's quantitative data (2-3 reps/semester) and Farah's cognitive complexity insight. Day 2 added prototype validation. Fewer direct accounts than other steps.", supportCount: 4 },
       "5": { level: "stable", evidence: "Strong across both days. Day 1 established the gap; Day 2 Session 2 provided the richest data with the reasoning-over-checkboxes breakthrough and coach-perspective insights.", supportCount: 5 },
       "6": { level: "tentative", evidence: "Thin evidence across both days. Only oblique references. May need targeted questions in future sessions.", supportCount: 1 },
-      "7": { level: "emerging", evidence: "Day 1 established pass/fail context. Day 2 added submission variability evidence from Jocelyn and Matty. Still less discussed than other steps.", supportCount: 3 },
+      "7": { level: "emerging", evidence: "Day 1 established pass/fail context. Day 2 added submission variability evidence from Jocelyn and Maddie. Still less discussed than other steps.", supportCount: 3 },
       "gap2": { level: "emerging", evidence: "Day 1 established cramming pattern (Jocelyn). Day 2 added longitudinal tracking insight (Danielle). Implied rather than extensively discussed.", supportCount: 3 },
       "8": { level: "emerging", evidence: "Day 2 added the progression/scaffolding insight from Derek and Matt. Still not deeply explored as a distinct moment.", supportCount: 2 }
     },

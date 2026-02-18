@@ -2671,7 +2671,9 @@
         try { return localStorage.getItem("fcm-dark-mode") === "true"; } catch { return false; }
       });
       const [mainTab, setMainTab] = useState("journey");
-      const [presentMode, setPresentMode] = useState(false);
+      const [presentMode, setPresentMode] = useState(() => {
+        try { return new URLSearchParams(window.location.search).has("present"); } catch { return false; }
+      });
       const theme = darkMode ? BRAND_DARK : BRAND;
       useEffect(() => { document.body.style.background = theme.offWhite; }, [theme.offWhite]);
       const toggleDarkMode = () => {
