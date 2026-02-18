@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FCM Journey Mapper · HDS 2026</title>
+  <title>FCM Journey Mapper · Health Design Sprint 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -22,6 +22,75 @@
       .admin-card { min-width: 0 !important; }
       .pl-evidence-grid { grid-template-columns: 1fr !important; }
       .pl-builder-grid { grid-template-columns: 1fr !important; }
+    }
+    /* ── Story Mode ────────────────────────────────────────── */
+    .story-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #111; color: #F9FAFB;
+      overflow-y: auto; overflow-x: hidden;
+    }
+    .story-page {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 48px 32px; max-width: 960px; margin: 0 auto;
+    }
+    .story-page h2 { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; margin: 0 0 12px; text-align: center; }
+    .story-page h3 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; margin: 0 0 8px; color: #10B981; }
+    .story-subtitle { font-size: 16px; color: #9CA3AF; text-align: center; margin: 0 0 40px; line-height: 1.6; }
+    .story-big-number { font-family: 'JetBrains Mono', monospace; font-size: 56px; font-weight: 800; color: #10B981; line-height: 1; }
+    .story-big-label { font-size: 13px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+    .story-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center; width: 100%; max-width: 700px; margin-bottom: 40px; }
+    .story-pull-quote { font-size: 24px; font-weight: 600; line-height: 1.5; text-align: center; max-width: 700px; margin: 0 0 16px; font-style: italic; color: #F9FAFB; }
+    .story-quote-attr { font-size: 13px; color: #6B7280; text-align: center; }
+    .story-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1001; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 16px 24px; background: rgba(17,17,17,0.95); backdrop-filter: blur(8px); border-top: 1px solid #374151; }
+    .story-dot { width: 10px; height: 10px; border-radius: 50%; background: #374151; cursor: pointer; transition: all 0.2s; border: none; padding: 0; }
+    .story-dot.active { background: #10B981; transform: scale(1.3); }
+    .story-nav-btn { padding: 8px 20px; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #E5E7EB; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+    .story-nav-btn:hover { background: #1F2937; }
+    .story-nav-btn.primary { background: #10B981; border-color: #10B981; color: #111; }
+    .story-nav-btn.primary:hover { background: #059669; }
+    .story-toggle { position: fixed; top: 16px; right: 16px; z-index: 1002; }
+    .story-close { position: fixed; top: 16px; left: 16px; z-index: 1002; background: none; border: 1px solid #374151; border-radius: 8px; padding: 8px 14px; color: #9CA3AF; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .story-close:hover { color: #F9FAFB; border-color: #6B7280; }
+    .story-process-step { text-align: center; padding: 24px; background: #1F2937; border-radius: 12px; flex: 1; min-width: 200px; }
+    .story-process-arrow { font-size: 28px; color: #374151; align-self: center; }
+    .story-moment-friction { padding: 12px 16px; border-radius: 8px; background: rgba(239,68,68,0.1); border-left: 3px solid #EF4444; margin-bottom: 12px; }
+    .story-moment-wish { padding: 12px 16px; border-radius: 8px; background: rgba(16,185,129,0.1); border-left: 3px solid #10B981; margin-bottom: 12px; }
+    .story-quote-card { padding: 14px 18px; background: #1F2937; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #3B82F6; }
+    .story-swimlane { display: grid; gap: 2px; width: 100%; overflow-x: auto; }
+    .story-swimlane-cell { padding: 8px 4px; border-radius: 6px; text-align: center; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.15s; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.3; }
+    .story-swimlane-cell:hover { transform: scale(1.03); }
+    .story-cell-detail { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 90vw); z-index: 1010; background: #1A1A1A; border-left: 1px solid #374151; padding: 24px; overflow-y: auto; box-shadow: -4px 0 20px rgba(0,0,0,0.5); }
+    .story-yield-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 20px; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .story-stability-badge { display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    /* ── Free Browse Tabs ──────────────────────────────────── */
+    .browse-tabs { display: flex; gap: 0; border-bottom: 1px solid #374151; margin-bottom: 24px; }
+    .browse-tab { padding: 10px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6B7280; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
+    .browse-tab.active { color: #10B981; border-bottom-color: #10B981; }
+    /* ── Rendered PRD ──────────────────────────────────────── */
+    .rendered-prd { font-family: Inter, -apple-system, sans-serif; font-size: 14px; line-height: 1.7; color: #1A1A1A; padding: 32px; }
+    .rendered-prd h1 { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; margin: 0 0 8px; color: #1A1A1A; border-bottom: 2px solid #10B981; padding-bottom: 8px; }
+    .rendered-prd h2 { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: #1A1A1A; border-bottom: 1px solid #E5E7EB; padding-bottom: 6px; }
+    .rendered-prd h3 { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: #2D2D2D; }
+    .rendered-prd p { margin: 0 0 12px; }
+    .rendered-prd ul { padding-left: 20px; margin: 0 0 12px; }
+    .rendered-prd li { margin-bottom: 6px; }
+    .rendered-prd strong { color: #1A1A1A; }
+    .rendered-prd em { color: #6B7280; }
+    .rendered-prd hr { border: none; border-top: 1px solid #E5E7EB; margin: 24px 0; }
+    .rendered-prd table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .rendered-prd th, .rendered-prd td { border: 1px solid #E5E7EB; padding: 8px 12px; text-align: left; font-size: 13px; }
+    .rendered-prd th { background: #F9FAFB; font-weight: 600; }
+    /* ── Print Styles ──────────────────────────────────────── */
+    @media print {
+      body { background: white !important; }
+      .story-overlay { position: static; background: white; color: #1A1A1A; }
+      .story-nav, .story-toggle, .story-close { display: none !important; }
+      .story-page { min-height: auto; page-break-after: always; padding: 24px 0; }
+      .story-page:last-child { page-break-after: auto; }
+      .story-big-number { color: #1A1A1A; }
+      .story-pull-quote { color: #1A1A1A; }
+      .rendered-prd { padding: 0; }
     }
   </style>
   <script src="sessions-data.js"></script>
@@ -74,6 +143,30 @@
 
     const MONO = "'JetBrains Mono', 'Consolas', monospace";
     const SANS = "Inter, -apple-system, sans-serif";
+
+    /* ── PROJECT_CONFIG — swap for future cohorts ─────────── */
+    const PROJECT_CONFIG = {
+      courseName: "Foundations of Clinical Medicine (FCM)",
+      courseShort: "FCM",
+      institution: "University of Virginia School of Medicine",
+      sprintName: "Health Design Sprint 2026",
+      sprintShort: "HDS 2026",
+      /* Design sprint phase labels */
+      phases: {
+        1: "Understand",    // Journey mapping
+        2: "Define",        // Synthesis + convergence
+        3: "Ideate",        // Product Lab
+        4: "Prototype",     // Build
+        5: "Test",          // Feedback loop
+      },
+      /* Key moments to feature in presentations (step IDs + page titles) */
+      storyMoments: [
+        { stepId: "1", title: "The Spark", subtitle: "Get the Assignment" },
+        { stepId: "2", title: "Reasoning vs. Checkboxes", subtitle: "Build Differential" },
+        { stepId: "gap1", title: "The Gap", subtitle: "Cognitive Decay" },
+        { stepId: "3", title: "Re-Entry", subtitle: "FCM Session" },
+      ],
+    };
 
     /* ── Emotions ──────────────────────────────────────────────── */
     const EMOTIONS = [
@@ -632,6 +725,511 @@
       );
     }
 
+    /* ── Story Mode: Computed Stats ─────────────────────────── */
+    function computeResearchStats() {
+      if (!SESSION_DATA) return null;
+      const sessions = SESSION_DATA.sessions;
+      let totalQuotes = 0;
+      const speakerSet = new Set();
+      let stableCount = 0;
+      let topYield = 0;
+      const perspectives = new Set();
+      sessions.forEach(s => {
+        ["student", "coach", "administrator"].forEach(p => {
+          const pData = s.perspectives?.[p];
+          if (!pData) return;
+          perspectives.add(p);
+          if (pData.steps) {
+            Object.values(pData.steps).forEach(step => {
+              (step.keyQuotes || []).forEach(q => {
+                totalQuotes++;
+                if (q.speaker) speakerSet.add(q.speaker.split(" ")[0]);
+              });
+            });
+          }
+          if (pData.macroJobs) {
+            pData.macroJobs.forEach(job => {
+              (job.keyQuotes || []).forEach(q => {
+                totalQuotes++;
+                if (q.speaker) speakerSet.add(q.speaker.split(" ")[0]);
+              });
+            });
+          }
+        });
+      });
+      const cumStab = SESSION_DATA.cumulative?.stability || {};
+      Object.values(cumStab).forEach(s => { if (s.level === "stable") stableCount++; });
+      const cumYield = SESSION_DATA.cumulative?.yieldOpportunities || [];
+      if (cumYield.length > 0) topYield = cumYield[0].yieldScore;
+      return {
+        sessionCount: sessions.length,
+        totalQuotes,
+        namedStudents: speakerSet.size,
+        stepsCount: DEFAULT_STEPS.length,
+        perspectiveCount: perspectives.size,
+        stablePatterns: stableCount,
+        topYield,
+        speakers: [...speakerSet],
+      };
+    }
+
+    /* ── Story Mode: ResearchImpact (Page 1) ─────────────── */
+    function ResearchImpact() {
+      const stats = useMemo(() => computeResearchStats(), []);
+      if (!stats) return null;
+      return (
+        <div className="story-page">
+          <h3>REVEAL</h3>
+          <h2>Your Research at a Glance</h2>
+          <p className="story-subtitle">In just two days, you created this.</p>
+          <div className="story-stats-grid">
+            <div><div className="story-big-number">{stats.sessionCount}</div><div className="story-big-label">Sessions</div></div>
+            <div><div className="story-big-number">{stats.totalQuotes}+</div><div className="story-big-label">Direct Quotes</div></div>
+            <div><div className="story-big-number">{stats.namedStudents}</div><div className="story-big-label">Named Speakers</div></div>
+            <div><div className="story-big-number">{stats.stepsCount}</div><div className="story-big-label">FCM Steps Mapped</div></div>
+          </div>
+          <div className="story-stats-grid" style={{ maxWidth: 500 }}>
+            <div><div className="story-big-number">{stats.perspectiveCount}</div><div className="story-big-label">Stakeholder Views</div></div>
+            <div><div className="story-big-number">{stats.stablePatterns}</div><div className="story-big-label">Stable Patterns</div></div>
+            <div><div className="story-big-number" style={{ color: "#EF4444" }}>{stats.topYield}/10</div><div className="story-big-label">Top Yield Score</div></div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── Story Mode: ProcessChain (Page 2) ───────────────── */
+    function ProcessChain() {
+      return (
+        <div className="story-page">
+          <h3>VALIDATE</h3>
+          <h2>How We Got Here</h2>
+          <p className="story-subtitle">AI as amplifier, not author</p>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", width: "100%", maxWidth: 800, marginBottom: 32 }}>
+            <div className="story-process-step">
+              <div style={{ fontSize: 40, marginBottom: 12 }}>🗣️</div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, marginBottom: 8 }}>You Talked</div>
+              <div style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5 }}>Honest discussions about FCM. Individual reflections. No filters.</div>
+            </div>
+            <div className="story-process-arrow">→</div>
+            <div className="story-process-step">
+              <div style={{ fontSize: 40, marginBottom: 12 }}>🤖</div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, marginBottom: 8 }}>AI Organized</div>
+              <div style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5 }}>Transcripts processed. Patterns extracted. Quotes identified and attributed.</div>
+            </div>
+            <div className="story-process-arrow">→</div>
+            <div className="story-process-step">
+              <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, marginBottom: 8 }}>You Validated</div>
+              <div style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5 }}>Reviewed findings. Starred insights. Confirmed what resonated.</div>
+            </div>
+          </div>
+          <div style={{ padding: "20px 24px", background: "#1F2937", borderRadius: 12, maxWidth: 700, borderLeft: "3px solid #10B981" }}>
+            <p style={{ fontSize: 15, color: "#D1FAE5", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
+              "The AI didn't invent these insights. It organized YOUR expertise into a form we can act on."
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── Story Mode: MomentCard (Pages 3-6) ──────────────── */
+    function MomentCard({ momentConfig, pageNumber }) {
+      const latestSession = SESSION_DATA?.sessions?.[SESSION_DATA.sessions.length - 1];
+      if (!latestSession) return null;
+      const stepData = latestSession.perspectives?.student?.steps?.[momentConfig.stepId];
+      const coachData = latestSession.perspectives?.coach?.steps?.[momentConfig.stepId];
+      const stability = SESSION_DATA.cumulative?.stability?.[momentConfig.stepId];
+      const yieldOpp = (SESSION_DATA.cumulative?.yieldOpportunities || []).find(o => o.stepId === momentConfig.stepId);
+      if (!stepData) return null;
+      const quotes = stepData.keyQuotes || [];
+      const heroQuote = quotes[0];
+      const isGapPage = momentConfig.stepId === "gap1";
+      const hasCoachData = coachData && (coachData.keyQuotes || []).length > 0;
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>KEY MOMENT {pageNumber - 2}</h3>
+          <h2 style={{ fontSize: isGapPage ? 40 : 32 }}>"{momentConfig.title}"</h2>
+          <p className="story-subtitle">{momentConfig.subtitle}</p>
+
+          {/* Yield + Stability badges */}
+          <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap", justifyContent: "center" }}>
+            {yieldOpp && (
+              <span className="story-yield-badge" style={{ background: yieldOpp.yieldScore >= 9 ? "rgba(239,68,68,0.15)" : "rgba(245,158,11,0.15)", color: yieldOpp.yieldScore >= 9 ? "#EF4444" : "#F59E0B", fontSize: 14 }}>
+                Yield: {yieldOpp.yieldScore}/10
+              </span>
+            )}
+            {stability && (
+              <span className="story-stability-badge" style={{
+                background: stability.level === "stable" ? "rgba(16,185,129,0.15)" : stability.level === "emerging" ? "rgba(245,158,11,0.15)" : "rgba(107,114,128,0.15)",
+                color: stability.level === "stable" ? "#10B981" : stability.level === "emerging" ? "#F59E0B" : "#6B7280"
+              }}>
+                {stability.level === "stable" ? "Stable" : stability.level === "emerging" ? "Emerging" : "Tentative"} · {stability.supportCount}/{SESSION_DATA.sessions[SESSION_DATA.sessions.length-1].participantCount} participants
+              </span>
+            )}
+          </div>
+
+          {/* Hero quote */}
+          {heroQuote && (
+            <div style={{ marginBottom: 32 }}>
+              <p className="story-pull-quote">"{heroQuote.text}"</p>
+              <p className="story-quote-attr">— {heroQuote.speaker}{heroQuote.context ? ` · ${heroQuote.context}` : ""}</p>
+            </div>
+          )}
+
+          {/* Two-column for session step (student vs coach) */}
+          {hasCoachData ? (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, width: "100%", maxWidth: 800, marginBottom: 24 }}>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 12, textTransform: "uppercase" }}>Student View</div>
+                {quotes.slice(1).map((q, i) => (
+                  <div key={i} className="story-quote-card">
+                    <div style={{ fontSize: 13, color: "#D1D5DB", fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
+                    <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6 }}>— {q.speaker}</div>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#7C3AED", marginBottom: 12, textTransform: "uppercase" }}>Coach View</div>
+                {(coachData.keyQuotes || []).map((q, i) => (
+                  <div key={i} className="story-quote-card" style={{ borderLeftColor: "#7C3AED" }}>
+                    <div style={{ fontSize: 13, color: "#D1D5DB", fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
+                    <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6 }}>— {q.speaker}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div style={{ width: "100%", maxWidth: 700, marginBottom: 24 }}>
+              {quotes.slice(1).map((q, i) => (
+                <div key={i} className="story-quote-card">
+                  <div style={{ fontSize: 13, color: "#D1D5DB", fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
+                  <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6 }}>— {q.speaker}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Friction + Wish */}
+          <div style={{ width: "100%", maxWidth: 700 }}>
+            {stepData.suggestedFriction && (
+              <div className="story-moment-friction">
+                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#EF4444", marginBottom: 4 }}>FRICTION</div>
+                <div style={{ fontSize: 13, color: "#FCA5A5", lineHeight: 1.5 }}>{stepData.suggestedFriction}</div>
+              </div>
+            )}
+            {stepData.suggestedWish && (
+              <div className="story-moment-wish">
+                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 4 }}>WISH</div>
+                <div style={{ fontSize: 13, color: "#6EE7B7", lineHeight: 1.5 }}>{stepData.suggestedWish}</div>
+              </div>
+            )}
+          </div>
+
+          {/* Extra visual weight for The Gap */}
+          {isGapPage && stability && (
+            <div style={{ marginTop: 24, padding: "20px 24px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, maxWidth: 700, textAlign: "center" }}>
+              <div style={{ fontSize: 36, fontWeight: 800, fontFamily: MONO, color: "#EF4444" }}>{stability.supportCount}/{SESSION_DATA.sessions[SESSION_DATA.sessions.length-1].participantCount}</div>
+              <div style={{ fontSize: 13, color: "#FCA5A5", marginTop: 4 }}>participants confirmed this exact pattern</div>
+              <div style={{ fontSize: 14, color: "#9CA3AF", marginTop: 8, fontStyle: "italic" }}>Highest-confidence finding in the entire dataset</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ── Story Mode: SwimlaneMap (Page 7) ────────────────── */
+    function SwimlaneMap({ onCellClick }) {
+      const latestSession = SESSION_DATA?.sessions?.[SESSION_DATA.sessions.length - 1];
+      const cumStab = SESSION_DATA?.cumulative?.stability || {};
+      const cumYield = SESSION_DATA?.cumulative?.yieldOpportunities || [];
+      if (!latestSession) return null;
+
+      const rows = [
+        { key: "student", label: "Student", color: "#10B981" },
+        { key: "coach", label: "Coach", color: "#7C3AED" },
+        { key: "administrator", label: "Admin", color: "#EF4444" },
+      ];
+
+      const getCellData = (perspKey, stepId) => {
+        const pData = latestSession.perspectives?.[perspKey];
+        if (perspKey === "administrator") {
+          if (!pData?.macroJobs) return null;
+          const relevant = pData.macroJobs.find(j => j.id === stepId || j.title.toLowerCase().includes(DEFAULT_STEPS.find(s => s.id === stepId)?.title?.toLowerCase() || "___"));
+          return relevant ? { hasData: true, summary: relevant.title } : null;
+        }
+        const stepData = pData?.steps?.[stepId];
+        if (!stepData || (!stepData.summary && (!stepData.keyQuotes || stepData.keyQuotes.length === 0))) return null;
+        return { hasData: true, summary: stepData.summary, quoteCount: (stepData.keyQuotes || []).length };
+      };
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>THE FULL PICTURE</h3>
+          <h2>Your Journey Map</h2>
+          <p className="story-subtitle">And that's just 4 of the {DEFAULT_STEPS.length} steps you mapped. Here's the complete view.</p>
+
+          <div style={{ width: "100%", overflowX: "auto", marginBottom: 32 }}>
+            {/* Header row */}
+            <div className="story-swimlane" style={{ gridTemplateColumns: `100px repeat(${DEFAULT_STEPS.length}, minmax(80px, 1fr))` }}>
+              <div style={{ padding: 8 }} />
+              {DEFAULT_STEPS.map((step, i) => (
+                <div key={step.id} style={{ padding: "6px 4px", textAlign: "center" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, fontFamily: MONO, color: step.isInvisible ? "#F59E0B" : "#9CA3AF" }}>{step.isInvisible ? "👻" : i + 1 - DEFAULT_STEPS.slice(0, i).filter(s => s.isInvisible).length}</div>
+                  <div style={{ fontSize: 9, fontFamily: MONO, color: "#6B7280", lineHeight: 1.2 }}>{step.title.replace("⏳ ", "")}</div>
+                  {cumYield.find(o => o.stepId === step.id) && (
+                    <div style={{ fontSize: 8, fontWeight: 700, fontFamily: MONO, color: "#EF4444", marginTop: 2 }}>{cumYield.find(o => o.stepId === step.id).yieldScore}/10</div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Data rows */}
+            {rows.map(row => (
+              <div key={row.key} className="story-swimlane" style={{ gridTemplateColumns: `100px repeat(${DEFAULT_STEPS.length}, minmax(80px, 1fr))` }}>
+                <div style={{ padding: "8px 4px", fontSize: 11, fontWeight: 700, fontFamily: MONO, color: row.color, display: "flex", alignItems: "center" }}>{row.label}</div>
+                {DEFAULT_STEPS.map(step => {
+                  const cell = getCellData(row.key, step.id);
+                  const stab = cumStab[step.id];
+                  const isGap = step.isInvisible;
+                  const bgColor = cell?.hasData
+                    ? (isGap ? "rgba(239,68,68,0.12)" : "rgba(16,185,129,0.08)")
+                    : (isGap ? "rgba(245,158,11,0.08)" : "rgba(55,65,81,0.3)");
+                  return (
+                    <div
+                      key={step.id}
+                      className="story-swimlane-cell"
+                      style={{ background: bgColor }}
+                      onClick={() => cell?.hasData && onCellClick(row.key, step.id)}
+                    >
+                      {cell?.hasData ? (
+                        <>
+                          <div style={{ fontSize: 10, color: row.color, fontWeight: 600 }}>
+                            {cell.quoteCount ? `${cell.quoteCount} quotes` : "data"}
+                          </div>
+                          {stab && <div style={{ fontSize: 8, marginTop: 2, color: stab.level === "stable" ? "#10B981" : stab.level === "emerging" ? "#F59E0B" : "#6B7280" }}>{stab.level}</div>}
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 10, color: "#374151" }}>—</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ── Story Mode: CellDetail (slide-in overlay) ───────── */
+    function CellDetail({ perspKey, stepId, onClose }) {
+      const latestSession = SESSION_DATA?.sessions?.[SESSION_DATA.sessions.length - 1];
+      if (!latestSession) return null;
+      const step = DEFAULT_STEPS.find(s => s.id === stepId);
+      const pData = latestSession.perspectives?.[perspKey];
+      const stepData = pData?.steps?.[stepId];
+      const stab = SESSION_DATA?.cumulative?.stability?.[stepId];
+      const yieldOpp = (SESSION_DATA?.cumulative?.yieldOpportunities || []).find(o => o.stepId === stepId);
+
+      useEffect(() => {
+        const handler = (e) => { if (e.key === "Escape") onClose(); };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+      }, [onClose]);
+
+      return (
+        <div className="story-cell-detail">
+          <button onClick={onClose} style={{ float: "right", background: "none", border: "1px solid #374151", borderRadius: 6, padding: "4px 10px", color: "#9CA3AF", cursor: "pointer", fontFamily: MONO, fontSize: 12 }}>✕</button>
+          <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: perspKey === "student" ? "#10B981" : perspKey === "coach" ? "#7C3AED" : "#EF4444", textTransform: "uppercase", marginBottom: 8 }}>{perspKey}</div>
+          <h3 style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#F9FAFB", margin: "0 0 16px" }}>{step?.title || stepId}</h3>
+          {stab && (
+            <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <span className="story-stability-badge" style={{ background: stab.level === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: stab.level === "stable" ? "#10B981" : "#F59E0B" }}>{stab.level} · {stab.supportCount} participants</span>
+              {yieldOpp && <span className="story-yield-badge" style={{ background: "rgba(239,68,68,0.15)", color: "#EF4444", fontSize: 12 }}>Yield {yieldOpp.yieldScore}/10</span>}
+            </div>
+          )}
+          {stepData?.summary && <p style={{ fontSize: 13, color: "#D1D5DB", lineHeight: 1.6, marginBottom: 16 }}>{stepData.summary}</p>}
+          {stepData?.themes && stepData.themes.length > 0 && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+              {stepData.themes.map((t, i) => (
+                <span key={i} style={{ padding: "3px 10px", borderRadius: 12, background: "#1F2937", color: "#9CA3AF", fontSize: 11, fontFamily: MONO }}>{t}</span>
+              ))}
+            </div>
+          )}
+          {stepData?.keyQuotes && stepData.keyQuotes.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#6B7280", marginBottom: 8, textTransform: "uppercase" }}>Quotes</div>
+              {stepData.keyQuotes.map((q, i) => (
+                <div key={i} style={{ padding: "10px 14px", background: "#1F2937", borderRadius: 6, marginBottom: 6, borderLeft: "2px solid #3B82F6" }}>
+                  <div style={{ fontSize: 13, color: "#D1D5DB", fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
+                  <div style={{ fontSize: 11, color: "#6B7280", marginTop: 4 }}>— {q.speaker}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {stepData?.suggestedFriction && (
+            <div style={{ marginTop: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#EF4444", marginBottom: 4 }}>FRICTION</div>
+              <div style={{ fontSize: 12, color: "#FCA5A5", lineHeight: 1.5 }}>{stepData.suggestedFriction}</div>
+            </div>
+          )}
+          {stepData?.suggestedWish && (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 4 }}>WISH</div>
+              <div style={{ fontSize: 12, color: "#6EE7B7", lineHeight: 1.5 }}>{stepData.suggestedWish}</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ── Story Mode: ConvergenceBridge (Page 8) ──────────── */
+    function ConvergenceBridge({ onEnterProductLab }) {
+      const cumYield = SESSION_DATA?.cumulative?.yieldOpportunities || [];
+      const top3 = cumYield.slice(0, 3);
+      return (
+        <div className="story-page">
+          <h3>CONVERGE</h3>
+          <h2>What This Means</h2>
+          <p className="story-subtitle">Your research points to a clear product opportunity.</p>
+          <div style={{ width: "100%", maxWidth: 700, marginBottom: 40 }}>
+            {top3.map((opp, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "16px 20px", background: "#1F2937", borderRadius: 10, marginBottom: 8, border: i === 0 ? "1px solid rgba(239,68,68,0.3)" : "1px solid #374151" }}>
+                <div style={{ fontFamily: MONO, fontWeight: 800, fontSize: 28, color: opp.yieldScore >= 9 ? "#EF4444" : opp.yieldScore >= 7 ? "#F59E0B" : "#6B7280", minWidth: 48, textAlign: "center" }}>{opp.yieldScore}</div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: "#F9FAFB", fontFamily: MONO }}>{opp.title}</div>
+                  <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 4 }}>
+                    {opp.sessions?.length || 0} session{(opp.sessions?.length || 0) !== 1 ? "s" : ""}
+                    {opp.rationale ? ` — ${opp.rationale.slice(0, 100)}${opp.rationale.length > 100 ? "..." : ""}` : ""}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ maxWidth: 600, textAlign: "center", marginBottom: 32 }}>
+            <p style={{ fontSize: 15, color: "#D1D5DB", lineHeight: 1.6 }}>
+              Now let's decide what to build — and make real tradeoffs. The Product Lab turns these opportunities into features, features into budget decisions, and budget decisions into a PRD.
+            </p>
+          </div>
+          <button className="story-nav-btn primary" onClick={onEnterProductLab} style={{ fontSize: 16, padding: "14px 32px" }}>
+            Enter Product Lab →
+          </button>
+        </div>
+      );
+    }
+
+    /* ── Story Mode: FreeBrowse ──────────────────────────── */
+    function FreeBrowse({ onCellClick, onEnterProductLab }) {
+      const [browseTab, setBrowseTab] = useState("impact");
+      const tabs = [
+        { id: "impact", label: "Impact Summary" },
+        { id: "moments", label: "Key Moments" },
+        { id: "map", label: "Journey Map" },
+        { id: "convergence", label: "Convergence" },
+      ];
+      return (
+        <div style={{ padding: "24px 32px", maxWidth: 960, margin: "0 auto" }}>
+          <div className="browse-tabs">
+            {tabs.map(tab => (
+              <button key={tab.id} className={`browse-tab ${browseTab === tab.id ? "active" : ""}`} onClick={() => setBrowseTab(tab.id)}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          {browseTab === "impact" && <ResearchImpact />}
+          {browseTab === "moments" && (
+            <div>
+              {PROJECT_CONFIG.storyMoments.map((m, i) => (
+                <MomentCard key={m.stepId} momentConfig={m} pageNumber={i + 3} />
+              ))}
+            </div>
+          )}
+          {browseTab === "map" && <SwimlaneMap onCellClick={onCellClick} />}
+          {browseTab === "convergence" && <ConvergenceBridge onEnterProductLab={onEnterProductLab} />}
+        </div>
+      );
+    }
+
+    /* ── Story Mode: Container ───────────────────────────── */
+    function StoryMode({ onClose, onEnterProductLab }) {
+      const [page, setPage] = useState(1);
+      const [mode, setMode] = useState("story"); // "story" or "browse"
+      const [cellDetail, setCellDetail] = useState(null);
+      const totalPages = 8;
+
+      const handleCellClick = useCallback((perspKey, stepId) => {
+        setCellDetail({ perspKey, stepId });
+      }, []);
+
+      // Arrow key navigation
+      useEffect(() => {
+        if (mode !== "story") return;
+        const handler = (e) => {
+          if (cellDetail) return; // Don't navigate when detail overlay is open
+          if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); setPage(p => Math.min(p + 1, totalPages)); }
+          if (e.key === "ArrowLeft") { e.preventDefault(); setPage(p => Math.max(p - 1, 1)); }
+          if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+      }, [mode, onClose, cellDetail]);
+
+      const handleEnterPL = useCallback(() => {
+        onClose();
+        onEnterProductLab();
+      }, [onClose, onEnterProductLab]);
+
+      return (
+        <div className="story-overlay">
+          <button className="story-close" onClick={onClose}>✕ Exit</button>
+
+          <div className="story-toggle">
+            <button
+              className="story-nav-btn"
+              onClick={() => setMode(mode === "story" ? "browse" : "story")}
+              style={{ fontSize: 12 }}
+            >
+              {mode === "story" ? "Free Browse" : "Story Mode"}
+            </button>
+            <button
+              className="story-nav-btn"
+              onClick={() => window.print()}
+              style={{ fontSize: 12, marginLeft: 8 }}
+            >
+              Print / Save PDF
+            </button>
+          </div>
+
+          {mode === "story" ? (
+            <>
+              {page === 1 && <ResearchImpact />}
+              {page === 2 && <ProcessChain />}
+              {page >= 3 && page <= 6 && <MomentCard momentConfig={PROJECT_CONFIG.storyMoments[page - 3]} pageNumber={page} />}
+              {page === 7 && <SwimlaneMap onCellClick={handleCellClick} />}
+              {page === 8 && <ConvergenceBridge onEnterProductLab={handleEnterPL} />}
+
+              <div className="story-nav">
+                <button className="story-nav-btn" onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} style={{ opacity: page === 1 ? 0.3 : 1 }}>← Back</button>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button key={i} className={`story-dot ${page === i + 1 ? "active" : ""}`} onClick={() => setPage(i + 1)} />
+                  ))}
+                </div>
+                <button className={`story-nav-btn ${page < totalPages ? "primary" : ""}`} onClick={() => page < totalPages ? setPage(p => p + 1) : handleEnterPL()}>
+                  {page < totalPages ? "Next →" : "Enter Product Lab →"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <FreeBrowse onCellClick={handleCellClick} onEnterProductLab={handleEnterPL} />
+          )}
+
+          {cellDetail && <CellDetail perspKey={cellDetail.perspKey} stepId={cellDetail.stepId} onClose={() => setCellDetail(null)} />}
+        </div>
+      );
+    }
+
     /* ── Product Lab: Data ─────────────────────────────────────── */
 
     const PL_EVIDENCE = {
@@ -699,16 +1297,16 @@
     ];
 
     const PL_FEATURES = [
-      { id: "gap-refresh", name: "Gamified Case Refresh", icon: "🎮", description: "10-15 min mobile experience before FCM. Quick-fire differential review, confidence check, 'here's what to listen for.'", cost: 2, requires: ["mobile-ui", "case-content"], stakeholders: ["student"], affectsSteps: ["walk", "gap"], engagement: "burst", studentOutcome: "Arrive at session with case fresh in mind" },
-      { id: "reasoning-capture", name: "Reasoning Capture", icon: "🧠", description: "Replace VINDICATE worksheet. Capture WHY students think each diagnosis — structured reasoning prompts, not checkboxes.", cost: 3, requires: ["database", "case-content"], stakeholders: ["student", "instructor"], affectsSteps: ["prep", "session"], engagement: "task", studentOutcome: "Build deeper reasoning habits; coach sees thinking quality", instructorSupport: "See each student's reasoning chain before session — target teaching to actual gaps" },
-      { id: "confidence-cal", name: "Confidence Calibration", icon: "🎯", description: "Rank differentials by likelihood + confidence. After session, see how calibrated you were. Track improvement over time.", cost: 2, requires: ["database"], stakeholders: ["student"], affectsSteps: ["prep", "feedback"], engagement: "burst", studentOutcome: "Develop metacognition — know what you don't know" },
-      { id: "student-signal", name: "Student → Instructor Signal", icon: "📡", description: "Before session: flag confusion areas, discussion topics. Instructor sees aggregate + individual. Quiet students get a voice.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["student", "instructor"], affectsSteps: ["prep", "session"], engagement: "task", studentOutcome: "Get help on YOUR questions, not just the curriculum", instructorSupport: "See aggregate confusion areas + individual flags before walking in" },
-      { id: "instructor-dashboard", name: "Instructor Prep Dashboard", icon: "👁️", description: "Pre-session view: who prepared, common errors, areas of confusion. Target teaching to actual gaps.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["instructor"], affectsSteps: ["session"], engagement: "none", studentOutcome: "Better teaching targeted to your actual gaps", instructorSupport: "Dashboard: who prepared, common errors, confusion areas, individual student goals" },
-      { id: "ai-patient", name: "AI Patient Encounter", icon: "🤖", description: "Voice/chat AI standardized patient. Unlimited history-taking practice. Real-time differential adjustment feedback.", cost: 4, requires: ["ai-llm", "case-content", "mobile-ui"], stakeholders: ["student"], affectsSteps: ["prep", "gap"], engagement: "sustained", studentOutcome: "Unlimited practice reps — fail safely before the real encounter", realityWarning: "Requires students to engage between sessions. High value but low adoption risk." },
-      { id: "progress-tracker", name: "Longitudinal Progress Tracker", icon: "📈", description: "Track reasoning quality across cases over a semester. Growth patterns, persistent gaps. Student + coach view.", cost: 3, requires: ["database", "auth", "analytics"], stakeholders: ["student", "instructor", "admin"], affectsSteps: ["feedback", "fade"], engagement: "passive", studentOutcome: "See your growth over time — motivation through visible progress", instructorSupport: "Track student development across cases, spot persistent blind spots", adminConstraint: "Feeds AAMC competency tracking" },
-      { id: "spaced-review", name: "Spaced Repetition Review", icon: "🔁", description: "Post-session review cards. 'What would you do differently?' Builds cumulative knowledge case-over-case.", cost: 2, requires: ["database", "case-content"], stakeholders: ["student"], affectsSteps: ["fade", "gap"], engagement: "sustained", studentOutcome: "Actually retain what you learned — fight the fade", realityWarning: "Requires between-session engagement. Works best with push notifications + tiny interactions." },
-      { id: "compliance-dash", name: "Compliance & Analytics", icon: "🏛️", description: "Admin dashboard: AAMC competency mapping, session quality metrics, coach consistency, early warning for struggling students.", cost: 2, requires: ["database", "auth", "admin-view", "analytics"], stakeholders: ["admin"], affectsSteps: ["fade"], engagement: "none", studentOutcome: "Program quality improves over time", adminConstraint: "AAMC/LCME competency mapping, coach quality consistency" },
-      { id: "peer-compare", name: "Anonymous Peer Comparison", icon: "👥", description: "See how your differential compares to anonymized group. 'Most students identified PE — you focused on anxiety.'", cost: 1, requires: ["database"], stakeholders: ["student"], affectsSteps: ["session", "feedback"], engagement: "passive", studentOutcome: "Calibrate against peers — am I the only one who missed this?" },
+      { id: "gap-refresh", name: "Gamified Case Refresh", icon: "🎮", description: "10-15 min mobile experience before FCM. Quick-fire differential review, confidence check, 'here's what to listen for.'", cost: 2, requires: ["mobile-ui", "case-content"], stakeholders: ["student"], affectsSteps: ["walk", "gap"], engagement: "burst", studentOutcome: "Arrive at session with case fresh in mind", addressesEvidence: ["s7", "s1", "sw1"] },
+      { id: "reasoning-capture", name: "Reasoning Capture", icon: "🧠", description: "Replace VINDICATE worksheet. Capture WHY students think each diagnosis — structured reasoning prompts, not checkboxes.", cost: 3, requires: ["database", "case-content"], stakeholders: ["student", "instructor"], affectsSteps: ["prep", "session"], engagement: "task", studentOutcome: "Build deeper reasoning habits; coach sees thinking quality", instructorSupport: "See each student's reasoning chain before session — target teaching to actual gaps", addressesEvidence: ["s4", "sw2", "i1", "iw2"] },
+      { id: "confidence-cal", name: "Confidence Calibration", icon: "🎯", description: "Rank differentials by likelihood + confidence. After session, see how calibrated you were. Track improvement over time.", cost: 2, requires: ["database"], stakeholders: ["student"], affectsSteps: ["prep", "feedback"], engagement: "burst", studentOutcome: "Develop metacognition — know what you don't know", addressesEvidence: ["s3", "sw3"] },
+      { id: "student-signal", name: "Student → Instructor Signal", icon: "📡", description: "Before session: flag confusion areas, discussion topics. Instructor sees aggregate + individual. Quiet students get a voice.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["student", "instructor"], affectsSteps: ["prep", "session"], engagement: "task", studentOutcome: "Get help on YOUR questions, not just the curriculum", instructorSupport: "See aggregate confusion areas + individual flags before walking in", addressesEvidence: ["s6", "sw4", "i2", "iw4"] },
+      { id: "instructor-dashboard", name: "Instructor Prep Dashboard", icon: "👁️", description: "Pre-session view: who prepared, common errors, areas of confusion. Target teaching to actual gaps.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["instructor"], affectsSteps: ["session"], engagement: "none", studentOutcome: "Better teaching targeted to your actual gaps", instructorSupport: "Dashboard: who prepared, common errors, confusion areas, individual student goals", addressesEvidence: ["i1", "i4", "iw1"] },
+      { id: "ai-patient", name: "AI Patient Encounter", icon: "🤖", description: "Voice/chat AI standardized patient. Unlimited history-taking practice. Real-time differential adjustment feedback.", cost: 4, requires: ["ai-llm", "case-content", "mobile-ui"], stakeholders: ["student"], affectsSteps: ["prep", "gap"], engagement: "sustained", studentOutcome: "Unlimited practice reps — fail safely before the real encounter", realityWarning: "Requires students to engage between sessions. High value but low adoption risk.", addressesEvidence: ["s2", "s5", "sw5"] },
+      { id: "progress-tracker", name: "Longitudinal Progress Tracker", icon: "📈", description: "Track reasoning quality across cases over a semester. Growth patterns, persistent gaps. Student + coach view.", cost: 3, requires: ["database", "auth", "analytics"], stakeholders: ["student", "instructor", "admin"], affectsSteps: ["feedback", "fade"], engagement: "passive", studentOutcome: "See your growth over time — motivation through visible progress", instructorSupport: "Track student development across cases, spot persistent blind spots", adminConstraint: "Feeds AAMC competency tracking", addressesEvidence: ["s3", "i3", "a3", "aw1"] },
+      { id: "spaced-review", name: "Spaced Repetition Review", icon: "🔁", description: "Post-session review cards. 'What would you do differently?' Builds cumulative knowledge case-over-case.", cost: 2, requires: ["database", "case-content"], stakeholders: ["student"], affectsSteps: ["fade", "gap"], engagement: "sustained", studentOutcome: "Actually retain what you learned — fight the fade", realityWarning: "Requires between-session engagement. Works best with push notifications + tiny interactions.", addressesEvidence: ["s1", "sw1"] },
+      { id: "compliance-dash", name: "Compliance & Analytics", icon: "🏛️", description: "Admin dashboard: AAMC competency mapping, session quality metrics, coach consistency, early warning for struggling students.", cost: 2, requires: ["database", "auth", "admin-view", "analytics"], stakeholders: ["admin"], affectsSteps: ["fade"], engagement: "none", studentOutcome: "Program quality improves over time", adminConstraint: "AAMC/LCME competency mapping, coach quality consistency", addressesEvidence: ["a1", "a2", "aw2", "aw3"] },
+      { id: "peer-compare", name: "Anonymous Peer Comparison", icon: "👥", description: "See how your differential compares to anonymized group. 'Most students identified PE — you focused on anxiety.'", cost: 1, requires: ["database"], stakeholders: ["student"], affectsSteps: ["session", "feedback"], engagement: "passive", studentOutcome: "Calibrate against peers — am I the only one who missed this?", addressesEvidence: ["s6", "sw3"] },
     ];
 
     const PL_TECH_REQS = {
@@ -726,6 +1324,14 @@
       { id: "reasoning-loop", name: "The Reasoning Loop", icon: "🔄", description: "Student reasoning → coach visibility → targeted feedback. The core two-sided value.", features: ["reasoning-capture", "student-signal", "instructor-dashboard"] },
       { id: "engagement-loop", name: "The Engagement Loop", icon: "🔥", description: "Keep the case alive before and after sessions. Fight the fade.", features: ["gap-refresh", "spaced-review"] },
       { id: "growth-loop", name: "The Growth Loop", icon: "📈", description: "Track metacognition and development over time. Make learning visible.", features: ["confidence-cal", "progress-tracker"] },
+    ];
+
+    const PL_SCENARIOS = [
+      { id: "tuesday-night", name: "Tuesday Night — Deep Exploration", scene: "It's 9pm Tuesday. You just got a new chief complaint. You have 45 minutes before switching to studying anatomy.", device: "Desktop", timing: "Steps 1-2 (Case Assignment → Build Differential)", steps: "1-2", featureIds: ["reasoning-capture", "confidence-cal", "ai-patient"], momentLink: "1", icon: "🖥️" },
+      { id: "walking-to-fcm", name: "Walking to FCM — Quick Refresh", scene: "Monday 1:45pm. FCM starts in 15 minutes. You haven't thought about this case since Tuesday. You're walking across Grounds.", device: "Mobile", timing: "Bridging The Gap", steps: "gap1", featureIds: ["gap-refresh", "spaced-review"], momentLink: "gap1", icon: "📱" },
+      { id: "in-the-room", name: "In the Room — Active Session", scene: "You're in the FCM room. The coach is facilitating discussion. You want to contribute but don't want to look unprepared.", device: "Mobile/Tablet", timing: "Step 3 (Small Group Session)", steps: "3", featureIds: ["student-signal", "peer-compare"], momentLink: "3", icon: "📱" },
+      { id: "coach-prep", name: "Coach Prep — Instructor Dashboard", scene: "Dr. Martinez has 6 students in 2 hours. She wants to know who prepared and where common misconceptions are.", device: "Desktop", timing: "Parallel to Steps 1-2", steps: "1-2", featureIds: ["instructor-dashboard", "reasoning-capture"], momentLink: "2", icon: "🖥️" },
+      { id: "practice-presenting", name: "Practice Presenting — Rehearsal", scene: "Farah wants to practice presenting a case in SOAP format before next week's FCM. She's alone in her apartment.", device: "Desktop/Mobile", timing: "Steps 2→3 (Prep → Session bridge)", steps: "2-3", featureIds: ["ai-patient", "confidence-cal"], momentLink: "2", icon: "🎙️" },
     ];
 
     const PL_BUDGET = 10;
@@ -849,20 +1455,31 @@
 
     /* ── Product Lab: Components ────────────────────────────────── */
 
-    function PLVoteItem({ item, active, onClick, isWish, custom }) {
+    function PLVoteItem({ item, active, onClick, isWish, custom, selectedFeatureIds }) {
       const theme = useTheme();
       const isDark = theme.offWhite === "#1A1A1A";
       const activeBg = isWish ? theme.blueLight : (isDark ? "#78350F" : "#FFF7ED");
       const activeBorder = isWish ? theme.blue : "#EA580C";
+      const coveringFeatures = (selectedFeatureIds || []).map(fId => PL_FEATURES.find(f => f.id === fId)).filter(f => f && (f.addressesEvidence || []).includes(item.id));
       return (
         <button onClick={onClick} style={{ display: "flex", alignItems: "flex-start", gap: 8, width: "100%", padding: "8px 10px", marginBottom: 6, fontSize: 12, fontFamily: SANS, lineHeight: 1.5, textAlign: "left", background: active ? activeBg : theme.offWhite, border: `1px solid ${active ? activeBorder : theme.lightGray}`, borderRadius: 6, cursor: "pointer", color: theme.black, transition: "all 0.15s" }}>
           <span style={{ fontSize: 14, flexShrink: 0, marginTop: -1 }}>{active ? (isWish ? "⭐" : "🔥") : "○"}</span>
-          <span>{custom && <span style={{ fontSize: 10, color: theme.blue, fontWeight: 600 }}>ADDED </span>}{item.text}</span>
+          <span>
+            {custom && <span style={{ fontSize: 10, color: theme.blue, fontWeight: 600 }}>ADDED </span>}
+            {item.text}
+            {coveringFeatures.length > 0 && (
+              <span style={{ display: "inline-flex", gap: 3, marginLeft: 6 }}>
+                {coveringFeatures.map(f => (
+                  <span key={f.id} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: theme.emeraldLight, color: theme.emerald, fontFamily: MONO, fontWeight: 600, whiteSpace: "nowrap" }} title={f.name}>→ {f.icon} {f.name.split(" ")[0]}</span>
+                ))}
+              </span>
+            )}
+          </span>
         </button>
       );
     }
 
-    function PLStakeholderColumn({ sKey, data, customPoints, newPoint, setNewPoint, votes, toggleVote, addPoint, setCustomPoints, sc }) {
+    function PLStakeholderColumn({ sKey, data, customPoints, newPoint, setNewPoint, votes, toggleVote, addPoint, setCustomPoints, sc, selectedFeatureIds }) {
       const theme = useTheme();
       return (
         <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, overflow: "hidden" }}>
@@ -873,10 +1490,10 @@
           <div style={{ padding: 16 }}>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Pain Points</div>
             {data.painPoints.map(item => (
-              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} />
+              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} selectedFeatureIds={selectedFeatureIds} />
             ))}
             {customPoints.map(item => (
-              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} custom />
+              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} custom selectedFeatureIds={selectedFeatureIds} />
             ))}
             <div style={{ display: "flex", gap: 6, marginTop: 8, marginBottom: 16 }}>
               <input type="text" value={newPoint} onChange={e => setNewPoint(e.target.value)} onKeyDown={e => e.key === "Enter" && addPoint()} placeholder="Add pain point..." style={{ flex: 1, padding: "6px 10px", fontSize: 12, fontFamily: MONO, border: `1px solid ${theme.lightGray}`, borderRadius: 6, background: theme.offWhite, color: theme.black, outline: "none" }} />
@@ -884,14 +1501,14 @@
             </div>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Wishes</div>
             {data.wishes.map(item => (
-              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} isWish />
+              <PLVoteItem key={item.id} item={item} active={!!votes[item.id]} onClick={() => toggleVote(item.id)} isWish selectedFeatureIds={selectedFeatureIds} />
             ))}
           </div>
         </div>
       );
     }
 
-    function PLEvidenceWall({ votes, toggleVote, customPainPoints, setCustomPainPoints, newPainPoint, setNewPainPoint, addPainPoint, stColors }) {
+    function PLEvidenceWall({ votes, toggleVote, customPainPoints, setCustomPainPoints, newPainPoint, setNewPainPoint, addPainPoint, stColors, selectedFeatureIds }) {
       const theme = useTheme();
       return (
         <div>
@@ -901,7 +1518,7 @@
           </p>
           <div className="pl-evidence-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
             {Object.entries(PL_EVIDENCE).map(([key, data]) => (
-              <PLStakeholderColumn key={key} sKey={key} data={data} customPoints={customPainPoints[key]} newPoint={newPainPoint[key]} setNewPoint={val => setNewPainPoint(prev => ({ ...prev, [key]: val }))} votes={votes} toggleVote={toggleVote} addPoint={() => addPainPoint(key)} setCustomPoints={pts => setCustomPainPoints(prev => ({ ...prev, [key]: pts }))} sc={stColors[key]} />
+              <PLStakeholderColumn key={key} sKey={key} data={data} customPoints={customPainPoints[key]} newPoint={newPainPoint[key]} setNewPoint={val => setNewPainPoint(prev => ({ ...prev, [key]: val }))} votes={votes} toggleVote={toggleVote} addPoint={() => addPainPoint(key)} setCustomPoints={pts => setCustomPainPoints(prev => ({ ...prev, [key]: pts }))} sc={stColors[key]} selectedFeatureIds={selectedFeatureIds} />
             ))}
           </div>
         </div>
@@ -946,6 +1563,9 @@
           <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 20px 0" }}>
             What kind of product are you building? <strong style={{ color: theme.black }}>Drag the pin</strong> on the map to explore four product archetypes.
             Each quadrant shows well-known apps that share that DNA.
+            <span style={{ display: "block", marginTop: 8, fontSize: 12, color: theme.blue, lineHeight: 1.5 }}>
+              Why consumer apps for medical education? Because the best learning tools steal engagement patterns from products students already love — then apply them to clinical reasoning. Duolingo's streak mechanics work for differentials. Strava's social accountability works for case prep.
+            </span>
           </p>
 
           <div style={{ maxWidth: 520, margin: "0 auto 24px" }}>
@@ -1076,10 +1696,20 @@
       );
     }
 
-    function PLFeatureCard({ feature, selected, onToggle, overBudget }) {
+    function PLFeatureCard({ feature, selected, onToggle, overBudget, selectedFeatureIds }) {
       const theme = useTheme();
       const isDark = theme.offWhite === "#1A1A1A";
       const stColors = { student: theme.emerald, instructor: isDark ? "#A78BFA" : "#7C3AED", admin: theme.red };
+      // Build evidence label lookup
+      const getEvidenceLabel = (id) => {
+        for (const [, data] of Object.entries(PL_EVIDENCE)) {
+          const pp = data.painPoints.find(p => p.id === id);
+          if (pp) return pp.text.slice(0, 40) + (pp.text.length > 40 ? "..." : "");
+          const w = data.wishes.find(p => p.id === id);
+          if (w) return w.text.slice(0, 40) + (w.text.length > 40 ? "..." : "");
+        }
+        return id;
+      };
       return (
         <button onClick={onToggle} style={{ display: "flex", alignItems: "flex-start", gap: 10, width: "100%", padding: "12px 14px", marginBottom: 8, textAlign: "left", fontFamily: SANS, background: selected ? (isDark ? "#374151" : "#F0FDF4") : theme.white, border: `2px solid ${selected ? theme.emerald : theme.lightGray}`, borderRadius: 8, cursor: overBudget && !selected ? "not-allowed" : "pointer", opacity: overBudget && !selected ? 0.5 : 1, transition: "all 0.15s" }}>
           <span style={{ fontSize: 22, flexShrink: 0 }}>{feature.icon}</span>
@@ -1089,6 +1719,14 @@
               <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: isDark ? "#78350F" : "#FFF7ED", color: isDark ? "#F59E0B" : "#EA580C", fontFamily: MONO }}>{feature.cost} pt{feature.cost !== 1 ? "s" : ""}</span>
             </div>
             <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 4 }}>{feature.description}</div>
+            {feature.addressesEvidence && feature.addressesEvidence.length > 0 && (
+              <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 4 }}>
+                {feature.addressesEvidence.slice(0, 3).map(eId => (
+                  <span key={eId} style={{ fontSize: 8, padding: "1px 6px", borderRadius: 3, background: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue, fontFamily: MONO }} title={getEvidenceLabel(eId)}>Addresses: {eId}</span>
+                ))}
+                {feature.addressesEvidence.length > 3 && <span style={{ fontSize: 8, color: theme.medGray, fontFamily: MONO }}>+{feature.addressesEvidence.length - 3}</span>}
+              </div>
+            )}
             {feature.studentOutcome && (
               <div style={{ fontSize: 10, color: theme.emerald, lineHeight: 1.4, marginBottom: 4 }}>
                 <strong>Student outcome:</strong> {feature.studentOutcome}
@@ -1288,7 +1926,7 @@
               </div>
             )}
           </div>
-          <div style={{ display: "flex", gap: 2, alignItems: "stretch" }}>
+          <div style={{ display: "flex", gap: 3, alignItems: "stretch" }}>
             {PL_FCM_STEPS.map((step, i) => {
               const feats = stepCoverage[step.id];
               const covered = feats.length > 0;
@@ -1296,27 +1934,28 @@
               return (
                 <div key={step.id} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
                   <div style={{
-                    width: "100%", padding: "8px 2px", borderRadius: 6, textAlign: "center",
+                    width: "100%", padding: "10px 4px", borderRadius: 6, textAlign: "center",
                     background: covered ? (isDark ? "#064E3B" : "#F0FDF4") : isGap ? (isDark ? "#7F1D1D" : "#FEF2F2") : theme.offWhite,
                     border: `1px solid ${covered ? theme.emerald : isGap ? (isDark ? "#991B1B" : "#FECACA") : theme.lightGray}`,
-                    minHeight: 52, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                    transition: "all 0.2s",
-                  }}>
-                    <div style={{ fontSize: 14, marginBottom: 2 }}>{step.icon}</div>
-                    <div style={{ fontSize: 8, fontWeight: 600, fontFamily: MONO, color: covered ? theme.emerald : isGap ? theme.red : theme.medGray, lineHeight: 1.2, whiteSpace: "pre-line" }}>{step.short}</div>
+                    minHeight: 64, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s", cursor: covered ? "pointer" : "default",
+                  }} title={covered ? feats.map(f => f.name).join(", ") : ""}>
+                    <div style={{ fontSize: 9, fontWeight: 800, fontFamily: MONO, color: theme.medGray, marginBottom: 2, width: 18, height: 18, borderRadius: "50%", background: isDark ? "#374151" : "#E5E7EB", display: "flex", alignItems: "center", justifyContent: "center" }}>{i + 1}</div>
+                    <div style={{ fontSize: 16, marginBottom: 2 }}>{step.icon}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, fontFamily: MONO, color: covered ? theme.emerald : isGap ? theme.red : theme.medGray, lineHeight: 1.2, whiteSpace: "pre-line" }}>{step.short}</div>
                   </div>
                   {covered && (
-                    <div style={{ display: "flex", gap: 2, marginTop: 4, flexWrap: "wrap", justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: 3, marginTop: 4, flexWrap: "wrap", justifyContent: "center" }}>
                       {feats.map(f => (
-                        <span key={f.id} title={f.name} style={{ fontSize: 10, cursor: "default" }}>{f.icon}</span>
+                        <span key={f.id} title={f.name} style={{ fontSize: 12, cursor: "default" }}>{f.icon}</span>
                       ))}
                     </div>
                   )}
                   {isGap && !covered && (
-                    <div style={{ fontSize: 8, color: theme.red, fontFamily: MONO, marginTop: 4, textAlign: "center", fontWeight: 600 }}>DARK ZONE</div>
+                    <div style={{ fontSize: 9, color: theme.red, fontFamily: MONO, marginTop: 4, textAlign: "center", fontWeight: 600 }}>DARK ZONE</div>
                   )}
                   {i < PL_FCM_STEPS.length - 1 && (
-                    <div style={{ position: "absolute", right: -3, top: 26, fontSize: 8, color: theme.lightGray }}>›</div>
+                    <div style={{ position: "absolute", right: -4, top: 30, fontSize: 10, color: theme.lightGray }}>›</div>
                   )}
                 </div>
               );
@@ -1331,10 +1970,10 @@
       );
     }
 
-    function PLDesignPhilosophy({ selectedFeatures }) {
+    function PLDesignPhilosophy({ selectedFeatures, confirmedPhilosophy, setConfirmedPhilosophy }) {
       const theme = useTheme();
       const isDark = theme.offWhite === "#1A1A1A";
-      const [activeApp, setActiveApp] = useState("duolingo");
+      const [activeApp, setActiveApp] = useState(confirmedPhilosophy || "duolingo");
 
       const philosophies = [
         {
@@ -1493,11 +2132,68 @@
               })}
             </div>
           )}
+          {selectedFeatures.length > 0 && (
+            <button onClick={() => setConfirmedPhilosophy(confirmedPhilosophy === activeApp ? null : activeApp)} style={{
+              marginTop: 16, width: "100%", padding: "12px 20px", borderRadius: 8, border: "none", fontSize: 13, fontWeight: 700, fontFamily: MONO, cursor: "pointer",
+              background: confirmedPhilosophy === activeApp ? theme.emerald : theme.black, color: theme.white, transition: "all 0.15s",
+            }}>
+              {confirmedPhilosophy === activeApp ? `Locked In: ${activePhil.name} Philosophy` : `Lock In: ${activePhil.name} Philosophy`}
+            </button>
+          )}
         </div>
       );
     }
 
-    function PLProductBuilder({ selectedIds, toggleFeature }) {
+    function PLScenarios({ selectedFeatureIds }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const selFeats = PL_FEATURES.filter(f => selectedFeatureIds.includes(f.id));
+      return (
+        <div>
+          <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Imagine real students using your product. Each scenario maps features to a specific moment in the FCM week. <strong style={{ color: theme.black }}>Gaps mean uncovered scenarios.</strong>
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+            {PL_SCENARIOS.map(s => {
+              const mappedFeats = selFeats.filter(f => (s.featureIds || []).includes(f.id));
+              const coverage = s.featureIds.length > 0 ? mappedFeats.length / s.featureIds.length : 0;
+              return (
+                <div key={s.id} style={{ background: theme.white, border: `1px solid ${coverage > 0 ? theme.emerald : theme.lightGray}`, borderRadius: 10, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 16px", background: coverage >= 1 ? (isDark ? "#064E3B" : "#F0FDF4") : theme.offWhite, borderBottom: `1px solid ${theme.lightGray}` }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 20 }}>{s.icon}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.black }}>{s.name}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, fontStyle: "italic" }}>{s.scene}</div>
+                  </div>
+                  <div style={{ padding: 16 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, fontFamily: MONO, color: theme.medGray, marginBottom: 6 }}>DEVICE: {s.device} · FCM STEPS: {s.steps}</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: theme.medGray, marginBottom: 8, textTransform: "uppercase" }}>Mapped Features</div>
+                    {mappedFeats.length > 0 ? (
+                      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+                        {mappedFeats.map(f => (
+                          <span key={f.id} style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, background: theme.emeraldLight, color: theme.emerald, fontFamily: MONO, fontWeight: 600 }}>{f.icon} {f.name}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 11, color: theme.red, fontFamily: MONO, marginBottom: 8 }}>No features selected for this scenario</div>
+                    )}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 10, fontFamily: MONO, color: coverage >= 1 ? theme.emerald : coverage > 0 ? theme.amber : theme.red }}>
+                        {coverage >= 1 ? "Full coverage" : coverage > 0 ? `${mappedFeats.length}/${s.featureIds.length} covered` : "Gap"}
+                      </span>
+                      <span style={{ fontSize: 10, fontFamily: MONO, color: theme.medGray }}>Links to: Step {s.momentLink}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    function PLProductBuilder({ selectedIds, toggleFeature, confirmedPhilosophy, setConfirmedPhilosophy }) {
       const theme = useTheme();
       const [activeLens, setActiveLens] = useState("budget");
       const selectedFeatures = PL_FEATURES.filter(f => selectedIds.includes(f.id));
@@ -1509,6 +2205,7 @@
         { id: "tech", label: "Tech Stack", icon: "🔧" },
         { id: "product", label: "Product Shape", icon: "🏗️" },
         { id: "wwxd", label: "What Would X Do?", icon: "🪞" },
+        { id: "scenarios", label: "Scenarios", icon: "🎬" },
       ];
 
       return (
@@ -1539,7 +2236,8 @@
                 {activeLens === "budget" && <PLBudgetLens selectedFeatures={selectedFeatures} />}
                 {activeLens === "tech" && <PLTechLens selectedFeatures={selectedFeatures} />}
                 {activeLens === "product" && <PLProductLens selectedFeatures={selectedFeatures} />}
-                {activeLens === "wwxd" && <PLDesignPhilosophy selectedFeatures={selectedFeatures} />}
+                {activeLens === "wwxd" && <PLDesignPhilosophy selectedFeatures={selectedFeatures} confirmedPhilosophy={confirmedPhilosophy} setConfirmedPhilosophy={setConfirmedPhilosophy} />}
+                {activeLens === "scenarios" && <PLScenarios selectedFeatureIds={selectedIds} />}
               </div>
             </div>
           </div>
@@ -1547,7 +2245,33 @@
       );
     }
 
-    function PLPRDDraft({ voted, selectedFeatureIds, confirmedArchetype, notBuilding, setNotBuilding, newNotBuilding, setNewNotBuilding, prdNotes, setPrdNotes, generatePRDMarkdown, stColors }) {
+    /* ── Simple Markdown→HTML renderer ─────────────────────── */
+    function renderMarkdownToHtml(md) {
+      return md
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^\*\*(.+?)\*\*/gm, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
+        .replace(/^---$/gm, '<hr/>')
+        .replace(/\|(.+)\|/g, (m) => {
+          const cells = m.split('|').filter(c => c.trim());
+          if (cells.every(c => c.trim().match(/^-+$/))) return '';
+          const tag = cells[0]?.trim().startsWith('**') ? 'th' : 'td';
+          return `<tr>${cells.map(c => `<${tag}>${c.trim().replace(/\*\*/g, '')}</${tag}>`).join('')}</tr>`;
+        })
+        .replace(/(<tr>.*<\/tr>\n?)+/g, (m) => `<table>${m}</table>`)
+        .replace(/~~(.+?)~~/g, '<del>$1</del>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<[hultdp])(.+)$/gm, '<p>$1</p>')
+        .replace(/<p><\/p>/g, '')
+        .replace(/<p>(<[hultdr])/g, '$1')
+        .replace(/(<\/[hultdr][^>]*>)<\/p>/g, '$1');
+    }
+
+    function PLPRDDraft({ voted, selectedFeatureIds, confirmedArchetype, notBuilding, setNotBuilding, newNotBuilding, setNewNotBuilding, prdNotes, setPrdNotes, generatePRDMarkdown, stColors, confirmedPhilosophy, visionStatement, setVisionStatement }) {
       const theme = useTheme();
       const isDark = theme.offWhite === "#1A1A1A";
       const [copied, setCopied] = useState(false);
@@ -1661,17 +2385,28 @@
             </div>
           </div>
           <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Product Vision Statement</div>
+            <textarea value={visionStatement} onChange={e => setVisionStatement(e.target.value)} placeholder="A digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice, makes student thinking visible to instructors, and creates feedback loops that close the gap between preparation and learning." style={{ width: "100%", minHeight: 60, padding: 12, fontSize: 12, fontFamily: SANS, border: `1px solid ${theme.lightGray}`, borderRadius: 6, background: theme.offWhite, color: theme.black, outline: "none", resize: "vertical", lineHeight: 1.6, boxSizing: "border-box" }} />
+            <div style={{ fontSize: 10, color: theme.medGray, marginTop: 4 }}>Edit to make it yours. This becomes Section 4 of the PRD.</div>
+          </div>
+          <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 20 }}>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 10, fontFamily: MONO }}>Additional Notes</div>
             <textarea value={prdNotes} onChange={e => setPrdNotes(e.target.value)} placeholder="Anything else the PRD should capture? Design preferences, technical constraints, questions for the team..." style={{ width: "100%", minHeight: 80, padding: 12, fontSize: 12, fontFamily: SANS, border: `1px solid ${theme.lightGray}`, borderRadius: 6, background: theme.offWhite, color: theme.black, outline: "none", resize: "vertical", lineHeight: 1.6, boxSizing: "border-box" }} />
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <button onClick={handleCopy} style={{ padding: "12px 24px", borderRadius: 8, border: "none", background: theme.black, color: theme.white, cursor: "pointer", fontWeight: 700, fontSize: 13, fontFamily: MONO }}>{copied ? "Copied!" : "Copy PRD to Clipboard"}</button>
-            <button onClick={() => setShowPreview(!showPreview)} style={{ padding: "12px 24px", borderRadius: 8, border: `1px solid ${theme.lightGray}`, background: theme.white, color: theme.black, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>{showPreview ? "Hide Preview" : "Preview Markdown"}</button>
+            <button onClick={() => setShowPreview(showPreview === "raw" ? false : "raw")} style={{ padding: "12px 24px", borderRadius: 8, border: `1px solid ${theme.lightGray}`, background: showPreview === "raw" ? theme.offWhite : theme.white, color: theme.black, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>Raw Markdown</button>
+            <button onClick={() => setShowPreview(showPreview === "formatted" ? false : "formatted")} style={{ padding: "12px 24px", borderRadius: 8, border: `1px solid ${theme.emerald}`, background: showPreview === "formatted" ? theme.emeraldLight : theme.white, color: theme.black, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>Formatted Preview</button>
             <button onClick={handleDownload} style={{ padding: "12px 24px", borderRadius: 8, border: `1px solid ${theme.lightGray}`, background: theme.white, color: theme.black, cursor: "pointer", fontWeight: 600, fontSize: 13, fontFamily: MONO }}>Download .md</button>
           </div>
-          {showPreview && (
+          {showPreview === "raw" && (
             <div style={{ marginTop: 16, padding: 20, background: isDark ? "#111" : "#1a1a1a", borderRadius: 8, fontFamily: MONO, fontSize: 11, color: "#e0e0e0", lineHeight: 1.7, whiteSpace: "pre-wrap", overflow: "auto", maxHeight: 500 }}>
               {generatePRDMarkdown()}
+            </div>
+          )}
+          {showPreview === "formatted" && (
+            <div style={{ marginTop: 16, border: `1px solid ${theme.lightGray}`, borderRadius: 8, overflow: "auto", maxHeight: 600, background: theme.white }}>
+              <div className="rendered-prd" dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(generatePRDMarkdown()) }} />
             </div>
           )}
         </div>
@@ -1697,14 +2432,16 @@
       const [dnaPosition, setDnaPosition] = useState(saved.dnaPosition || { x: 0.5, y: 0.5 });
       const [confirmedArchetype, setConfirmedArchetype] = useState(saved.confirmedArchetype || null);
       const [customPainPoints, setCustomPainPoints] = useState(saved.customPainPoints || { student: [], instructor: [], admin: [] });
+      const [confirmedPhilosophy, setConfirmedPhilosophy] = useState(saved.confirmedPhilosophy || null);
+      const [visionStatement, setVisionStatement] = useState(saved.visionStatement || "");
       const [notBuilding, setNotBuilding] = useState(saved.notBuilding || ["Full EMR integration", "Graded assessments (this is practice, not evaluation)", "Replacing FCM sessions entirely"]);
       const [prdNotes, setPrdNotes] = useState(saved.prdNotes || "");
       const [newPainPoint, setNewPainPoint] = useState({ student: "", instructor: "", admin: "" });
       const [newNotBuilding, setNewNotBuilding] = useState("");
 
       useEffect(() => {
-        try { localStorage.setItem("fcm-product-lab", JSON.stringify({ votes, selectedFeatures, dnaPosition, confirmedArchetype, customPainPoints, notBuilding, prdNotes })); } catch {}
-      }, [votes, selectedFeatures, dnaPosition, confirmedArchetype, customPainPoints, notBuilding, prdNotes]);
+        try { localStorage.setItem("fcm-product-lab", JSON.stringify({ votes, selectedFeatures, dnaPosition, confirmedArchetype, customPainPoints, notBuilding, prdNotes, confirmedPhilosophy, visionStatement })); } catch {}
+      }, [votes, selectedFeatures, dnaPosition, confirmedArchetype, customPainPoints, notBuilding, prdNotes, confirmedPhilosophy, visionStatement]);
 
       const toggleVote = useCallback((id) => { setVotes(prev => ({ ...prev, [id]: prev[id] ? 0 : 1 })); }, []);
 
@@ -1802,12 +2539,41 @@
 
         // Section 4: Vision
         md += `## 4. Vision\n\n`;
-        md += `A digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice, makes student thinking visible to instructors before sessions, and creates structured feedback loops that close the gap between preparation and learning.\n\n`;
+        md += visionStatement
+          ? `${visionStatement}\n\n`
+          : `A digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice, makes student thinking visible to instructors before sessions, and creates structured feedback loops that close the gap between preparation and learning.\n\n`;
 
         // Section 5: Archetype
         md += `${archMd}\n`;
 
-        // Section 6: Features
+        // Section: Design Philosophy
+        if (confirmedPhilosophy) {
+          const philData = [
+            { id: "duolingo", name: "Duolingo", phil: "Everything in 5 minutes. Gamify everything. Streaks for retention. Mobile-only." },
+            { id: "piazza", name: "Piazza", phil: "Two-sided: students post, instructors respond. Anonymous participation. Threaded discussions." },
+            { id: "strava", name: "Strava", phil: "Track everything. Peer comparison. Personal records. Social feed. Data makes effort visible." },
+            { id: "chatgpt", name: "ChatGPT", phil: "Conversational AI. Adapts to student level. Infinite depth. Always available." },
+          ].find(p => p.id === confirmedPhilosophy);
+          if (philData) {
+            md += `## ${sec}. Design Philosophy: ${philData.name}\n*Locked in during Product Lab*\n\n${philData.phil}\n\nThis philosophy should guide all UX and feature decisions. When in doubt, ask: "What would ${philData.name} do?"\n\n`;
+            sec++;
+          }
+        }
+
+        // Section: Usage Scenarios
+        const scenarios = PL_SCENARIOS || [];
+        if (scenarios.length > 0) {
+          md += `## ${sec}. Usage Scenarios\n\n`;
+          scenarios.forEach(s => {
+            md += `### ${s.name}\n*${s.scene}*\n\n- **Device:** ${s.device}\n- **When:** ${s.timing}\n- **FCM Steps:** ${s.steps}\n`;
+            const mappedFeats = selFeats.filter(f => (s.featureIds || []).includes(f.id));
+            if (mappedFeats.length > 0) md += `- **Features:** ${mappedFeats.map(f => `${f.icon} ${f.name}`).join(", ")}\n`;
+            md += `\n`;
+          });
+          sec++;
+        }
+
+        // Section: Features
         md += `## ${sec}. Selected Features (${totalCost}/${PL_BUDGET} build points)\n${featMd}\n\n`;
         sec++;
 
@@ -1844,7 +2610,7 @@
         md += `**To start building:** Paste this entire PRD into Claude Code or your preferred AI coding assistant. All context needed to understand the domain, users, and product decisions is included above.\n`;
 
         return md;
-      }, [selectedFeatures, confirmedArchetype, notBuilding, prdNotes, getVotedItems]);
+      }, [selectedFeatures, confirmedArchetype, notBuilding, prdNotes, getVotedItems, confirmedPhilosophy, visionStatement]);
 
       const voted = getVotedItems();
       const totalVoted = voted.painPoints.length + voted.wishes.length;
@@ -1879,10 +2645,10 @@
               </div>
             </div>
           </div>
-          {plTab === "evidence" && <PLEvidenceWall votes={votes} toggleVote={toggleVote} customPainPoints={customPainPoints} setCustomPainPoints={setCustomPainPoints} newPainPoint={newPainPoint} setNewPainPoint={setNewPainPoint} addPainPoint={addPainPoint} stColors={stColors} />}
+          {plTab === "evidence" && <PLEvidenceWall votes={votes} toggleVote={toggleVote} customPainPoints={customPainPoints} setCustomPainPoints={setCustomPainPoints} newPainPoint={newPainPoint} setNewPainPoint={setNewPainPoint} addPainPoint={addPainPoint} stColors={stColors} selectedFeatureIds={selectedFeatures} />}
           {plTab === "dna" && <PLProductDNA dnaPosition={dnaPosition} setDnaPosition={setDnaPosition} confirmedArchetype={confirmedArchetype} setConfirmedArchetype={setConfirmedArchetype} />}
-          {plTab === "builder" && <PLProductBuilder selectedIds={selectedFeatures} toggleFeature={toggleFeature} />}
-          {plTab === "prd" && <PLPRDDraft voted={voted} selectedFeatureIds={selectedFeatures} confirmedArchetype={confirmedArchetype} notBuilding={notBuilding} setNotBuilding={setNotBuilding} newNotBuilding={newNotBuilding} setNewNotBuilding={setNewNotBuilding} prdNotes={prdNotes} setPrdNotes={setPrdNotes} generatePRDMarkdown={generatePRDMarkdown} stColors={stColors} />}
+          {plTab === "builder" && <PLProductBuilder selectedIds={selectedFeatures} toggleFeature={toggleFeature} confirmedPhilosophy={confirmedPhilosophy} setConfirmedPhilosophy={setConfirmedPhilosophy} />}
+          {plTab === "prd" && <PLPRDDraft voted={voted} selectedFeatureIds={selectedFeatures} confirmedArchetype={confirmedArchetype} notBuilding={notBuilding} setNotBuilding={setNotBuilding} newNotBuilding={newNotBuilding} setNewNotBuilding={setNewNotBuilding} prdNotes={prdNotes} setPrdNotes={setPrdNotes} generatePRDMarkdown={generatePRDMarkdown} stColors={stColors} confirmedPhilosophy={confirmedPhilosophy} visionStatement={visionStatement} setVisionStatement={setVisionStatement} />}
         </div>
       );
     }
@@ -1905,6 +2671,7 @@
         try { return localStorage.getItem("fcm-dark-mode") === "true"; } catch { return false; }
       });
       const [mainTab, setMainTab] = useState("journey");
+      const [presentMode, setPresentMode] = useState(false);
       const theme = darkMode ? BRAND_DARK : BRAND;
       useEffect(() => { document.body.style.background = theme.offWhite; }, [theme.offWhite]);
       const toggleDarkMode = () => {
@@ -2249,11 +3016,22 @@
 
       return (
         <ThemeContext.Provider value={theme}>
+        {presentMode && SESSION_DATA && (
+          <StoryMode
+            onClose={() => setPresentMode(false)}
+            onEnterProductLab={() => { setPresentMode(false); setMainTab("productlab"); }}
+          />
+        )}
         <div style={{ maxWidth: mainTab === "productlab" ? 1100 : 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh", transition: "max-width 0.3s" }}>
           <div style={{ textAlign: "center", marginBottom: 32, position: "relative" }}>
-            <button onClick={toggleDarkMode} style={{ position: "absolute", top: 0, right: 0, background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1 }} title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>{darkMode ? "☀️" : "🌙"}</button>
-            <div style={{ fontFamily: MONO, fontSize: 13, color: theme.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; HEALTH DESIGN SPRINT 2026</div>
-            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: theme.black, fontFamily: MONO }}>FCM Journey Mapper</h1>
+            <div style={{ position: "absolute", top: 0, right: 0, display: "flex", gap: 8 }}>
+              {SESSION_DATA && (
+                <button onClick={() => setPresentMode(true)} style={{ background: theme.emerald, border: "none", borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#fff" }}>Present</button>
+              )}
+              <button onClick={toggleDarkMode} style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1 }} title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>{darkMode ? "☀️" : "🌙"}</button>
+            </div>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: theme.emerald, fontWeight: 700, letterSpacing: 1 }}>&lt;mdp&gt; {PROJECT_CONFIG.sprintShort.toUpperCase()}</div>
+            <h1 style={{ margin: "8px 0", fontSize: 28, fontWeight: 800, color: theme.black, fontFamily: MONO }}>{PROJECT_CONFIG.courseShort} Journey Mapper</h1>
             <p style={{ color: theme.medGray, fontSize: 15, margin: 0 }}>
               {mainTab === "productlab"
                 ? "Evidence → Build Points → PRD. Choose what ships."
@@ -2365,7 +3143,7 @@
           {mainTab === "productlab" && <ProductLab />}
 
           <div style={{ textAlign: "center", marginTop: 32, padding: "16px 0", borderTop: `1px solid ${theme.lightGray}` }}>
-            <p style={{ fontSize: 12, color: theme.medGray, fontFamily: MONO }}>&lt;mdp&gt; UVA Medical Design Program &middot; HDS 2026</p>
+            <p style={{ fontSize: 12, color: theme.medGray, fontFamily: MONO }}>&lt;mdp&gt; {PROJECT_CONFIG.institution} &middot; {PROJECT_CONFIG.sprintShort}</p>
           </div>
         </div>
         </ThemeContext.Provider>
