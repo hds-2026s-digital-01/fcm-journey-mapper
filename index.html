@@ -63,6 +63,41 @@
     .story-cell-detail { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 90vw); z-index: 1010; background: #1A1A1A; border-left: 1px solid #374151; padding: 24px; overflow-y: auto; box-shadow: -4px 0 20px rgba(0,0,0,0.5); }
     .story-yield-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 20px; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
     .story-stability-badge { display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    /* ── Story Design Pages (9-17) ───────────────────────── */
+    .story-discussion {
+      border-left: 3px solid #10B981; padding: 14px 18px; margin: 20px 0;
+      background: rgba(16,185,129,0.06); border-radius: 0 8px 8px 0;
+      font-size: 14px; color: #D1FAE5; line-height: 1.6;
+    }
+    .story-instructor {
+      font-size: 12px; color: #6B7280; font-style: italic; margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .story-feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px; width: 100%;
+    }
+    .story-two-col {
+      display: grid; grid-template-columns: 1fr 320px; gap: 24px; width: 100%;
+    }
+    @media (max-width: 800px) {
+      .story-two-col { grid-template-columns: 1fr; }
+    }
+    .story-section-label {
+      display: inline-block; padding: 3px 12px; border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-weight: 700; letter-spacing: 0.1em; margin-bottom: 12px;
+    }
+    .story-prd-box {
+      background: #FFFFFF; color: #1A1A1A; border-radius: 12px;
+      padding: 0; overflow: hidden; max-height: 500px; overflow-y: auto;
+      border: 1px solid #374151;
+    }
+    .story-nav-group-label {
+      font-size: 9px; font-family: 'JetBrains Mono', monospace;
+      color: #6B7280; text-align: center; margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
     /* ── Free Browse Tabs ──────────────────────────────────── */
     .browse-tabs { display: flex; gap: 0; border-bottom: 1px solid #374151; margin-bottom: 24px; }
     .browse-tab { padding: 10px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6B7280; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
@@ -1148,14 +1183,14 @@
     }
 
     /* ── Story Mode: ConvergenceBridge (Page 8) ──────────── */
-    function ConvergenceBridge({ onEnterProductLab }) {
+    function ConvergenceBridge() {
       const cumYield = SESSION_DATA?.cumulative?.yieldOpportunities || [];
       const top3 = cumYield.slice(0, 3);
       return (
         <div className="story-page">
           <h3>CONVERGE</h3>
           <h2>What This Means</h2>
-          <p className="story-subtitle">Your research points to a clear product opportunity.</p>
+          <p className="story-subtitle">Your research points to a clear product opportunity. Now let's decide what to build.</p>
           <div style={{ width: "100%", maxWidth: 700, marginBottom: 40 }}>
             {top3.map((opp, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "16px 20px", background: "#1F2937", borderRadius: 10, marginBottom: 8, border: i === 0 ? "1px solid rgba(239,68,68,0.3)" : "1px solid #374151" }}>
@@ -1170,20 +1205,17 @@
               </div>
             ))}
           </div>
-          <div style={{ maxWidth: 600, textAlign: "center", marginBottom: 32 }}>
+          <div style={{ maxWidth: 600, textAlign: "center" }}>
             <p style={{ fontSize: 15, color: "#D1D5DB", lineHeight: 1.6 }}>
-              Now let's decide what to build — and make real tradeoffs. The Product Lab turns these opportunities into features, features into budget decisions, and budget decisions into a PRD.
+              The next 9 pages walk you through the design decisions: scenarios, evidence voting, feature selection, budget tradeoffs, and your final PRD. Let's build.
             </p>
           </div>
-          <button className="story-nav-btn primary" onClick={onEnterProductLab} style={{ fontSize: 16, padding: "14px 32px" }}>
-            Enter Product Lab →
-          </button>
         </div>
       );
     }
 
     /* ── Story Mode: FreeBrowse ──────────────────────────── */
-    function FreeBrowse({ onCellClick, onEnterProductLab }) {
+    function FreeBrowse({ onCellClick }) {
       const [browseTab, setBrowseTab] = useState("impact");
       const tabs = [
         { id: "impact", label: "Impact Summary" },
@@ -1209,27 +1241,63 @@
             </div>
           )}
           {browseTab === "map" && <SwimlaneMap onCellClick={onCellClick} />}
-          {browseTab === "convergence" && <ConvergenceBridge onEnterProductLab={onEnterProductLab} />}
+          {browseTab === "convergence" && <ConvergenceBridge />}
         </div>
       );
     }
 
     /* ── Story Mode: Container ───────────────────────────── */
-    function StoryMode({ onClose, onEnterProductLab }) {
+    function StoryMode({ onClose }) {
       const [page, setPage] = useState(0);
       const [mode, setMode] = useState("story"); // "story" or "browse"
       const [cellDetail, setCellDetail] = useState(null);
-      const totalPages = 9; // 0=landing, 1-8=content
+      const totalPages = 18; // 0=landing, 1-8=research, 9-17=design
+
+      // Lifted Product Lab state
+      const plSaved = useMemo(() => {
+        try { return JSON.parse(localStorage.getItem("fcm-product-lab")) || {}; } catch { return {}; }
+      }, []);
+      const [votes, setVotes] = useState(plSaved.votes || {});
+      const [selectedFeatures, setSelectedFeatures] = useState(plSaved.selectedFeatures || []);
+      const [customPainPoints, setCustomPainPoints] = useState(plSaved.customPainPoints || { student: [], instructor: [], admin: [] });
+      const [newPainPoint, setNewPainPoint] = useState({ student: "", instructor: "", admin: "" });
+      const [confirmedArchetype, setConfirmedArchetype] = useState(plSaved.confirmedArchetype || null);
+      const [confirmedPhilosophy, setConfirmedPhilosophy] = useState(plSaved.confirmedPhilosophy || null);
+      const [visionStatement, setVisionStatement] = useState(plSaved.visionStatement || "");
+      const [notBuilding, setNotBuilding] = useState(plSaved.notBuilding || ["Full EMR integration", "Graded assessments (this is practice, not evaluation)", "Replacing FCM sessions entirely"]);
+      const [newNotBuilding, setNewNotBuilding] = useState("");
+      const [prdNotes, setPrdNotes] = useState(plSaved.prdNotes || "");
+
+      // Persist to localStorage
+      useEffect(() => {
+        try { localStorage.setItem("fcm-product-lab", JSON.stringify({ votes, selectedFeatures, dnaPosition: plSaved.dnaPosition || { x: 0.5, y: 0.5 }, confirmedArchetype, customPainPoints, notBuilding, prdNotes, confirmedPhilosophy, visionStatement })); } catch {}
+      }, [votes, selectedFeatures, confirmedArchetype, customPainPoints, notBuilding, prdNotes, confirmedPhilosophy, visionStatement]);
+
+      const toggleVote = useCallback((id) => { setVotes(prev => ({ ...prev, [id]: prev[id] ? 0 : 1 })); }, []);
+      const toggleFeature = useCallback((id) => { setSelectedFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]); }, []);
+      const addPainPoint = useCallback((stakeholder) => {
+        if (!newPainPoint[stakeholder]?.trim()) return;
+        setCustomPainPoints(prev => ({ ...prev, [stakeholder]: [...(prev[stakeholder] || []), { id: `custom-${Date.now()}`, text: newPainPoint[stakeholder].trim(), custom: true }] }));
+        setNewPainPoint(prev => ({ ...prev, [stakeholder]: "" }));
+      }, [newPainPoint]);
+
+      const prdMarkdown = useMemo(() => {
+        return generatePRDMarkdownShared({ selectedFeatures, votes, customPainPoints, confirmedArchetype, confirmedPhilosophy, visionStatement, notBuilding, prdNotes });
+      }, [selectedFeatures, votes, customPainPoints, confirmedArchetype, confirmedPhilosophy, visionStatement, notBuilding, prdNotes]);
 
       const handleCellClick = useCallback((perspKey, stepId) => {
         setCellDetail({ perspKey, stepId });
       }, []);
 
-      // Arrow key navigation
+      const goToPage = useCallback((p) => setPage(p), []);
+
+      // Arrow key navigation with input/textarea guard
       useEffect(() => {
         if (mode !== "story") return;
         const handler = (e) => {
-          if (cellDetail) return; // Don't navigate when detail overlay is open
+          if (cellDetail) return;
+          const tag = document.activeElement?.tagName;
+          if (tag === "INPUT" || tag === "TEXTAREA") return;
           if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); setPage(p => Math.min(p + 1, totalPages - 1)); }
           if (e.key === "ArrowLeft") { e.preventDefault(); setPage(p => Math.max(p - 1, 0)); }
           if (e.key === "Escape") onClose();
@@ -1238,16 +1306,13 @@
         return () => window.removeEventListener("keydown", handler);
       }, [mode, onClose, cellDetail]);
 
-      const handleEnterPL = useCallback(() => {
-        onClose();
-        onEnterProductLab();
-      }, [onClose, onEnterProductLab]);
+      const isResearchPhase = page <= 8;
 
       return (
         <div className="story-overlay">
           <button className="story-close" onClick={onClose}>✕ Exit</button>
 
-          {page > 0 && <div className="story-toggle">
+          {page > 0 && isResearchPhase && <div className="story-toggle">
             <button
               className="story-nav-btn"
               onClick={() => setMode(mode === "story" ? "browse" : "story")}
@@ -1271,25 +1336,625 @@
               {page === 2 && <ProcessChain />}
               {page >= 3 && page <= 6 && <MomentCard momentConfig={PROJECT_CONFIG.storyMoments[page - 3]} pageNumber={page} />}
               {page === 7 && <SwimlaneMap onCellClick={handleCellClick} />}
-              {page === 8 && <ConvergenceBridge onEnterProductLab={handleEnterPL} />}
+              {page === 8 && <ConvergenceBridge />}
+              {page === 9 && <StoryScenarios />}
+              {page === 10 && <StoryEvidence votes={votes} toggleVote={toggleVote} customPainPoints={customPainPoints} setCustomPainPoints={setCustomPainPoints} newPainPoint={newPainPoint} setNewPainPoint={setNewPainPoint} addPainPoint={addPainPoint} />}
+              {page === 11 && <StoryFeatureMenu votes={votes} />}
+              {page === 12 && <StoryBudgetBuild selectedFeatures={selectedFeatures} toggleFeature={toggleFeature} votes={votes} />}
+              {page === 13 && <StoryQuickWins selectedFeatures={selectedFeatures} />}
+              {page === 14 && <StorySynergyLoops selectedFeatures={selectedFeatures} />}
+              {page === 15 && <StoryScenarioCheck selectedFeatures={selectedFeatures} goToPage={goToPage} />}
+              {page === 16 && <StoryConverge selectedFeatures={selectedFeatures} votes={votes} customPainPoints={customPainPoints} visionStatement={visionStatement} setVisionStatement={setVisionStatement} notBuilding={notBuilding} setNotBuilding={setNotBuilding} newNotBuilding={newNotBuilding} setNewNotBuilding={setNewNotBuilding} prdNotes={prdNotes} setPrdNotes={setPrdNotes} />}
+              {page === 17 && <StoryShipIt prdMarkdown={prdMarkdown} />}
 
               <div className="story-nav">
                 <button className="story-nav-btn" onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0} style={{ opacity: page === 0 ? 0.3 : 1 }}>← Back</button>
-                <div style={{ display: "flex", gap: 6 }}>
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button key={i} className={`story-dot ${page === i ? "active" : ""}`} onClick={() => setPage(i)} />
-                  ))}
+                <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div className="story-nav-group-label">Research</div>
+                    <div style={{ display: "flex", gap: 4 }}>
+                      {Array.from({ length: 9 }, (_, i) => (
+                        <button key={i} className={`story-dot ${page === i ? "active" : ""}`} onClick={() => setPage(i)} />
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ width: 1, height: 16, background: "#374151" }} />
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div className="story-nav-group-label">Design</div>
+                    <div style={{ display: "flex", gap: 4 }}>
+                      {Array.from({ length: 9 }, (_, i) => (
+                        <button key={i + 9} className={`story-dot ${page === i + 9 ? "active" : ""}`} onClick={() => setPage(i + 9)} />
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <button className={`story-nav-btn ${page < totalPages - 1 ? "primary" : ""}`} onClick={() => page < totalPages - 1 ? setPage(p => p + 1) : handleEnterPL()}>
-                  {page === 0 ? "Begin →" : page < totalPages - 1 ? "Next →" : "Enter Product Lab →"}
+                <button className={`story-nav-btn ${page < totalPages - 1 ? "primary" : ""}`} onClick={() => page < totalPages - 1 ? setPage(p => p + 1) : onClose()}>
+                  {page === 0 ? "Begin →" : page < totalPages - 1 ? "Next →" : "Done"}
                 </button>
               </div>
             </>
           ) : (
-            <FreeBrowse onCellClick={handleCellClick} onEnterProductLab={handleEnterPL} />
+            <FreeBrowse onCellClick={handleCellClick} />
           )}
 
           {cellDetail && <CellDetail perspKey={cellDetail.perspKey} stepId={cellDetail.stepId} onClose={() => setCellDetail(null)} />}
+        </div>
+      );
+    }
+
+    /* ── Story Design Pages (9-17) ─────────────────────────────── */
+
+    const SECTION_COLORS = {
+      DESIGN: { bg: "rgba(124,58,237,0.15)", color: "#A78BFA" },
+      EVIDENCE: { bg: "rgba(59,130,246,0.15)", color: "#60A5FA" },
+      BUILD: { bg: "rgba(245,158,11,0.15)", color: "#F59E0B" },
+      STRATEGY: { bg: "rgba(16,185,129,0.15)", color: "#10B981" },
+      VALIDATE: { bg: "rgba(239,68,68,0.15)", color: "#EF4444" },
+      CONVERGE: { bg: "rgba(99,102,241,0.15)", color: "#818CF8" },
+      SHIP: { bg: "rgba(16,185,129,0.15)", color: "#10B981" },
+    };
+
+    function SectionLabel({ label }) {
+      const sc = SECTION_COLORS[label] || SECTION_COLORS.BUILD;
+      return <span className="story-section-label" style={{ background: sc.bg, color: sc.color }}>{label}</span>;
+    }
+
+    function NarrativeIntro({ children }) {
+      return <p className="story-subtitle" style={{ marginBottom: 24 }}>{children}</p>;
+    }
+
+    function DiscussionPrompt({ children }) {
+      return <div className="story-discussion">{children}</div>;
+    }
+
+    function InstructorNote({ children }) {
+      return <div className="story-instructor">{children}</div>;
+    }
+
+    /* Page 9 — Scenarios */
+    function StoryScenarios() {
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <SectionLabel label="DESIGN" />
+          <h2>"What We're Building For"</h2>
+          <NarrativeIntro>Your research revealed 5 real moments in the FCM cycle where a product could make a difference. These aren't hypothetical — they came from your own words.</NarrativeIntro>
+
+          <div style={{ width: "100%", maxWidth: 800 }}>
+            {PL_SCENARIOS.map((s, i) => (
+              <div key={s.id} style={{ background: "#1F2937", borderRadius: 12, padding: 20, marginBottom: 12, border: "1px solid #374151" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                  <span style={{ fontSize: 28 }}>{s.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{s.name}</div>
+                    <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                      <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, background: "rgba(59,130,246,0.15)", color: "#60A5FA", fontFamily: MONO, fontWeight: 600 }}>{s.device}</span>
+                      <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, background: "rgba(16,185,129,0.15)", color: "#10B981", fontFamily: MONO, fontWeight: 600 }}>{s.timing}</span>
+                    </div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 13, color: "#D1D5DB", lineHeight: 1.6, margin: "0 0 10px", fontStyle: "italic" }}>"{s.scene}"</p>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {s.featureIds.map(fId => {
+                    const f = PL_FEATURES.find(ff => ff.id === fId);
+                    return f ? <span key={fId} style={{ fontSize: 10, padding: "2px 8px", borderRadius: 6, background: "rgba(255,255,255,0.06)", color: "#9CA3AF", fontFamily: MONO }}>{f.icon} {f.name}</span> : null;
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DiscussionPrompt>Which of these 5 moments feels most broken? Where would you want help first?</DiscussionPrompt>
+          <InstructorNote>~5 min. Walk through each scenario aloud. Let students react before moving on.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 10 — Evidence Wall */
+    function StoryEvidence({ votes, toggleVote, customPainPoints, setCustomPainPoints, newPainPoint, setNewPainPoint, addPainPoint }) {
+      const totalVoted = Object.values(votes).filter(Boolean).length;
+      return (
+        <div className="story-page" style={{ paddingBottom: 100, maxWidth: 1100 }}>
+          <SectionLabel label="EVIDENCE" />
+          <h2>"What You Told Us"</h2>
+          <NarrativeIntro>These pain points and wishes came directly from your journey mapping sessions. Click to prioritize the ones that matter most — your votes shape the product.</NarrativeIntro>
+
+          <div style={{ marginBottom: 16, textAlign: "center" }}>
+            <span style={{ fontSize: 20, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{totalVoted}</span>
+            <span style={{ fontSize: 13, color: "#9CA3AF", marginLeft: 8 }}>items prioritized</span>
+          </div>
+
+          <ThemeContext.Provider value={BRAND_DARK}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, width: "100%" }}>
+              {Object.entries(PL_EVIDENCE).map(([key, data]) => {
+                const sc = { color: key === "student" ? "#10B981" : key === "instructor" ? "#A78BFA" : "#EF4444", bg: key === "student" ? "#064E3B" : key === "instructor" ? "#4C1D95" : "#7F1D1D" };
+                return (
+                  <div key={key} style={{ background: "#1F2937", border: "1px solid #374151", borderRadius: 10, overflow: "hidden" }}>
+                    <div style={{ background: sc.bg, padding: "14px 16px", borderBottom: "1px solid #374151" }}>
+                      <div style={{ fontSize: 18, marginBottom: 2 }}>{data.emoji}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: sc.color, fontFamily: MONO }}>{data.label}</div>
+                    </div>
+                    <div style={{ padding: 16 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 10, fontFamily: MONO }}>Pain Points</div>
+                      {data.painPoints.map(item => (
+                        <button key={item.id} onClick={() => toggleVote(item.id)} style={{ display: "flex", alignItems: "flex-start", gap: 8, width: "100%", padding: "8px 10px", marginBottom: 6, fontSize: 12, fontFamily: SANS, lineHeight: 1.5, textAlign: "left", background: votes[item.id] ? "#78350F" : "#1A1A1A", border: `1px solid ${votes[item.id] ? "#EA580C" : "#374151"}`, borderRadius: 6, cursor: "pointer", color: "#F9FAFB", transition: "all 0.15s" }}>
+                          <span style={{ fontSize: 14, flexShrink: 0 }}>{votes[item.id] ? "🔥" : "○"}</span>
+                          <span>{item.text}</span>
+                        </button>
+                      ))}
+                      {(customPainPoints[key] || []).map(item => (
+                        <button key={item.id} onClick={() => toggleVote(item.id)} style={{ display: "flex", alignItems: "flex-start", gap: 8, width: "100%", padding: "8px 10px", marginBottom: 6, fontSize: 12, fontFamily: SANS, lineHeight: 1.5, textAlign: "left", background: votes[item.id] ? "#78350F" : "#1A1A1A", border: `1px solid ${votes[item.id] ? "#EA580C" : "#374151"}`, borderRadius: 6, cursor: "pointer", color: "#F9FAFB", transition: "all 0.15s" }}>
+                          <span style={{ fontSize: 14, flexShrink: 0 }}>{votes[item.id] ? "🔥" : "○"}</span>
+                          <span><span style={{ fontSize: 10, color: "#60A5FA", fontWeight: 600 }}>ADDED </span>{item.text}</span>
+                        </button>
+                      ))}
+                      <div style={{ display: "flex", gap: 6, marginTop: 8, marginBottom: 16 }}>
+                        <input type="text" value={newPainPoint[key] || ""} onChange={e => setNewPainPoint(prev => ({ ...prev, [key]: e.target.value }))} onKeyDown={e => e.key === "Enter" && addPainPoint(key)} placeholder="Add pain point..." style={{ flex: 1, padding: "6px 10px", fontSize: 12, fontFamily: MONO, border: "1px solid #374151", borderRadius: 6, background: "#1A1A1A", color: "#F9FAFB", outline: "none" }} />
+                        <button onClick={() => addPainPoint(key)} style={{ padding: "6px 12px", fontSize: 12, fontFamily: MONO, fontWeight: 700, background: "#F9FAFB", color: "#1A1A1A", border: "none", borderRadius: 6, cursor: "pointer" }}>+</button>
+                      </div>
+                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 10, fontFamily: MONO }}>Wishes</div>
+                      {data.wishes.map(item => (
+                        <button key={item.id} onClick={() => toggleVote(item.id)} style={{ display: "flex", alignItems: "flex-start", gap: 8, width: "100%", padding: "8px 10px", marginBottom: 6, fontSize: 12, fontFamily: SANS, lineHeight: 1.5, textAlign: "left", background: votes[item.id] ? "#1E3A5F" : "#1A1A1A", border: `1px solid ${votes[item.id] ? "#3B82F6" : "#374151"}`, borderRadius: 6, cursor: "pointer", color: "#F9FAFB", transition: "all 0.15s" }}>
+                          <span style={{ fontSize: 14, flexShrink: 0 }}>{votes[item.id] ? "⭐" : "○"}</span>
+                          <span>{item.text}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </ThemeContext.Provider>
+
+          <DiscussionPrompt>Look at what the group prioritized. Any surprises? Anything missing?</DiscussionPrompt>
+          <InstructorNote>~5 min. Students click to vote. Watch the counter update. Discuss top picks.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 11 — Feature Menu (read-only) */
+    function StoryFeatureMenu({ votes }) {
+      const costTiers = [
+        { cost: 1, label: "1 pt — Quick Adds" },
+        { cost: 2, label: "2 pts — Light Builds" },
+        { cost: 3, label: "3 pts — Core Features" },
+        { cost: 4, label: "4 pts — Heavy Lifts" },
+      ];
+      const votedIds = new Set(Object.keys(votes).filter(k => votes[k]));
+      return (
+        <div className="story-page" style={{ paddingBottom: 100, maxWidth: 900 }}>
+          <SectionLabel label="BUILD" />
+          <h2>"11 Ways to Fix This"</h2>
+          <NarrativeIntro>Here are all the features your team could build — designed to address the evidence you just prioritized. But you can't build them all.</NarrativeIntro>
+
+          <div style={{ width: "100%", marginBottom: 24, padding: "12px 20px", background: "#1F2937", borderRadius: 8, display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ height: 8, flex: 1, background: "#374151", borderRadius: 4, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: "0%", background: "#10B981", borderRadius: 4 }} />
+            </div>
+            <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: "#6B7280" }}>0 / {PL_BUDGET}</span>
+          </div>
+
+          {costTiers.map(tier => {
+            const features = PL_FEATURES.filter(f => f.cost === tier.cost);
+            if (features.length === 0) return null;
+            return (
+              <div key={tier.cost} style={{ marginBottom: 24, width: "100%" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, fontFamily: MONO, color: "#F59E0B", marginBottom: 10 }}>{tier.label}</div>
+                <div className="story-feature-grid">
+                  {features.map(f => {
+                    const hasVotedEvidence = (f.addressesEvidence || []).some(eId => votedIds.has(eId));
+                    return (
+                      <div key={f.id} style={{ background: "#1F2937", border: `1px solid ${hasVotedEvidence ? "rgba(59,130,246,0.4)" : "#374151"}`, borderRadius: 8, padding: "12px 14px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                          <span style={{ fontSize: 20 }}>{f.icon}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{f.name}</span>
+                          <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: "#78350F", color: "#F59E0B", fontFamily: MONO, marginLeft: "auto" }}>{f.cost} pt{f.cost !== 1 ? "s" : ""}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: "#9CA3AF", lineHeight: 1.5, marginBottom: 6 }}>{f.description}</div>
+                        {hasVotedEvidence && <div style={{ fontSize: 10, color: "#60A5FA", fontFamily: MONO }}>Addresses your prioritized evidence</div>}
+                        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                          {f.stakeholders.map(s => (
+                            <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: 3, color: s === "student" ? "#10B981" : s === "instructor" ? "#A78BFA" : "#EF4444", background: s === "student" ? "#064E3B" : s === "instructor" ? "#4C1D95" : "#7F1D1D", fontFamily: MONO, textTransform: "uppercase" }}>{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+
+          <DiscussionPrompt>Look at the menu. What jumps out? Which features feel like must-haves vs. nice-to-haves?</DiscussionPrompt>
+          <InstructorNote>~5 min. Read-only view — let tension build. They'll get to choose on the next page.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 12 — Budget Build (core negotiation) */
+    function StoryBudgetBuild({ selectedFeatures, toggleFeature, votes }) {
+      const selFeats = PL_FEATURES.filter(f => selectedFeatures.includes(f.id));
+      const totalCost = selFeats.reduce((sum, f) => sum + f.cost, 0);
+      const overBudget = totalCost > PL_BUDGET;
+      const pct = Math.min(100, (totalCost / PL_BUDGET) * 100);
+      const votedIds = new Set(Object.keys(votes).filter(k => votes[k]));
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100, maxWidth: 1100 }}>
+          <SectionLabel label="BUILD" />
+          <h2>"10 Points. Real Tradeoffs."</h2>
+          <NarrativeIntro>You have {PL_BUDGET} build points. Every feature has a cost. You can't build everything — choose what matters most.</NarrativeIntro>
+
+          <div className="story-two-col">
+            <div>
+              {PL_FEATURES.map(f => {
+                const selected = selectedFeatures.includes(f.id);
+                const hasVotedEvidence = (f.addressesEvidence || []).some(eId => votedIds.has(eId));
+                return (
+                  <button key={f.id} onClick={() => toggleFeature(f.id)} style={{ display: "flex", alignItems: "flex-start", gap: 10, width: "100%", padding: "12px 14px", marginBottom: 8, textAlign: "left", fontFamily: SANS, background: selected ? "rgba(16,185,129,0.12)" : "#1F2937", border: `2px solid ${selected ? "#10B981" : "#374151"}`, borderRadius: 8, cursor: overBudget && !selected ? "not-allowed" : "pointer", opacity: overBudget && !selected ? 0.5 : 1, transition: "all 0.15s", color: "#F9FAFB" }}>
+                    <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+                        <span style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO }}>{f.name}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: "#78350F", color: "#F59E0B", fontFamily: MONO }}>{f.cost} pt{f.cost !== 1 ? "s" : ""}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: "#9CA3AF", lineHeight: 1.5, marginBottom: 4 }}>{f.description}</div>
+                      {hasVotedEvidence && <div style={{ fontSize: 10, color: "#60A5FA", fontFamily: MONO }}>Addresses your prioritized evidence</div>}
+                      {f.realityWarning && <div style={{ fontSize: 10, color: "#F59E0B", marginTop: 2 }}>Reality: {f.realityWarning}</div>}
+                    </div>
+                    <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>{selected ? "✅" : "○"}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={{ position: "sticky", top: 80, alignSelf: "start" }}>
+              <div style={{ background: "#1F2937", borderRadius: 12, padding: 20, border: "1px solid #374151" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 16, fontFamily: MONO }}>Budget</div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: overBudget ? "#EF4444" : "#10B981" }}>{totalCost}</span>
+                  <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: "#6B7280" }}>/ {PL_BUDGET}</span>
+                </div>
+                <div style={{ height: 8, background: "#374151", borderRadius: 4, overflow: "hidden", marginBottom: 8 }}>
+                  <div style={{ height: "100%", width: `${pct}%`, background: overBudget ? "#EF4444" : pct > 80 ? "#F59E0B" : "#10B981", borderRadius: 4, transition: "all 0.3s" }} />
+                </div>
+                {overBudget && <div style={{ fontSize: 12, color: "#EF4444", fontWeight: 600, fontFamily: MONO }}>Over budget by {totalCost - PL_BUDGET} pts! Remove features.</div>}
+                {!overBudget && totalCost > 0 && <div style={{ fontSize: 12, color: "#10B981", fontFamily: MONO }}>{PL_BUDGET - totalCost} points remaining</div>}
+
+                {selFeats.length > 0 && (
+                  <div style={{ marginTop: 16 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", marginBottom: 8, fontFamily: MONO }}>SELECTED</div>
+                    {selFeats.sort((a, b) => b.cost - a.cost).map(f => (
+                      <div key={f.id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #374151", fontSize: 12 }}>
+                        <span style={{ color: "#F9FAFB" }}>{f.icon} {f.name}</span>
+                        <span style={{ fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{f.cost}pt</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", marginBottom: 8, fontFamily: MONO }}>FCM CYCLE COVERAGE</div>
+                  <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+                    {PL_FCM_STEPS.map(step => {
+                      const covered = selFeats.some(f => (f.affectsSteps || []).includes(step.id));
+                      return <span key={step.id} style={{ fontSize: 9, padding: "3px 6px", borderRadius: 4, background: covered ? "rgba(16,185,129,0.15)" : "rgba(55,65,81,0.3)", color: covered ? "#10B981" : "#4B5563", fontFamily: MONO, fontWeight: 600 }}>{step.short}</span>;
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DiscussionPrompt>You're over budget? What gets cut? Defend your choices to the group.</DiscussionPrompt>
+          <InstructorNote>~10 min. This is the core negotiation. Let debate happen. Over-budget is intentional — force tradeoffs.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 13 — Quick Wins vs Full System */
+    function StoryQuickWins({ selectedFeatures }) {
+      const selFeats = PL_FEATURES.filter(f => selectedFeatures.includes(f.id));
+      const quickWins = selFeats.filter(f => f.cost <= 2 && (f.requires || []).length <= 2 && !(f.requires || []).includes("ai-llm") && !(f.requires || []).includes("auth"));
+      const fullSystem = selFeats.filter(f => !quickWins.includes(f));
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <SectionLabel label="STRATEGY" />
+          <h2>"What Ships First?"</h2>
+          <NarrativeIntro>Not everything ships at once. Some features are quick wins — low cost, few dependencies. Others need the full system. Here's how your choices split.</NarrativeIntro>
+
+          {selFeats.length === 0 ? (
+            <div style={{ padding: 40, textAlign: "center", color: "#6B7280" }}>
+              <p style={{ fontSize: 16 }}>No features selected yet. Go back to the budget page to make your picks.</p>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, width: "100%", maxWidth: 800 }}>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 12 }}>Quick Wins ({quickWins.length})</div>
+                <div style={{ fontSize: 11, color: "#9CA3AF", marginBottom: 16 }}>Low cost, few deps. Ship these first.</div>
+                {quickWins.length === 0 && <div style={{ fontSize: 12, color: "#4B5563", fontStyle: "italic" }}>No quick wins in your selection</div>}
+                {quickWins.map(f => (
+                  <div key={f.id} style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 8, padding: 12, marginBottom: 8 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{f.icon} {f.name}</div>
+                    <div style={{ fontSize: 10, color: "#10B981", fontFamily: MONO, marginTop: 4 }}>{f.cost}pt · needs: {(f.requires || []).join(", ") || "nothing"}</div>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, fontFamily: MONO, color: "#F59E0B", marginBottom: 12 }}>Full System ({fullSystem.length})</div>
+                <div style={{ fontSize: 11, color: "#9CA3AF", marginBottom: 16 }}>Higher cost or heavy deps. Phase 2+.</div>
+                {fullSystem.length === 0 && <div style={{ fontSize: 12, color: "#4B5563", fontStyle: "italic" }}>All your picks are quick wins!</div>}
+                {fullSystem.map(f => (
+                  <div key={f.id} style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 8, padding: 12, marginBottom: 8 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{f.icon} {f.name}</div>
+                    <div style={{ fontSize: 10, color: "#F59E0B", fontFamily: MONO, marginTop: 4 }}>{f.cost}pt · needs: {(f.requires || []).join(", ")}</div>
+                    {f.realityWarning && <div style={{ fontSize: 10, color: "#9CA3AF", marginTop: 2 }}>{f.realityWarning}</div>}
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                      {(f.requires || []).map(r => {
+                        const req = PL_TECH_REQS[r];
+                        return req ? <span key={r} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "#374151", color: "#9CA3AF", fontFamily: MONO }}>{req.icon} {req.label}</span> : null;
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <DiscussionPrompt>If you could only ship quick wins for v1, would that be enough? What's the minimum viable product?</DiscussionPrompt>
+          <InstructorNote>~5 min. Frame the MVP conversation. Quick wins = what you demo next week.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 14 — Synergy Loops */
+    function StorySynergyLoops({ selectedFeatures }) {
+      const selIds = new Set(selectedFeatures);
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <SectionLabel label="STRATEGY" />
+          <h2>"The Loops That Make It Work"</h2>
+          <NarrativeIntro>Great products create reinforcing loops — features that feed into each other. Here are the three loops in this product space.</NarrativeIntro>
+
+          <div style={{ width: "100%", maxWidth: 800 }}>
+            {PL_SYNERGIES.map(syn => {
+              const featureStates = syn.features.map(fId => ({
+                feature: PL_FEATURES.find(f => f.id === fId),
+                selected: selIds.has(fId),
+              }));
+              const selectedCount = featureStates.filter(fs => fs.selected).length;
+              const isComplete = selectedCount === syn.features.length;
+              const isPartial = selectedCount > 0 && !isComplete;
+              const missingFeatures = featureStates.filter(fs => !fs.selected);
+
+              return (
+                <div key={syn.id} style={{ background: "#1F2937", borderRadius: 12, padding: 20, marginBottom: 16, border: `2px solid ${isComplete ? "#10B981" : isPartial ? "#F59E0B" : "#374151"}` }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                    <span style={{ fontSize: 28 }}>{syn.icon}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{syn.name}</div>
+                      <div style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5 }}>{syn.description}</div>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 700, fontFamily: MONO, padding: "4px 12px", borderRadius: 8, background: isComplete ? "rgba(16,185,129,0.15)" : isPartial ? "rgba(245,158,11,0.15)" : "rgba(107,114,128,0.15)", color: isComplete ? "#10B981" : isPartial ? "#F59E0B" : "#6B7280" }}>
+                      {isComplete ? "Complete" : `${selectedCount}/${syn.features.length}`}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+                    {featureStates.map(({ feature, selected }) => (
+                      <div key={feature.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, background: selected ? "rgba(16,185,129,0.12)" : "rgba(55,65,81,0.3)", border: `1px solid ${selected ? "#10B981" : "#374151"}` }}>
+                        <span style={{ fontSize: 14 }}>{feature.icon}</span>
+                        <span style={{ fontSize: 11, fontFamily: MONO, color: selected ? "#10B981" : "#6B7280", fontWeight: selected ? 700 : 400 }}>{feature.name}</span>
+                        <span style={{ fontSize: 10 }}>{selected ? "✅" : "⬜"}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {isPartial && missingFeatures.length > 0 && (
+                    <div style={{ marginTop: 10, fontSize: 12, color: "#F59E0B", fontStyle: "italic" }}>
+                      Add {missingFeatures.map(fs => `${fs.feature.name} (${fs.feature.cost}pt)`).join(" + ")} to complete this loop
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <DiscussionPrompt>Which loops did you complete? Are the incomplete ones worth finishing — or is the cost too high?</DiscussionPrompt>
+          <InstructorNote>~5 min. Highlight that individual features are good, but loops create defensible products.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 15 — Scenario Coverage Check */
+    function StoryScenarioCheck({ selectedFeatures, goToPage }) {
+      const selIds = new Set(selectedFeatures);
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <SectionLabel label="VALIDATE" />
+          <h2>"Does Your Product Work?"</h2>
+          <NarrativeIntro>Let's check your feature selections against the 5 real scenarios. Does your product actually cover the moments that matter?</NarrativeIntro>
+
+          <div style={{ width: "100%", maxWidth: 800 }}>
+            {PL_SCENARIOS.map(s => {
+              const needed = s.featureIds;
+              const covered = needed.filter(fId => selIds.has(fId));
+              const missing = needed.filter(fId => !selIds.has(fId));
+              const ratio = needed.length > 0 ? covered.length / needed.length : 0;
+              const color = ratio >= 1 ? "#10B981" : ratio >= 0.5 ? "#F59E0B" : "#EF4444";
+
+              return (
+                <div key={s.id} style={{ background: "#1F2937", borderRadius: 12, padding: 18, marginBottom: 10, border: `1px solid ${ratio >= 1 ? "rgba(16,185,129,0.3)" : "#374151"}` }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 20 }}>{s.icon}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{s.name}</span>
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 800, fontFamily: MONO, color }}>{covered.length}/{needed.length}</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {needed.map(fId => {
+                      const f = PL_FEATURES.find(ff => ff.id === fId);
+                      const has = selIds.has(fId);
+                      return f ? (
+                        <span key={fId} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: has ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.1)", color: has ? "#10B981" : "#EF4444", fontFamily: MONO, fontWeight: 600, border: `1px solid ${has ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.2)"}` }}>
+                          {has ? "✓" : "✗"} {f.name}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ marginTop: 24, textAlign: "center" }}>
+            <button className="story-nav-btn" onClick={() => goToPage(12)} style={{ fontSize: 14, padding: "10px 24px" }}>
+              ← Revise Features
+            </button>
+          </div>
+
+          <DiscussionPrompt>Any scenarios with red coverage? Is that acceptable, or do you need to revise your feature picks?</DiscussionPrompt>
+          <InstructorNote>~5 min. If coverage is poor, encourage them to go back. The "Revise" button takes them to page 12.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 16 — Converge */
+    function StoryConverge({ selectedFeatures, votes, customPainPoints, visionStatement, setVisionStatement, notBuilding, setNotBuilding, newNotBuilding, setNewNotBuilding, prdNotes, setPrdNotes }) {
+      const selFeats = PL_FEATURES.filter(f => selectedFeatures.includes(f.id));
+      const totalCost = selFeats.reduce((sum, f) => sum + f.cost, 0);
+      const reqSet = new Set();
+      selFeats.forEach(f => (f.requires || []).forEach(r => reqSet.add(r)));
+      const activeSynergies = PL_SYNERGIES.filter(s => s.features.every(fId => selectedFeatures.includes(fId)));
+      const scenarioCoverage = PL_SCENARIOS.map(s => {
+        const covered = s.featureIds.filter(fId => selectedFeatures.includes(fId)).length;
+        return { name: s.name, covered, total: s.featureIds.length };
+      });
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100, maxWidth: 900 }}>
+          <SectionLabel label="CONVERGE" />
+          <h2>"What You're Building"</h2>
+          <NarrativeIntro>Time to crystallize. Write your vision, confirm what you're NOT building, and review the summary.</NarrativeIntro>
+
+          <div style={{ width: "100%", marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 10, fontFamily: MONO }}>Product Vision</div>
+            <textarea value={visionStatement} onChange={e => setVisionStatement(e.target.value)} placeholder="A digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice..." style={{ width: "100%", minHeight: 80, padding: 14, fontSize: 13, fontFamily: SANS, border: "1px solid #374151", borderRadius: 8, background: "#1F2937", color: "#F9FAFB", outline: "none", resize: "vertical", lineHeight: 1.6, boxSizing: "border-box" }} />
+          </div>
+
+          <div style={{ width: "100%", marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 10, fontFamily: MONO }}>What We're NOT Building</div>
+            <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 10px" }}>Scope boundaries. Saying "no" to good ideas keeps your product focused.</p>
+            {notBuilding.map((item, idx) => (
+              <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: 12, lineHeight: 1.5, flex: 1, color: "#D1D5DB" }}>• {item}</span>
+                <button onClick={() => setNotBuilding(prev => prev.filter((_, i) => i !== idx))} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#6B7280", padding: "2px 6px" }}>×</button>
+              </div>
+            ))}
+            <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+              <input type="text" value={newNotBuilding} onChange={e => setNewNotBuilding(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && newNotBuilding.trim()) { setNotBuilding(prev => [...prev, newNotBuilding.trim()]); setNewNotBuilding(""); } }} placeholder="Add scope exclusion..." style={{ flex: 1, padding: "6px 10px", fontSize: 12, fontFamily: MONO, border: "1px solid #374151", borderRadius: 6, background: "#1F2937", color: "#F9FAFB", outline: "none" }} />
+            </div>
+          </div>
+
+          <div style={{ width: "100%", background: "#1F2937", borderRadius: 12, padding: 20, border: "1px solid #374151", marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 16, fontFamily: MONO }}>Summary</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{selFeats.length}</div>
+                <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>features</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: totalCost > PL_BUDGET ? "#EF4444" : "#10B981" }}>{totalCost}/{PL_BUDGET}</div>
+                <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>build pts</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{activeSynergies.length}/{PL_SYNERGIES.length}</div>
+                <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>loops</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{reqSet.size}</div>
+                <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>tech reqs</div>
+              </div>
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", marginBottom: 6, fontFamily: MONO }}>SCENARIO COVERAGE</div>
+              {scenarioCoverage.map(sc => (
+                <div key={sc.name} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: "#9CA3AF", flex: 1, fontFamily: MONO }}>{sc.name}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: sc.covered === sc.total ? "#10B981" : sc.covered > 0 ? "#F59E0B" : "#EF4444" }}>{sc.covered}/{sc.total}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", marginBottom: 6, fontFamily: MONO }}>TECH STACK</div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {[...reqSet].map(rId => {
+                  const req = PL_TECH_REQS[rId];
+                  return req ? <span key={rId} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "#374151", color: "#D1D5DB", fontFamily: MONO }}>{req.icon} {req.label}</span> : null;
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ width: "100%", marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 10, fontFamily: MONO }}>Additional Notes</div>
+            <textarea value={prdNotes} onChange={e => setPrdNotes(e.target.value)} placeholder="Anything else the PRD should capture?" style={{ width: "100%", minHeight: 60, padding: 14, fontSize: 13, fontFamily: SANS, border: "1px solid #374151", borderRadius: 8, background: "#1F2937", color: "#F9FAFB", outline: "none", resize: "vertical", lineHeight: 1.6, boxSizing: "border-box" }} />
+          </div>
+
+          <DiscussionPrompt>Read the vision aloud. Does it capture what you're building? Does the "not building" list protect your scope?</DiscussionPrompt>
+          <InstructorNote>~5 min. Have one student read the vision. Others validate or refine. This is the final convergence.</InstructorNote>
+        </div>
+      );
+    }
+
+    /* Page 17 — Ship It (PRD) */
+    function StoryShipIt({ prdMarkdown }) {
+      const [showRaw, setShowRaw] = useState(false);
+      const [copied, setCopied] = useState(false);
+
+      const handleCopy = () => {
+        navigator.clipboard.writeText(prdMarkdown).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+      };
+      const handleDownload = () => {
+        const blob = new Blob([prdMarkdown], { type: "text/markdown" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `fcm-prd-${new Date().toISOString().slice(0,10)}.md`; a.click();
+      };
+
+      return (
+        <div className="story-page" style={{ paddingBottom: 100, maxWidth: 900 }}>
+          <SectionLabel label="SHIP" />
+          <h2>"Your PRD"</h2>
+          <NarrativeIntro>Everything you decided — assembled into a Product Requirements Document. Copy it, download it, and use it to build.</NarrativeIntro>
+
+          <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap", justifyContent: "center" }}>
+            <button onClick={handleCopy} className="story-nav-btn primary" style={{ fontSize: 13 }}>{copied ? "Copied!" : "Copy to Clipboard"}</button>
+            <button onClick={handleDownload} className="story-nav-btn" style={{ fontSize: 13 }}>Download .md</button>
+            <button onClick={() => setShowRaw(!showRaw)} className="story-nav-btn" style={{ fontSize: 13 }}>{showRaw ? "Formatted View" : "Raw Markdown"}</button>
+          </div>
+
+          <div style={{ width: "100%" }}>
+            {showRaw ? (
+              <div style={{ padding: 20, background: "#0A0A0A", borderRadius: 8, fontFamily: MONO, fontSize: 11, color: "#e0e0e0", lineHeight: 1.7, whiteSpace: "pre-wrap", overflow: "auto", maxHeight: 500, border: "1px solid #374151" }}>
+                {prdMarkdown}
+              </div>
+            ) : (
+              <div className="story-prd-box">
+                <div className="rendered-prd" dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(prdMarkdown) }} />
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginTop: 32, padding: "20px 24px", background: "rgba(16,185,129,0.06)", borderRadius: 12, border: "1px solid rgba(16,185,129,0.2)", width: "100%", textAlign: "center" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 8 }}>What happens next?</div>
+            <p style={{ fontSize: 13, color: "#D1D5DB", lineHeight: 1.6, margin: 0 }}>
+              Paste this PRD into Claude Code or your AI coding assistant. It has everything needed to start building — the domain context, user research, feature decisions, and technical requirements. Your design sprint research becomes a real product.
+            </p>
+          </div>
+
+          <InstructorNote>~5 min. Walk through the PRD. Celebrate the work. Copy/download for the team.</InstructorNote>
         </div>
       );
     }
@@ -2477,6 +3142,150 @@
       );
     }
 
+    /* ── Shared PRD Generator ───────────────────────────────────── */
+    function getVotedItemsFromState(votes, customPainPoints) {
+      const result = { painPoints: [], wishes: [] };
+      Object.entries(PL_EVIDENCE).forEach(([key, data]) => {
+        data.painPoints.filter(p => votes[p.id]).forEach(p => result.painPoints.push({ ...p, stakeholder: key, stakeholderLabel: data.label }));
+        data.wishes.filter(w => votes[w.id]).forEach(w => result.wishes.push({ ...w, stakeholder: key, stakeholderLabel: data.label }));
+      });
+      Object.entries(customPainPoints).forEach(([key, points]) => {
+        points.filter(p => votes[p.id]).forEach(p => result.painPoints.push({ ...p, stakeholder: key, stakeholderLabel: PL_EVIDENCE[key].label }));
+      });
+      return result;
+    }
+
+    function generatePRDMarkdownShared({ selectedFeatures, votes, customPainPoints, confirmedArchetype, confirmedPhilosophy, visionStatement, notBuilding, prdNotes }) {
+      const v = getVotedItemsFromState(votes, customPainPoints);
+      const selFeats = PL_FEATURES.filter(f => selectedFeatures.includes(f.id));
+      const notSelFeats = PL_FEATURES.filter(f => !selectedFeatures.includes(f.id));
+      const totalCost = selFeats.reduce((sum, f) => sum + f.cost, 0);
+      const reqSet = new Set();
+      selFeats.forEach(f => (f.requires || []).forEach(r => reqSet.add(r)));
+      const synergies = PL_SYNERGIES.filter(s => s.features.every(fId => selFeats.some(f => f.id === fId)));
+      const arch = confirmedArchetype ? PL_ARCHETYPES.find(a => a.id === confirmedArchetype) : null;
+
+      const featMd = selFeats.length > 0
+        ? selFeats.map(f => `- **${f.name}** ${f.icon} (${f.cost}pt) — ${f.description}\n  - Stakeholders: ${f.stakeholders.join(", ")}\n  - Requires: ${f.requires.join(", ")}`).join("\n")
+        : "*No features selected yet*";
+      const notFeatMd = notSelFeats.map(f => `- ~~${f.name}~~ (${f.cost}pt) — ${f.description}`).join("\n");
+      const techMd = reqSet.size > 0
+        ? [...reqSet].map(rId => { const r = PL_TECH_REQS[rId]; return r ? `- ${r.icon} **${r.label}** — ${r.description}` : null; }).filter(Boolean).join("\n")
+        : "*No tech requirements (select features first)*";
+      const synMd = synergies.length > 0
+        ? synergies.map(s => `- ${s.icon} **${s.name}** — ${s.description}\n  - Features: ${s.features.map(fId => PL_FEATURES.find(f => f.id === fId)?.name || fId).join(", ")}`).join("\n")
+        : "";
+      const painMd = v.painPoints.length > 0 ? v.painPoints.map(p => `- [${p.stakeholderLabel}] ${p.text}`).join("\n") : "*No pain points prioritized yet*";
+      const wishMd = v.wishes.length > 0 ? v.wishes.map(w => `- [${w.stakeholderLabel}] ${w.text}`).join("\n") : "*No wishes prioritized yet*";
+
+      const archMd = arch
+        ? `## 5. Product Archetype: ${arch.name}\n*"${arch.tagline}"*\n\n${arch.description}\n\n**Reference products:** ${arch.referenceApps.map(a => `${a.name} (${a.trait})`).join(", ")}\n\n**Best for:** ${arch.bestFor}\n\n**Key tradeoff:** ${arch.tradeoff}\n`
+        : "## 5. Product Archetype\n*Not yet selected — go to Product DNA tab*\n";
+
+      let sec = 6;
+      let md = `# FCM Companion App — Product Requirements Document\n\n`;
+      md += `*Generated by Product Lab — Health Design Sprint 2026*\n`;
+      md += `*University of Virginia School of Medicine*\n`;
+      md += `*Date: ${new Date().toLocaleDateString()}*\n\n`;
+      md += `---\n\n`;
+
+      md += `## 1. Background & Context\n\n`;
+      md += `### What is FCM?\n`;
+      md += `Foundations of Clinical Medicine (FCM) is a longitudinal first-year course at the University of Virginia School of Medicine. Students learn clinical reasoning — how to take a patient history, build a differential diagnosis, perform a physical exam, and synthesize findings into a clinical assessment.\n\n`;
+      md += `### The FCM Case Cycle\n`;
+      md += `Each week, students go through a repeating cycle:\n\n`;
+      md += `1. **Case Assignment** — Receive a one-line chief concern (e.g., "43 y/o male, 1-week worsening SOB") posted to the LMS\n`;
+      md += `2. **Pre-Session Prep** — Build a broad differential diagnosis. Select history questions and PE maneuvers. Complete a pre-class worksheet (VINDICATE framework)\n`;
+      md += `3. **The Gap** — Days pass between receiving the case and the session. Students study other subjects. The case goes cold in memory\n`;
+      md += `4. **Small Group Session** — 4-hour in-person session with a clinical coach and ~6 students. Students present cases, discuss reasoning, observe peers\n`;
+      md += `5. **Patient Encounter** — Interview a standardized patient. Full history, targeted physical exam, present assessment and plan\n`;
+      md += `6. **Coach Feedback** — Verbal feedback during/after encounter. Quality and depth vary significantly by coach\n`;
+      md += `7. **Write the Note** — Synthesize encounter into an illness script with ranked diagnoses and supporting evidence\n`;
+      md += `8. **Written Feedback** — Coach reviews illness script in LMS. Often delayed, sometimes cursory\n`;
+      md += `9. **The Fade** — No structured follow-up. Student may never revisit this case. Learning is entirely self-directed\n\n`;
+      md += `### The Core Problems\n`;
+      md += `- Students prepare in isolation with no feedback on whether their reasoning is sound\n`;
+      md += `- Instructors walk into sessions "flying blind" — they don't know what students prepared or where they're confused\n`;
+      md += `- The gap between case assignment and session causes knowledge decay\n`;
+      md += `- After sessions, there is no structured mechanism to close the learning loop\n`;
+      md += `- The current cycle rewards completion over quality of reasoning\n\n`;
+
+      md += `## 2. Users & Stakeholders\n\n`;
+      md += `| Role | Count | Description |\n`;
+      md += `|------|-------|-------------|\n`;
+      md += `| **M1 Students** | ~180/year (groups of ~6) | Primary users. Cycle through weekly cases. Need better prep tools and feedback loops |\n`;
+      md += `| **FCM Coaches** | ~30 instructors | Lead small group sessions. Want visibility into student readiness. Need fast, lightweight tools |\n`;
+      md += `| **Curriculum Admins** | 3-5 | Track AAMC competency alignment, student progress at scale, coach consistency |\n\n`;
+
+      md += `## 3. User Research Findings\n\n`;
+      md += `This PRD is based on structured user research conducted during the Health Design Sprint at UVA (February 2026), including journey mapping of the FCM case cycle, stakeholder interviews, pain point prioritization, and feature tradeoff analysis with medical students.\n\n`;
+      md += `### Prioritized Pain Points\n${painMd}\n\n`;
+      md += `### Prioritized Wishes\n${wishMd}\n\n`;
+
+      md += `## 4. Vision\n\n`;
+      md += visionStatement
+        ? `${visionStatement}\n\n`
+        : `A digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice, makes student thinking visible to instructors before sessions, and creates structured feedback loops that close the gap between preparation and learning.\n\n`;
+
+      md += `${archMd}\n`;
+
+      if (confirmedPhilosophy) {
+        const philData = [
+          { id: "duolingo", name: "Duolingo", phil: "Everything in 5 minutes. Gamify everything. Streaks for retention. Mobile-only." },
+          { id: "piazza", name: "Piazza", phil: "Two-sided: students post, instructors respond. Anonymous participation. Threaded discussions." },
+          { id: "strava", name: "Strava", phil: "Track everything. Peer comparison. Personal records. Social feed. Data makes effort visible." },
+          { id: "chatgpt", name: "ChatGPT", phil: "Conversational AI. Adapts to student level. Infinite depth. Always available." },
+        ].find(p => p.id === confirmedPhilosophy);
+        if (philData) {
+          md += `## ${sec}. Design Philosophy: ${philData.name}\n*Locked in during Product Lab*\n\n${philData.phil}\n\nThis philosophy should guide all UX and feature decisions. When in doubt, ask: "What would ${philData.name} do?"\n\n`;
+          sec++;
+        }
+      }
+
+      const scenarios = PL_SCENARIOS || [];
+      if (scenarios.length > 0) {
+        md += `## ${sec}. Usage Scenarios\n\n`;
+        scenarios.forEach(s => {
+          md += `### ${s.name}\n*${s.scene}*\n\n- **Device:** ${s.device}\n- **When:** ${s.timing}\n- **FCM Steps:** ${s.steps}\n`;
+          const mappedFeats = selFeats.filter(f => (s.featureIds || []).includes(f.id));
+          if (mappedFeats.length > 0) md += `- **Features:** ${mappedFeats.map(f => `${f.icon} ${f.name}`).join(", ")}\n`;
+          md += `\n`;
+        });
+        sec++;
+      }
+
+      md += `## ${sec}. Selected Features (${totalCost}/${PL_BUDGET} build points)\n${featMd}\n\n`;
+      sec++;
+
+      if (notSelFeats.length > 0) {
+        md += `## ${sec}. Features Considered but Not Selected\nThese were evaluated during the design sprint but cut due to budget constraints:\n${notFeatMd}\n\n`;
+        sec++;
+      }
+
+      md += `## ${sec}. Required Tech Stack\n${techMd}\n\n`;
+      sec++;
+
+      if (synMd) {
+        md += `## ${sec}. Synergy Loops\nThese feature combinations create reinforcing product loops:\n${synMd}\n\n`;
+        sec++;
+      }
+
+      md += `## ${sec}. What We're NOT Building\n${notBuilding.map(n => `- ${n}`).join("\n")}\n\n`;
+      sec++;
+
+      md += `## ${sec}. Additional Notes\n${prdNotes || "*None yet*"}\n\n`;
+      sec++;
+
+      md += `---\n\n`;
+      md += `## Build Instructions\n\n`;
+      md += `This app should be built as a responsive web application (mobile-friendly, works on phones and laptops). The target users are medical students and clinical instructors at UVA School of Medicine.\n\n`;
+      md += `**Recommended stack:** Next.js or similar React framework, Supabase for database/auth, Tailwind CSS for styling, deployed to Vercel or similar.\n\n`;
+      md += `**MVP scope:** Focus on the selected features above within the ${PL_BUDGET}-point build budget. Start with features that share the most tech requirements (to maximize infrastructure reuse) and build outward.\n\n`;
+      md += `**To start building:** Paste this entire PRD into Claude Code or your preferred AI coding assistant. All context needed to understand the domain, users, and product decisions is included above.\n`;
+
+      return md;
+    }
+
     function ProductLab() {
       const theme = useTheme();
       const isDark = theme.offWhite === "#1A1A1A";
@@ -2520,161 +3329,12 @@
       }, [newPainPoint]);
 
       const getVotedItems = useCallback(() => {
-        const result = { painPoints: [], wishes: [] };
-        Object.entries(PL_EVIDENCE).forEach(([key, data]) => {
-          data.painPoints.filter(p => votes[p.id]).forEach(p => result.painPoints.push({ ...p, stakeholder: key, stakeholderLabel: data.label }));
-          data.wishes.filter(w => votes[w.id]).forEach(w => result.wishes.push({ ...w, stakeholder: key, stakeholderLabel: data.label }));
-        });
-        Object.entries(customPainPoints).forEach(([key, points]) => {
-          points.filter(p => votes[p.id]).forEach(p => result.painPoints.push({ ...p, stakeholder: key, stakeholderLabel: PL_EVIDENCE[key].label }));
-        });
-        return result;
+        return getVotedItemsFromState(votes, customPainPoints);
       }, [votes, customPainPoints]);
 
       const generatePRDMarkdown = useCallback(() => {
-        const v = getVotedItems();
-        const selFeats = PL_FEATURES.filter(f => selectedFeatures.includes(f.id));
-        const notSelFeats = PL_FEATURES.filter(f => !selectedFeatures.includes(f.id));
-        const totalCost = selFeats.reduce((sum, f) => sum + f.cost, 0);
-        const reqSet = new Set();
-        selFeats.forEach(f => (f.requires || []).forEach(r => reqSet.add(r)));
-        const synergies = PL_SYNERGIES.filter(s => s.features.every(fId => selFeats.some(f => f.id === fId)));
-        const arch = confirmedArchetype ? PL_ARCHETYPES.find(a => a.id === confirmedArchetype) : null;
-
-        const featMd = selFeats.length > 0
-          ? selFeats.map(f => `- **${f.name}** ${f.icon} (${f.cost}pt) — ${f.description}\n  - Stakeholders: ${f.stakeholders.join(", ")}\n  - Requires: ${f.requires.join(", ")}`).join("\n")
-          : "*No features selected yet*";
-        const notFeatMd = notSelFeats.map(f => `- ~~${f.name}~~ (${f.cost}pt) — ${f.description}`).join("\n");
-        const techMd = reqSet.size > 0
-          ? [...reqSet].map(rId => { const r = PL_TECH_REQS[rId]; return r ? `- ${r.icon} **${r.label}** — ${r.description}` : null; }).filter(Boolean).join("\n")
-          : "*No tech requirements (select features first)*";
-        const synMd = synergies.length > 0
-          ? synergies.map(s => `- ${s.icon} **${s.name}** — ${s.description}\n  - Features: ${s.features.map(fId => PL_FEATURES.find(f => f.id === fId)?.name || fId).join(", ")}`).join("\n")
-          : "";
-        const painMd = v.painPoints.length > 0 ? v.painPoints.map(p => `- [${p.stakeholderLabel}] ${p.text}`).join("\n") : "*No pain points prioritized yet*";
-        const wishMd = v.wishes.length > 0 ? v.wishes.map(w => `- [${w.stakeholderLabel}] ${w.text}`).join("\n") : "*No wishes prioritized yet*";
-
-        const archMd = arch
-          ? `## 5. Product Archetype: ${arch.name}\n*"${arch.tagline}"*\n\n${arch.description}\n\n**Reference products:** ${arch.referenceApps.map(a => `${a.name} (${a.trait})`).join(", ")}\n\n**Best for:** ${arch.bestFor}\n\n**Key tradeoff:** ${arch.tradeoff}\n`
-          : "## 5. Product Archetype\n*Not yet selected — go to Product DNA tab*\n";
-
-        let sec = 6;
-        let md = `# FCM Companion App — Product Requirements Document\n\n`;
-        md += `*Generated by Product Lab — Health Design Sprint 2026*\n`;
-        md += `*University of Virginia School of Medicine*\n`;
-        md += `*Date: ${new Date().toLocaleDateString()}*\n\n`;
-        md += `---\n\n`;
-
-        // Section 1: Background & Context
-        md += `## 1. Background & Context\n\n`;
-        md += `### What is FCM?\n`;
-        md += `Foundations of Clinical Medicine (FCM) is a longitudinal first-year course at the University of Virginia School of Medicine. Students learn clinical reasoning — how to take a patient history, build a differential diagnosis, perform a physical exam, and synthesize findings into a clinical assessment.\n\n`;
-        md += `### The FCM Case Cycle\n`;
-        md += `Each week, students go through a repeating cycle:\n\n`;
-        md += `1. **Case Assignment** — Receive a one-line chief concern (e.g., "43 y/o male, 1-week worsening SOB") posted to the LMS\n`;
-        md += `2. **Pre-Session Prep** — Build a broad differential diagnosis. Select history questions and PE maneuvers. Complete a pre-class worksheet (VINDICATE framework)\n`;
-        md += `3. **The Gap** — Days pass between receiving the case and the session. Students study other subjects. The case goes cold in memory\n`;
-        md += `4. **Small Group Session** — 4-hour in-person session with a clinical coach and ~6 students. Students present cases, discuss reasoning, observe peers\n`;
-        md += `5. **Patient Encounter** — Interview a standardized patient. Full history, targeted physical exam, present assessment and plan\n`;
-        md += `6. **Coach Feedback** — Verbal feedback during/after encounter. Quality and depth vary significantly by coach\n`;
-        md += `7. **Write the Note** — Synthesize encounter into an illness script with ranked diagnoses and supporting evidence\n`;
-        md += `8. **Written Feedback** — Coach reviews illness script in LMS. Often delayed, sometimes cursory\n`;
-        md += `9. **The Fade** — No structured follow-up. Student may never revisit this case. Learning is entirely self-directed\n\n`;
-        md += `### The Core Problems\n`;
-        md += `- Students prepare in isolation with no feedback on whether their reasoning is sound\n`;
-        md += `- Instructors walk into sessions "flying blind" — they don't know what students prepared or where they're confused\n`;
-        md += `- The gap between case assignment and session causes knowledge decay\n`;
-        md += `- After sessions, there is no structured mechanism to close the learning loop\n`;
-        md += `- The current cycle rewards completion over quality of reasoning\n\n`;
-
-        // Section 2: Users
-        md += `## 2. Users & Stakeholders\n\n`;
-        md += `| Role | Count | Description |\n`;
-        md += `|------|-------|-------------|\n`;
-        md += `| **M1 Students** | ~180/year (groups of ~6) | Primary users. Cycle through weekly cases. Need better prep tools and feedback loops |\n`;
-        md += `| **FCM Coaches** | ~30 instructors | Lead small group sessions. Want visibility into student readiness. Need fast, lightweight tools |\n`;
-        md += `| **Curriculum Admins** | 3-5 | Track AAMC competency alignment, student progress at scale, coach consistency |\n\n`;
-
-        // Section 3: User Research
-        md += `## 3. User Research Findings\n\n`;
-        md += `This PRD is based on structured user research conducted during the Health Design Sprint at UVA (February 2026), including journey mapping of the FCM case cycle, stakeholder interviews, pain point prioritization, and feature tradeoff analysis with medical students.\n\n`;
-        md += `### Prioritized Pain Points\n${painMd}\n\n`;
-        md += `### Prioritized Wishes\n${wishMd}\n\n`;
-
-        // Section 4: Vision
-        md += `## 4. Vision\n\n`;
-        md += visionStatement
-          ? `${visionStatement}\n\n`
-          : `A digital companion for the FCM case cycle that transforms passive preparation into active clinical reasoning practice, makes student thinking visible to instructors before sessions, and creates structured feedback loops that close the gap between preparation and learning.\n\n`;
-
-        // Section 5: Archetype
-        md += `${archMd}\n`;
-
-        // Section: Design Philosophy
-        if (confirmedPhilosophy) {
-          const philData = [
-            { id: "duolingo", name: "Duolingo", phil: "Everything in 5 minutes. Gamify everything. Streaks for retention. Mobile-only." },
-            { id: "piazza", name: "Piazza", phil: "Two-sided: students post, instructors respond. Anonymous participation. Threaded discussions." },
-            { id: "strava", name: "Strava", phil: "Track everything. Peer comparison. Personal records. Social feed. Data makes effort visible." },
-            { id: "chatgpt", name: "ChatGPT", phil: "Conversational AI. Adapts to student level. Infinite depth. Always available." },
-          ].find(p => p.id === confirmedPhilosophy);
-          if (philData) {
-            md += `## ${sec}. Design Philosophy: ${philData.name}\n*Locked in during Product Lab*\n\n${philData.phil}\n\nThis philosophy should guide all UX and feature decisions. When in doubt, ask: "What would ${philData.name} do?"\n\n`;
-            sec++;
-          }
-        }
-
-        // Section: Usage Scenarios
-        const scenarios = PL_SCENARIOS || [];
-        if (scenarios.length > 0) {
-          md += `## ${sec}. Usage Scenarios\n\n`;
-          scenarios.forEach(s => {
-            md += `### ${s.name}\n*${s.scene}*\n\n- **Device:** ${s.device}\n- **When:** ${s.timing}\n- **FCM Steps:** ${s.steps}\n`;
-            const mappedFeats = selFeats.filter(f => (s.featureIds || []).includes(f.id));
-            if (mappedFeats.length > 0) md += `- **Features:** ${mappedFeats.map(f => `${f.icon} ${f.name}`).join(", ")}\n`;
-            md += `\n`;
-          });
-          sec++;
-        }
-
-        // Section: Features
-        md += `## ${sec}. Selected Features (${totalCost}/${PL_BUDGET} build points)\n${featMd}\n\n`;
-        sec++;
-
-        // Section: Not Selected
-        if (notSelFeats.length > 0) {
-          md += `## ${sec}. Features Considered but Not Selected\nThese were evaluated during the design sprint but cut due to budget constraints:\n${notFeatMd}\n\n`;
-          sec++;
-        }
-
-        // Section: Tech Stack
-        md += `## ${sec}. Required Tech Stack\n${techMd}\n\n`;
-        sec++;
-
-        // Section: Synergies
-        if (synMd) {
-          md += `## ${sec}. Synergy Loops\nThese feature combinations create reinforcing product loops:\n${synMd}\n\n`;
-          sec++;
-        }
-
-        // Section: Not Building
-        md += `## ${sec}. What We're NOT Building\n${notBuilding.map(n => `- ${n}`).join("\n")}\n\n`;
-        sec++;
-
-        // Section: Notes
-        md += `## ${sec}. Additional Notes\n${prdNotes || "*None yet*"}\n\n`;
-        sec++;
-
-        // Section: Build Instructions
-        md += `---\n\n`;
-        md += `## Build Instructions\n\n`;
-        md += `This app should be built as a responsive web application (mobile-friendly, works on phones and laptops). The target users are medical students and clinical instructors at UVA School of Medicine.\n\n`;
-        md += `**Recommended stack:** Next.js or similar React framework, Supabase for database/auth, Tailwind CSS for styling, deployed to Vercel or similar.\n\n`;
-        md += `**MVP scope:** Focus on the selected features above within the ${PL_BUDGET}-point build budget. Start with features that share the most tech requirements (to maximize infrastructure reuse) and build outward.\n\n`;
-        md += `**To start building:** Paste this entire PRD into Claude Code or your preferred AI coding assistant. All context needed to understand the domain, users, and product decisions is included above.\n`;
-
-        return md;
-      }, [selectedFeatures, confirmedArchetype, notBuilding, prdNotes, getVotedItems, confirmedPhilosophy, visionStatement]);
+        return generatePRDMarkdownShared({ selectedFeatures, votes, customPainPoints, confirmedArchetype, confirmedPhilosophy, visionStatement, notBuilding, prdNotes });
+      }, [selectedFeatures, votes, customPainPoints, confirmedArchetype, confirmedPhilosophy, visionStatement, notBuilding, prdNotes]);
 
       const voted = getVotedItems();
       const totalVoted = voted.painPoints.length + voted.wishes.length;
@@ -3088,7 +3748,6 @@
         {presentMode && SESSION_DATA && (
           <StoryMode
             onClose={() => setPresentMode(false)}
-            onEnterProductLab={() => { setPresentMode(false); setMainTab("productlab"); }}
           />
         )}
         <div style={{ maxWidth: mainTab === "productlab" ? 1100 : 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh", transition: "max-width 0.3s" }}>
