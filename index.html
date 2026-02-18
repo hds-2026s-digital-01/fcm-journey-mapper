@@ -686,17 +686,29 @@
       },
     };
 
+    const PL_FCM_STEPS = [
+      { id: "assign", label: "Case\nAssigned", icon: "📋", short: "Assign" },
+      { id: "prep", label: "Pre-Session\nPrep", icon: "📝", short: "Prep" },
+      { id: "gap", label: "The Gap", icon: "⏳", short: "Gap", isGap: true },
+      { id: "walk", label: "Walk to\nFCM", icon: "🚶", short: "Walk" },
+      { id: "session", label: "Small Group\nSession", icon: "👥", short: "Session" },
+      { id: "encounter", label: "Patient\nEncounter", icon: "🩺", short: "Encounter" },
+      { id: "feedback", label: "Coach\nFeedback", icon: "💬", short: "Feedback" },
+      { id: "note", label: "Write\nthe Note", icon: "✍️", short: "Note" },
+      { id: "fade", label: "The Fade", icon: "💨", short: "Fade", isGap: true },
+    ];
+
     const PL_FEATURES = [
-      { id: "gap-refresh", name: "Gamified Case Refresh", icon: "🎮", description: "10-15 min mobile experience before FCM. Quick-fire differential review, confidence check, 'here's what to listen for.'", cost: 2, requires: ["mobile-ui", "case-content"], stakeholders: ["student"] },
-      { id: "reasoning-capture", name: "Reasoning Capture", icon: "🧠", description: "Replace VINDICATE worksheet. Capture WHY students think each diagnosis — structured reasoning prompts, not checkboxes.", cost: 3, requires: ["database", "case-content"], stakeholders: ["student", "instructor"] },
-      { id: "confidence-cal", name: "Confidence Calibration", icon: "🎯", description: "Rank differentials by likelihood + confidence. After session, see how calibrated you were. Track improvement over time.", cost: 2, requires: ["database"], stakeholders: ["student"] },
-      { id: "student-signal", name: "Student → Instructor Signal", icon: "📡", description: "Before session: flag confusion areas, discussion topics. Instructor sees aggregate + individual. Quiet students get a voice.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["student", "instructor"] },
-      { id: "instructor-dashboard", name: "Instructor Prep Dashboard", icon: "👁️", description: "Pre-session view: who prepared, common errors, areas of confusion. Target teaching to actual gaps.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["instructor"] },
-      { id: "ai-patient", name: "AI Patient Encounter", icon: "🤖", description: "Voice/chat AI standardized patient. Unlimited history-taking practice. Real-time differential adjustment feedback.", cost: 4, requires: ["ai-llm", "case-content", "mobile-ui"], stakeholders: ["student"] },
-      { id: "progress-tracker", name: "Longitudinal Progress Tracker", icon: "📈", description: "Track reasoning quality across cases over a semester. Growth patterns, persistent gaps. Student + coach view.", cost: 3, requires: ["database", "auth", "analytics"], stakeholders: ["student", "instructor", "admin"] },
-      { id: "spaced-review", name: "Spaced Repetition Review", icon: "🔁", description: "Post-session review cards. 'What would you do differently?' Builds cumulative knowledge case-over-case.", cost: 2, requires: ["database", "case-content"], stakeholders: ["student"] },
-      { id: "compliance-dash", name: "Compliance & Analytics", icon: "🏛️", description: "Admin dashboard: AAMC competency mapping, session quality metrics, coach consistency, early warning for struggling students.", cost: 2, requires: ["database", "auth", "admin-view", "analytics"], stakeholders: ["admin"] },
-      { id: "peer-compare", name: "Anonymous Peer Comparison", icon: "👥", description: "See how your differential compares to anonymized group. 'Most students identified PE — you focused on anxiety.'", cost: 1, requires: ["database"], stakeholders: ["student"] },
+      { id: "gap-refresh", name: "Gamified Case Refresh", icon: "🎮", description: "10-15 min mobile experience before FCM. Quick-fire differential review, confidence check, 'here's what to listen for.'", cost: 2, requires: ["mobile-ui", "case-content"], stakeholders: ["student"], affectsSteps: ["walk", "gap"], engagement: "burst", studentOutcome: "Arrive at session with case fresh in mind" },
+      { id: "reasoning-capture", name: "Reasoning Capture", icon: "🧠", description: "Replace VINDICATE worksheet. Capture WHY students think each diagnosis — structured reasoning prompts, not checkboxes.", cost: 3, requires: ["database", "case-content"], stakeholders: ["student", "instructor"], affectsSteps: ["prep", "session"], engagement: "task", studentOutcome: "Build deeper reasoning habits; coach sees thinking quality", instructorSupport: "See each student's reasoning chain before session — target teaching to actual gaps" },
+      { id: "confidence-cal", name: "Confidence Calibration", icon: "🎯", description: "Rank differentials by likelihood + confidence. After session, see how calibrated you were. Track improvement over time.", cost: 2, requires: ["database"], stakeholders: ["student"], affectsSteps: ["prep", "feedback"], engagement: "burst", studentOutcome: "Develop metacognition — know what you don't know" },
+      { id: "student-signal", name: "Student → Instructor Signal", icon: "📡", description: "Before session: flag confusion areas, discussion topics. Instructor sees aggregate + individual. Quiet students get a voice.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["student", "instructor"], affectsSteps: ["prep", "session"], engagement: "task", studentOutcome: "Get help on YOUR questions, not just the curriculum", instructorSupport: "See aggregate confusion areas + individual flags before walking in" },
+      { id: "instructor-dashboard", name: "Instructor Prep Dashboard", icon: "👁️", description: "Pre-session view: who prepared, common errors, areas of confusion. Target teaching to actual gaps.", cost: 3, requires: ["database", "auth", "instructor-view"], stakeholders: ["instructor"], affectsSteps: ["session"], engagement: "none", studentOutcome: "Better teaching targeted to your actual gaps", instructorSupport: "Dashboard: who prepared, common errors, confusion areas, individual student goals" },
+      { id: "ai-patient", name: "AI Patient Encounter", icon: "🤖", description: "Voice/chat AI standardized patient. Unlimited history-taking practice. Real-time differential adjustment feedback.", cost: 4, requires: ["ai-llm", "case-content", "mobile-ui"], stakeholders: ["student"], affectsSteps: ["prep", "gap"], engagement: "sustained", studentOutcome: "Unlimited practice reps — fail safely before the real encounter", realityWarning: "Requires students to engage between sessions. High value but low adoption risk." },
+      { id: "progress-tracker", name: "Longitudinal Progress Tracker", icon: "📈", description: "Track reasoning quality across cases over a semester. Growth patterns, persistent gaps. Student + coach view.", cost: 3, requires: ["database", "auth", "analytics"], stakeholders: ["student", "instructor", "admin"], affectsSteps: ["feedback", "fade"], engagement: "passive", studentOutcome: "See your growth over time — motivation through visible progress", instructorSupport: "Track student development across cases, spot persistent blind spots", adminConstraint: "Feeds AAMC competency tracking" },
+      { id: "spaced-review", name: "Spaced Repetition Review", icon: "🔁", description: "Post-session review cards. 'What would you do differently?' Builds cumulative knowledge case-over-case.", cost: 2, requires: ["database", "case-content"], stakeholders: ["student"], affectsSteps: ["fade", "gap"], engagement: "sustained", studentOutcome: "Actually retain what you learned — fight the fade", realityWarning: "Requires between-session engagement. Works best with push notifications + tiny interactions." },
+      { id: "compliance-dash", name: "Compliance & Analytics", icon: "🏛️", description: "Admin dashboard: AAMC competency mapping, session quality metrics, coach consistency, early warning for struggling students.", cost: 2, requires: ["database", "auth", "admin-view", "analytics"], stakeholders: ["admin"], affectsSteps: ["fade"], engagement: "none", studentOutcome: "Program quality improves over time", adminConstraint: "AAMC/LCME competency mapping, coach quality consistency" },
+      { id: "peer-compare", name: "Anonymous Peer Comparison", icon: "👥", description: "See how your differential compares to anonymized group. 'Most students identified PE — you focused on anxiety.'", cost: 1, requires: ["database"], stakeholders: ["student"], affectsSteps: ["session", "feedback"], engagement: "passive", studentOutcome: "Calibrate against peers — am I the only one who missed this?" },
     ];
 
     const PL_TECH_REQS = {
@@ -730,9 +742,21 @@
         color: "#7C3AED",
         bgLight: "#F5F3FF", bgDark: "#1a1a2e",
         referenceApps: [
-          { name: "ChatGPT", icon: "🤖", trait: "Conversational AI" },
-          { name: "Amboss", icon: "📚", trait: "Clinical depth" },
-          { name: "Khan Academy", icon: "🎓", trait: "Guided learning" },
+          { name: "ChatGPT", icon: "🤖", trait: "Conversational AI", patterns: [
+            { name: "Conversation as Interface", desc: "No buttons or forms — just talk. The AI adapts to your level." },
+            { name: "Infinite Depth", desc: "Keep asking follow-ups. No preset limit on exploration." },
+            { name: "Context Memory", desc: "AI remembers what you said earlier in the session." },
+          ]},
+          { name: "Amboss", icon: "📚", trait: "Clinical depth", patterns: [
+            { name: "Knowledge Cards", desc: "Dense, linkable reference cards with clinical pearls." },
+            { name: "Highlight & Learn", desc: "Click any term to get a pop-up explanation." },
+            { name: "Spaced Repetition Q&A", desc: "Built-in question bank with SRS scheduling." },
+          ]},
+          { name: "Khan Academy", icon: "🎓", trait: "Guided learning", patterns: [
+            { name: "Mastery-Based Progression", desc: "Can't move forward until you demonstrate understanding." },
+            { name: "Video + Practice Loop", desc: "Watch, then immediately apply what you learned." },
+            { name: "Skill Tree", desc: "Visual map of all topics and your progress through them." },
+          ]},
         ],
       },
       {
@@ -746,9 +770,21 @@
         color: "#10B981",
         bgLight: "#F0FDF4", bgDark: "#0a2a1a",
         referenceApps: [
-          { name: "Piazza", icon: "💬", trait: "Q&A + instructor visibility" },
-          { name: "Slack", icon: "💡", trait: "Async communication" },
-          { name: "Canvas", icon: "📋", trait: "Course integration" },
+          { name: "Piazza", icon: "💬", trait: "Q&A + instructor visibility", patterns: [
+            { name: "Anonymous Posting", desc: "Students ask freely without social risk. Instructor sees identity." },
+            { name: "Instructor Endorsement", desc: "Best answers get an official stamp. Quality signal." },
+            { name: "Follow-Up Threads", desc: "Questions evolve through discussion. Peers refine each other's thinking." },
+          ]},
+          { name: "Slack", icon: "💡", trait: "Async communication", patterns: [
+            { name: "Channels by Topic", desc: "Organize by case, session, or theme. Find what you need." },
+            { name: "Reactions & Emoji", desc: "Quick, low-friction engagement. 'I have this question too.'" },
+            { name: "Search Everything", desc: "Past conversations become a searchable knowledge base." },
+          ]},
+          { name: "Canvas", icon: "📋", trait: "Course integration", patterns: [
+            { name: "Assignment Pipeline", desc: "Submit → Review → Grade → Feedback. Clear lifecycle." },
+            { name: "Gradebook as Dashboard", desc: "One view of all progress. Student and instructor both see it." },
+            { name: "Modules & Sequencing", desc: "Content unlocks in order. Structured learning path." },
+          ]},
         ],
       },
       {
@@ -762,9 +798,22 @@
         color: "#F59E0B",
         bgLight: "#FFF7ED", bgDark: "#1a2332",
         referenceApps: [
-          { name: "Duolingo", icon: "🦉", trait: "Gamified daily practice" },
-          { name: "Anki", icon: "📇", trait: "Spaced repetition" },
-          { name: "Quizlet", icon: "🃏", trait: "Quick-fire review" },
+          { name: "Duolingo", icon: "🦉", trait: "Gamified daily practice", patterns: [
+            { name: "Daily Streak", desc: "Miss a day, lose your streak. Most powerful retention mechanic in consumer apps." },
+            { name: "5-Minute Sessions", desc: "Everything fits in 5 minutes. No guilt, no commitment barrier." },
+            { name: "XP & Levels", desc: "Points for every action. Visible progression. Unlockable content." },
+            { name: "Push Notification Nudge", desc: "The sad owl. 'You haven't practiced today.' Shame-driven retention." },
+          ]},
+          { name: "Anki", icon: "📇", trait: "Spaced repetition", patterns: [
+            { name: "Spaced Repetition Algorithm", desc: "Show cards just before you'd forget them. Optimized memory." },
+            { name: "Self-Rated Confidence", desc: "'Easy / Good / Hard / Again.' You rate your own recall." },
+            { name: "User-Created Content", desc: "Students make their own flashcards. Creation = learning." },
+          ]},
+          { name: "Quizlet", icon: "🃏", trait: "Quick-fire review", patterns: [
+            { name: "Multiple Study Modes", desc: "Same content, different interactions: flashcards, matching, test mode." },
+            { name: "Social Decks", desc: "Share and discover study sets from other students." },
+            { name: "Timed Challenges", desc: "Race the clock. Gamified pressure without high stakes." },
+          ]},
         ],
       },
       {
@@ -778,9 +827,22 @@
         color: "#EF4444",
         bgLight: "#FEF2F2", bgDark: "#2a1a1a",
         referenceApps: [
-          { name: "Strava", icon: "🏃", trait: "Personal + peer tracking" },
-          { name: "Kahoot", icon: "🎯", trait: "Competitive engagement" },
-          { name: "Wordle", icon: "🟩", trait: "Daily habit, social sharing" },
+          { name: "Strava", icon: "🏃", trait: "Personal + peer tracking", patterns: [
+            { name: "Activity Feed", desc: "See what everyone's doing. Social accountability without direct competition." },
+            { name: "Personal Records", desc: "'Your best calibration score ever!' Compete with yourself." },
+            { name: "Segment Leaderboards", desc: "Compete on specific activities. 'Top differential builder this week.'" },
+            { name: "Kudos", desc: "One-tap encouragement. Low-friction social engagement." },
+          ]},
+          { name: "Kahoot", icon: "🎯", trait: "Competitive engagement", patterns: [
+            { name: "Live Quiz Mode", desc: "Everyone answers at once. Real-time leaderboard. Energy in the room." },
+            { name: "Time Pressure", desc: "Faster = more points. Creates urgency and excitement." },
+            { name: "Group Play", desc: "Designed for classrooms. The social experience IS the product." },
+          ]},
+          { name: "Wordle", icon: "🟩", trait: "Daily habit, social sharing", patterns: [
+            { name: "One Puzzle Per Day", desc: "Scarcity creates habit. Everyone does the same one. Shared experience." },
+            { name: "Shareable Results", desc: "Post your colored grid. No spoilers. Social proof of participation." },
+            { name: "30-Second Commitment", desc: "So fast there's no reason NOT to do it. Zero friction." },
+          ]},
         ],
       },
     ];
@@ -974,6 +1036,29 @@
             </div>
           </div>
 
+          <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 18, marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 14, fontFamily: MONO }}>Design Patterns to Steal</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {activeArchetype.referenceApps.map(app => (
+                <div key={app.name}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                    <span style={{ fontSize: 16 }}>{app.icon}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.black }}>{app.name}</span>
+                    <span style={{ fontSize: 10, color: theme.medGray }}>{app.trait}</span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 6, paddingLeft: 26 }}>
+                    {(app.patterns || []).map(p => (
+                      <div key={p.name} style={{ padding: "8px 10px", borderRadius: 6, background: theme.offWhite, border: `1px solid ${theme.lightGray}` }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: theme.black, fontFamily: MONO, marginBottom: 2 }}>{p.name}</div>
+                        <div style={{ fontSize: 10, color: theme.medGray, lineHeight: 1.4 }}>{p.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <button onClick={() => setConfirmedArchetype(activeArchetype.id)} style={{
             width: "100%", maxWidth: 520, display: "block", margin: "0 auto",
             padding: "14px 24px", borderRadius: 10, border: "none", fontSize: 14, fontWeight: 700, fontFamily: MONO, cursor: "pointer", transition: "all 0.15s",
@@ -1003,11 +1088,29 @@
               <span style={{ fontSize: 13, fontWeight: 700, color: theme.black, fontFamily: MONO }}>{feature.name}</span>
               <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: isDark ? "#78350F" : "#FFF7ED", color: isDark ? "#F59E0B" : "#EA580C", fontFamily: MONO }}>{feature.cost} pt{feature.cost !== 1 ? "s" : ""}</span>
             </div>
-            <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 6 }}>{feature.description}</div>
+            <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 4 }}>{feature.description}</div>
+            {feature.studentOutcome && (
+              <div style={{ fontSize: 10, color: theme.emerald, lineHeight: 1.4, marginBottom: 4 }}>
+                <strong>Student outcome:</strong> {feature.studentOutcome}
+              </div>
+            )}
+            {feature.instructorSupport && (
+              <div style={{ fontSize: 10, color: isDark ? "#A78BFA" : "#7C3AED", lineHeight: 1.4, marginBottom: 4 }}>
+                <strong>Supports teaching:</strong> {feature.instructorSupport}
+              </div>
+            )}
+            {feature.realityWarning && (
+              <div style={{ fontSize: 10, color: theme.amber, lineHeight: 1.4, marginBottom: 4 }}>
+                <strong>Reality:</strong> {feature.realityWarning}
+              </div>
+            )}
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
               {feature.stakeholders.map(s => (
                 <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: 3, color: stColors[s], background: s === "student" ? theme.emeraldLight : s === "instructor" ? (isDark ? "#4C1D95" : "#F5F3FF") : theme.redLight, fontFamily: MONO, textTransform: "uppercase" }}>{s}</span>
               ))}
+              {feature.engagement === "sustained" && (
+                <span style={{ fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: 3, color: theme.amber, background: isDark ? "#78350F" : "#FEF3C7", fontFamily: MONO }}>BETWEEN-SESSION</span>
+              )}
             </div>
           </div>
           <span style={{ fontSize: 16, flexShrink: 0, marginTop: 2 }}>{selected ? "✅" : "○"}</span>
@@ -1164,6 +1267,236 @@
       );
     }
 
+    function PLCycleOverlay({ selectedFeatures }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const stepCoverage = {};
+      PL_FCM_STEPS.forEach(s => { stepCoverage[s.id] = []; });
+      selectedFeatures.forEach(f => {
+        (f.affectsSteps || []).forEach(sId => { if (stepCoverage[sId]) stepCoverage[sId].push(f); });
+      });
+      const coveredCount = Object.values(stepCoverage).filter(v => v.length > 0).length;
+      const darkCount = PL_FCM_STEPS.length - coveredCount;
+
+      return (
+        <div style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 10, padding: 16, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, fontFamily: MONO }}>FCM Case Cycle Coverage</div>
+            {selectedFeatures.length > 0 && (
+              <div style={{ fontSize: 10, fontFamily: MONO, color: darkCount > 0 ? theme.amber : theme.emerald }}>
+                {coveredCount}/{PL_FCM_STEPS.length} steps covered{darkCount > 0 ? ` · ${darkCount} dark zone${darkCount > 1 ? "s" : ""}` : " — full coverage"}
+              </div>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 2, alignItems: "stretch" }}>
+            {PL_FCM_STEPS.map((step, i) => {
+              const feats = stepCoverage[step.id];
+              const covered = feats.length > 0;
+              const isGap = step.isGap;
+              return (
+                <div key={step.id} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
+                  <div style={{
+                    width: "100%", padding: "8px 2px", borderRadius: 6, textAlign: "center",
+                    background: covered ? (isDark ? "#064E3B" : "#F0FDF4") : isGap ? (isDark ? "#7F1D1D" : "#FEF2F2") : theme.offWhite,
+                    border: `1px solid ${covered ? theme.emerald : isGap ? (isDark ? "#991B1B" : "#FECACA") : theme.lightGray}`,
+                    minHeight: 52, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s",
+                  }}>
+                    <div style={{ fontSize: 14, marginBottom: 2 }}>{step.icon}</div>
+                    <div style={{ fontSize: 8, fontWeight: 600, fontFamily: MONO, color: covered ? theme.emerald : isGap ? theme.red : theme.medGray, lineHeight: 1.2, whiteSpace: "pre-line" }}>{step.short}</div>
+                  </div>
+                  {covered && (
+                    <div style={{ display: "flex", gap: 2, marginTop: 4, flexWrap: "wrap", justifyContent: "center" }}>
+                      {feats.map(f => (
+                        <span key={f.id} title={f.name} style={{ fontSize: 10, cursor: "default" }}>{f.icon}</span>
+                      ))}
+                    </div>
+                  )}
+                  {isGap && !covered && (
+                    <div style={{ fontSize: 8, color: theme.red, fontFamily: MONO, marginTop: 4, textAlign: "center", fontWeight: 600 }}>DARK ZONE</div>
+                  )}
+                  {i < PL_FCM_STEPS.length - 1 && (
+                    <div style={{ position: "absolute", right: -3, top: 26, fontSize: 8, color: theme.lightGray }}>›</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {selectedFeatures.length > 0 && selectedFeatures.some(f => f.realityWarning) && (
+            <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 6, background: isDark ? "#78350F" : "#FFF7ED", border: `1px solid ${isDark ? "#92400E" : "#FDE68A"}`, fontSize: 11, color: isDark ? "#F59E0B" : "#92400E", lineHeight: 1.5, fontFamily: MONO }}>
+              Reality check: {selectedFeatures.filter(f => f.realityWarning).map(f => `${f.icon} ${f.name}`).join(", ")} require between-session engagement. Students don't think about FCM between sessions — plan for that.
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function PLDesignPhilosophy({ selectedFeatures }) {
+      const theme = useTheme();
+      const isDark = theme.offWhite === "#1A1A1A";
+      const [activeApp, setActiveApp] = useState("duolingo");
+
+      const philosophies = [
+        {
+          id: "duolingo", name: "Duolingo", icon: "🦉", color: "#58CC02",
+          philosophy: "Everything in 5 minutes. Gamify everything. Streaks for retention. No instructor — the app IS the teacher.",
+          rules: ["Every interaction under 5 min", "Points for every action", "Daily streak = core retention mechanic", "No instructor-facing features", "Mobile-only design"],
+          reinterpret: (feats) => feats.map(f => {
+            const map = {
+              "gap-refresh": { verdict: "PERFECT FIT", note: "This IS Duolingo's core. Quick-fire differential quiz on the walk to FCM. Streak counter. XP for accuracy." },
+              "reasoning-capture": { verdict: "SIMPLIFY", note: "Too deep for 5-min sessions. Reduce to: 3 structured prompts, tap-to-rank differentials, 30-second reasoning voice memo." },
+              "confidence-cal": { verdict: "GAMIFY IT", note: "Prediction game: rate your confidence → see result after session → earn 'Calibration Score' XP. Leaderboard potential." },
+              "student-signal": { verdict: "CUT IT", note: "Duolingo has no teachers. This feature doesn't exist in this philosophy. Student learns from the app, not from signaling." },
+              "instructor-dashboard": { verdict: "CUT IT", note: "No instructor-facing features. The app teaches autonomously." },
+              "ai-patient": { verdict: "CORE FEATURE", note: "This IS the Duolingo lesson — conversational AI patient as the practice exercise. 5-min encounters. Daily practice." },
+              "progress-tracker": { verdict: "LEVEL SYSTEM", note: "XP, levels, badges. 'You've completed 12 cases. You're a Level 3 Diagnostician.' Visual skill tree." },
+              "spaced-review": { verdict: "PERFECT FIT", note: "Duolingo's spaced repetition is core. Push notifications: 'You haven't reviewed the SOB case in 5 days.'" },
+              "compliance-dash": { verdict: "CUT IT", note: "No admin view. The app is purely student-facing." },
+              "peer-compare": { verdict: "LEADERBOARD", note: "Anonymous weekly leaderboard: 'You're in the top 20% for diagnostic accuracy this week.'" },
+            };
+            return { feature: f, ...(map[f.id] || { verdict: "ADAPT", note: "Reframe as a gamified, 5-minute mobile interaction." }) };
+          }),
+        },
+        {
+          id: "piazza", name: "Piazza", icon: "💬", color: "#3158A3",
+          philosophy: "Every question gets answered. Instructor sees everything. Anonymous participation lowers the bar. The class learns together.",
+          rules: ["Two-sided: students post, instructors respond", "Anonymous option for every interaction", "Instructor endorsement = quality signal", "Threaded discussions", "Desktop-first, content-heavy"],
+          reinterpret: (feats) => feats.map(f => {
+            const map = {
+              "gap-refresh": { verdict: "DISCUSSION", note: "Replace quiz with: 'Post your top differential and why.' Peers comment. Instructor endorses best reasoning." },
+              "reasoning-capture": { verdict: "CORE FEATURE", note: "Students post reasoning threads. Instructor annotates inline. Best reasoning gets 'Instructor Endorsed' badge." },
+              "confidence-cal": { verdict: "CLASS POLL", note: "Anonymous poll: 'What's your top diagnosis?' See class distribution before session. Instructor sees who's divergent." },
+              "student-signal": { verdict: "PERFECT FIT", note: "This IS Piazza. Anonymous Q&A before session. Instructor sees aggregate confusion. Students feel safe asking." },
+              "instructor-dashboard": { verdict: "PERFECT FIT", note: "Piazza's instructor view: unanswered questions, participation stats, trending confusion areas." },
+              "ai-patient": { verdict: "DOESN'T FIT", note: "Piazza is human-to-human. AI patient is a solo experience. Could add: 'Share your AI encounter transcript with the class.'" },
+              "progress-tracker": { verdict: "PARTICIPATION", note: "Track contribution quality over time. 'You've posted 15 times, 3 instructor-endorsed answers.'" },
+              "spaced-review": { verdict: "ADAPT", note: "Post-session thread: 'Now that we know the diagnosis, what would you do differently?' Peer discussion." },
+              "compliance-dash": { verdict: "ANALYTICS", note: "Engagement metrics: who participates, quality of reasoning, coach response time." },
+              "peer-compare": { verdict: "BUILT IN", note: "Seeing peers' posts IS peer comparison. Add anonymous differential distribution chart." },
+            };
+            return { feature: f, ...(map[f.id] || { verdict: "ADAPT", note: "Reframe as a collaborative, discussion-based feature." }) };
+          }),
+        },
+        {
+          id: "strava", name: "Strava", icon: "🏃", color: "#FC4C02",
+          philosophy: "Track everything. Compare with peers. Personal records matter. The social feed IS the product. Data makes effort visible.",
+          rules: ["Activity feed is the home screen", "Everything generates data", "Peer comparison is motivating", "Personal records and trends", "Passive tracking where possible"],
+          reinterpret: (feats) => feats.map(f => {
+            const map = {
+              "gap-refresh": { verdict: "WARM-UP", note: "Pre-session warm-up that logs to your activity feed. 'Alex completed a 7-min case refresh.' Peers see it." },
+              "reasoning-capture": { verdict: "LOG IT", note: "Every reasoning session is an 'activity.' Logged with time, quality score, complexity. Visible on your profile." },
+              "confidence-cal": { verdict: "PERSONAL RECORD", note: "Track calibration score like a running pace. 'Your best calibration: 85% on the cardiology case.' PR notifications." },
+              "student-signal": { verdict: "DOESN'T FIT", note: "Strava doesn't have coaches giving real-time feedback. Could adapt: instructor 'kudos' on student activities." },
+              "instructor-dashboard": { verdict: "COACH VIEW", note: "Like Strava's coach dashboard: see all athletes' activities, training load, trends. No direct intervention." },
+              "ai-patient": { verdict: "WORKOUT", note: "AI encounter = a 'workout.' Logged with difficulty, duration, performance. Compare times with peers." },
+              "progress-tracker": { verdict: "CORE FEATURE", note: "This IS Strava. Graphs, trends, year-over-year comparison. 'You've improved 23% in diagnostic accuracy since September.'" },
+              "spaced-review": { verdict: "STREAK", note: "Review streak. 'You've reviewed cases 5 days in a row.' Activity calendar (green squares like GitHub)." },
+              "compliance-dash": { verdict: "LEADERBOARD", note: "Program-level leaderboards and stats. 'Your section averages 4.2 activities/week.'" },
+              "peer-compare": { verdict: "PERFECT FIT", note: "Segment leaderboards: 'On this case, you ranked #3 in diagnostic accuracy among 180 students.'" },
+            };
+            return { feature: f, ...(map[f.id] || { verdict: "ADAPT", note: "Reframe as a trackable, shareable activity." }) };
+          }),
+        },
+        {
+          id: "chatgpt", name: "ChatGPT", icon: "🤖", color: "#10A37F",
+          philosophy: "Conversational AI that adapts to you. No structure — you drive the interaction. Infinite depth. Every session is different.",
+          rules: ["Conversation is the interface", "AI adapts to student level", "No fixed curriculum path", "Infinite practice depth", "Solo experience, always available"],
+          reinterpret: (feats) => feats.map(f => {
+            const map = {
+              "gap-refresh": { verdict: "SIMPLIFY", note: "Instead of a quiz, just open a chat: 'Remind me about the SOB case.' AI gives a conversational recap tailored to what you forgot." },
+              "reasoning-capture": { verdict: "CONVERSATION", note: "Don't fill out forms. Talk through your reasoning with AI. It asks Socratic questions. Probes weak spots. Captures reasoning naturally." },
+              "confidence-cal": { verdict: "AI ASKS YOU", note: "AI: 'You said PE is most likely. How confident are you? What would change your mind?' Conversational calibration." },
+              "student-signal": { verdict: "AI SUMMARY", note: "AI generates a summary of each student's conversation for the instructor. Student doesn't have to 'signal' — AI extracts confusion automatically." },
+              "instructor-dashboard": { verdict: "AI INSIGHTS", note: "AI analyzes all student conversations: 'Common blind spot: 4 of 6 students missed pulmonary embolism as a differential.'" },
+              "ai-patient": { verdict: "CORE FEATURE", note: "This IS ChatGPT's strength. Conversational AI patient. Infinitely patient, always available, adapts to your level." },
+              "progress-tracker": { verdict: "AI REFLECTION", note: "AI: 'Compared to your first case in September, your reasoning is more structured. Here's what I notice...' Personalized growth insights." },
+              "spaced-review": { verdict: "AI PROMPTS", note: "AI texts you: 'Remember the SOB case? A new finding just came in. What do you think now?' Conversational spaced repetition." },
+              "compliance-dash": { verdict: "AUTO-GENERATE", note: "AI auto-generates competency reports from conversation analysis. No manual tracking needed." },
+              "peer-compare": { verdict: "DOESN'T FIT", note: "ChatGPT is solo. No peer visibility. Could add: 'Other students commonly identified X — want to explore that?'" },
+            };
+            return { feature: f, ...(map[f.id] || { verdict: "ADAPT", note: "Reframe as a conversational AI interaction." }) };
+          }),
+        },
+      ];
+
+      const activePhil = philosophies.find(p => p.id === activeApp);
+      const interpretations = activePhil.reinterpret(selectedFeatures);
+      const verdictColors = {
+        "PERFECT FIT": { bg: isDark ? "#064E3B" : "#F0FDF4", color: theme.emerald },
+        "CORE FEATURE": { bg: isDark ? "#064E3B" : "#F0FDF4", color: theme.emerald },
+        "BUILT IN": { bg: isDark ? "#064E3B" : "#F0FDF4", color: theme.emerald },
+        "GAMIFY IT": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "LEADERBOARD": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "LEVEL SYSTEM": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "CONVERSATION": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "WARM-UP": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "LOG IT": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "CLASS POLL": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "DISCUSSION": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "WORKOUT": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "PERSONAL RECORD": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "COACH VIEW": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "STREAK": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "AI ASKS YOU": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "AI SUMMARY": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "AI INSIGHTS": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "AI REFLECTION": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "AI PROMPTS": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "AUTO-GENERATE": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "PARTICIPATION": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "ANALYTICS": { bg: isDark ? "#1E3A5F" : "#EFF6FF", color: theme.blue },
+        "SIMPLIFY": { bg: isDark ? "#78350F" : "#FFF7ED", color: theme.amber },
+        "ADAPT": { bg: isDark ? "#78350F" : "#FFF7ED", color: theme.amber },
+        "CUT IT": { bg: isDark ? "#7F1D1D" : "#FEF2F2", color: theme.red },
+        "DOESN'T FIT": { bg: isDark ? "#7F1D1D" : "#FEF2F2", color: theme.red },
+      };
+
+      return (
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>What Would They Build?</div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
+            {philosophies.map(p => (
+              <button key={p.id} onClick={() => setActiveApp(p.id)} style={{
+                padding: "6px 14px", borderRadius: 20, fontSize: 12, fontFamily: MONO, fontWeight: activeApp === p.id ? 700 : 500, cursor: "pointer", transition: "all 0.15s",
+                background: activeApp === p.id ? p.color + "18" : "transparent",
+                border: `1.5px solid ${activeApp === p.id ? p.color : theme.lightGray}`,
+                color: activeApp === p.id ? p.color : theme.medGray,
+              }}>
+                {p.icon} {p.name}
+              </button>
+            ))}
+          </div>
+          <div style={{ padding: "12px 14px", borderRadius: 8, background: theme.offWhite, marginBottom: 16, borderLeft: `3px solid ${activePhil.color}` }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: theme.black, marginBottom: 4, fontFamily: MONO }}>If {activePhil.name} built your app...</div>
+            <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5, marginBottom: 8 }}>{activePhil.philosophy}</div>
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              {activePhil.rules.map((r, i) => (
+                <span key={i} style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10, background: theme.white, border: `1px solid ${theme.lightGray}`, color: theme.black, fontFamily: MONO }}>{r}</span>
+              ))}
+            </div>
+          </div>
+          {selectedFeatures.length === 0 ? (
+            <div style={{ fontSize: 12, color: theme.medGray, fontStyle: "italic", textAlign: "center", padding: 20 }}>Select features on the left to see how {activePhil.name} would reinterpret them</div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {interpretations.map(({ feature, verdict, note }) => {
+                const vc = verdictColors[verdict] || { bg: theme.offWhite, color: theme.medGray };
+                return (
+                  <div key={feature.id} style={{ padding: "10px 14px", borderRadius: 8, background: vc.bg, border: `1px solid ${vc.color}22` }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: theme.black }}>{feature.icon} {feature.name}</span>
+                      <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: vc.color + "22", color: vc.color, fontFamily: MONO }}>{verdict}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: theme.medGray, lineHeight: 1.5 }}>{note}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     function PLProductBuilder({ selectedIds, toggleFeature }) {
       const theme = useTheme();
       const [activeLens, setActiveLens] = useState("budget");
@@ -1175,14 +1508,16 @@
         { id: "budget", label: "Budget", icon: "💰" },
         { id: "tech", label: "Tech Stack", icon: "🔧" },
         { id: "product", label: "Product Shape", icon: "🏗️" },
+        { id: "wwxd", label: "What Would X Do?", icon: "🪞" },
       ];
 
       return (
         <div>
-          <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 20px 0" }}>
+          <p style={{ fontSize: 13, color: theme.medGray, lineHeight: 1.6, margin: "0 0 16px 0" }}>
             You have <strong style={{ color: theme.black }}>{PL_BUDGET} build points</strong>. Choose features that address the pain points you prioritized.{" "}
             <strong style={{ color: theme.black }}>Toggle lenses on the right</strong> to see how your choices shape the product.
           </p>
+          <PLCycleOverlay selectedFeatures={selectedFeatures} />
           <div className="pl-builder-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: theme.medGray, marginBottom: 12, fontFamily: MONO }}>
@@ -1193,9 +1528,9 @@
               ))}
             </div>
             <div>
-              <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${theme.lightGray}`, marginBottom: 16 }}>
+              <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${theme.lightGray}`, marginBottom: 16, flexWrap: "wrap" }}>
                 {lenses.map(lens => (
-                  <button key={lens.id} onClick={() => setActiveLens(lens.id)} style={{ padding: "6px 12px", fontSize: 11, fontWeight: activeLens === lens.id ? 700 : 500, fontFamily: MONO, color: activeLens === lens.id ? theme.black : theme.medGray, background: "none", border: "none", borderBottom: activeLens === lens.id ? `2px solid ${theme.blue}` : "2px solid transparent", cursor: "pointer", marginBottom: -1 }}>
+                  <button key={lens.id} onClick={() => setActiveLens(lens.id)} style={{ padding: "6px 10px", fontSize: 10, fontWeight: activeLens === lens.id ? 700 : 500, fontFamily: MONO, color: activeLens === lens.id ? theme.black : theme.medGray, background: "none", border: "none", borderBottom: activeLens === lens.id ? `2px solid ${theme.blue}` : "2px solid transparent", cursor: "pointer", marginBottom: -1 }}>
                     {lens.icon} {lens.label}
                   </button>
                 ))}
@@ -1204,6 +1539,7 @@
                 {activeLens === "budget" && <PLBudgetLens selectedFeatures={selectedFeatures} />}
                 {activeLens === "tech" && <PLTechLens selectedFeatures={selectedFeatures} />}
                 {activeLens === "product" && <PLProductLens selectedFeatures={selectedFeatures} />}
+                {activeLens === "wwxd" && <PLDesignPhilosophy selectedFeatures={selectedFeatures} />}
               </div>
             </div>
           </div>
