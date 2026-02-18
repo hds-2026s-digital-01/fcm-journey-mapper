@@ -773,6 +773,69 @@
       };
     }
 
+    /* ── Story Mode: Landing Page (Page 0) ────────────────── */
+    function StoryLanding() {
+      return (
+        <div className="story-page" style={{ maxWidth: 760, textAlign: "left" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: "#10B981", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>PROTOTYPE</div>
+            <h2 style={{ fontSize: 36, lineHeight: 1.2, textAlign: "center" }}>Story Mode</h2>
+            <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 540, margin: "8px auto 0" }}>
+              A narrative walkthrough of what emerged from your research — built by AI from your own words.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 32 }}>
+            <div style={{ background: "rgba(16,185,129,0.08)", borderRadius: 12, padding: 20, border: "1px solid rgba(16,185,129,0.2)" }}>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "#10B981", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>THE PROJECT</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#F9FAFB", marginBottom: 8, fontFamily: MONO }}>Redesigning FCM</div>
+              <p style={{ fontSize: 14, color: "#D1D5DB", lineHeight: 1.6, margin: 0 }}>
+                You've spent two days mapping how Foundations of Clinical Medicine actually works — from a student's first glance at the chief complaint through the gap, the session, and the fade. This presentation surfaces the patterns, quotes, and opportunities that emerged from <em>your</em> conversations.
+              </p>
+            </div>
+            <div style={{ background: "rgba(99,102,241,0.08)", borderRadius: 12, padding: 20, border: "1px solid rgba(99,102,241,0.2)" }}>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "#818CF8", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>THE EXPERIMENT</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#F9FAFB", marginBottom: 8, fontFamily: MONO }}>Is This Useful?</div>
+              <p style={{ fontSize: 14, color: "#D1D5DB", lineHeight: 1.6, margin: 0 }}>
+                This tool is itself a design experiment. We're testing whether AI-organized research findings — presented back to you as a narrative — actually help a team converge on what to build. As you go through, notice: does this feel like <em>your</em> work? Does it clarify or confuse?
+              </p>
+            </div>
+          </div>
+
+          <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 20, marginBottom: 28, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>WHERE WE ARE IN THE DESIGN PROCESS</div>
+            <div style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
+              {Object.entries(PROJECT_CONFIG.phases).map(([num, label], i) => {
+                const isActive = num === "2";
+                const isDone = num === "1";
+                return (
+                  <div key={num} style={{ flex: 1, textAlign: "center", padding: "10px 4px", background: isActive ? "rgba(16,185,129,0.15)" : isDone ? "rgba(16,185,129,0.05)" : "transparent", borderRadius: 8, border: isActive ? "1px solid rgba(16,185,129,0.4)" : "1px solid transparent", position: "relative" }}>
+                    <div style={{ fontFamily: MONO, fontSize: 11, color: isDone ? "#6B7280" : isActive ? "#10B981" : "#4B5563", fontWeight: 700 }}>{num}</div>
+                    <div style={{ fontSize: 13, fontWeight: isActive ? 700 : 500, color: isDone ? "#6B7280" : isActive ? "#F9FAFB" : "#4B5563", fontFamily: MONO }}>{label}</div>
+                    {isDone && <div style={{ fontSize: 10, color: "#6B7280" }}>Days 1–2</div>}
+                    {isActive && <div style={{ fontSize: 10, color: "#10B981", fontWeight: 600 }}>Today</div>}
+                  </div>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: 13, color: "#9CA3AF", margin: "12px 0 0", lineHeight: 1.5, textAlign: "center" }}>
+              Days 1–2 were <strong style={{ color: "#D1D5DB" }}>Understand</strong>. Today we <strong style={{ color: "#10B981" }}>Define</strong> — synthesize what you found and decide where to focus.
+            </p>
+          </div>
+
+          <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 10 }}>HOW TO NAVIGATE</div>
+            <div style={{ display: "flex", gap: 24, fontSize: 14, color: "#D1D5DB" }}>
+              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>→</span> or <span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Next</span> to advance</div>
+              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>←</span> or <span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Back</span> to go back</div>
+              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Dots</span> at the bottom to jump to any page</div>
+              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Free Browse</span> to explore non-linearly</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     /* ── Story Mode: ResearchImpact (Page 1) ─────────────── */
     function ResearchImpact() {
       const stats = useMemo(() => computeResearchStats(), []);
@@ -1153,10 +1216,10 @@
 
     /* ── Story Mode: Container ───────────────────────────── */
     function StoryMode({ onClose, onEnterProductLab }) {
-      const [page, setPage] = useState(1);
+      const [page, setPage] = useState(0);
       const [mode, setMode] = useState("story"); // "story" or "browse"
       const [cellDetail, setCellDetail] = useState(null);
-      const totalPages = 8;
+      const totalPages = 9; // 0=landing, 1-8=content
 
       const handleCellClick = useCallback((perspKey, stepId) => {
         setCellDetail({ perspKey, stepId });
@@ -1167,8 +1230,8 @@
         if (mode !== "story") return;
         const handler = (e) => {
           if (cellDetail) return; // Don't navigate when detail overlay is open
-          if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); setPage(p => Math.min(p + 1, totalPages)); }
-          if (e.key === "ArrowLeft") { e.preventDefault(); setPage(p => Math.max(p - 1, 1)); }
+          if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); setPage(p => Math.min(p + 1, totalPages - 1)); }
+          if (e.key === "ArrowLeft") { e.preventDefault(); setPage(p => Math.max(p - 1, 0)); }
           if (e.key === "Escape") onClose();
         };
         window.addEventListener("keydown", handler);
@@ -1184,7 +1247,7 @@
         <div className="story-overlay">
           <button className="story-close" onClick={onClose}>✕ Exit</button>
 
-          <div className="story-toggle">
+          {page > 0 && <div className="story-toggle">
             <button
               className="story-nav-btn"
               onClick={() => setMode(mode === "story" ? "browse" : "story")}
@@ -1199,10 +1262,11 @@
             >
               Print / Save PDF
             </button>
-          </div>
+          </div>}
 
           {mode === "story" ? (
             <>
+              {page === 0 && <StoryLanding />}
               {page === 1 && <ResearchImpact />}
               {page === 2 && <ProcessChain />}
               {page >= 3 && page <= 6 && <MomentCard momentConfig={PROJECT_CONFIG.storyMoments[page - 3]} pageNumber={page} />}
@@ -1210,14 +1274,14 @@
               {page === 8 && <ConvergenceBridge onEnterProductLab={handleEnterPL} />}
 
               <div className="story-nav">
-                <button className="story-nav-btn" onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} style={{ opacity: page === 1 ? 0.3 : 1 }}>← Back</button>
+                <button className="story-nav-btn" onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0} style={{ opacity: page === 0 ? 0.3 : 1 }}>← Back</button>
                 <div style={{ display: "flex", gap: 6 }}>
                   {Array.from({ length: totalPages }, (_, i) => (
-                    <button key={i} className={`story-dot ${page === i + 1 ? "active" : ""}`} onClick={() => setPage(i + 1)} />
+                    <button key={i} className={`story-dot ${page === i ? "active" : ""}`} onClick={() => setPage(i)} />
                   ))}
                 </div>
-                <button className={`story-nav-btn ${page < totalPages ? "primary" : ""}`} onClick={() => page < totalPages ? setPage(p => p + 1) : handleEnterPL()}>
-                  {page < totalPages ? "Next →" : "Enter Product Lab →"}
+                <button className={`story-nav-btn ${page < totalPages - 1 ? "primary" : ""}`} onClick={() => page < totalPages - 1 ? setPage(p => p + 1) : handleEnterPL()}>
+                  {page === 0 ? "Begin →" : page < totalPages - 1 ? "Next →" : "Enter Product Lab →"}
                 </button>
               </div>
             </>
@@ -2672,7 +2736,10 @@
       });
       const [mainTab, setMainTab] = useState("journey");
       const [presentMode, setPresentMode] = useState(() => {
-        try { return new URLSearchParams(window.location.search).has("present"); } catch { return false; }
+        try {
+          const href = window.location.href;
+          return href.includes("?present") || href.includes("#present") || href.includes("&present");
+        } catch { return false; }
       });
       const theme = darkMode ? BRAND_DARK : BRAND;
       useEffect(() => { document.body.style.background = theme.offWhite; }, [theme.offWhite]);
