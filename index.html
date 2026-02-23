@@ -82,6 +82,8 @@
     }
     @media (max-width: 800px) {
       .story-two-col { grid-template-columns: 1fr; }
+      .ext-chapter-bar { overflow-x: auto; }
+      .ext-chapter-label { font-size: 10px; padding: 6px 8px; }
     }
     .story-section-label {
       display: inline-block; padding: 3px 12px; border-radius: 12px;
@@ -97,6 +99,71 @@
       font-size: 9px; font-family: 'JetBrains Mono', monospace;
       color: #6B7280; text-align: center; margin-bottom: 4px;
       letter-spacing: 0.05em;
+    }
+    /* ── External Present Mode ───────────────────────────── */
+    .ext-chapter-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 1001;
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      padding: 0 24px; height: 56px;
+      background: rgba(17,17,17,0.95); backdrop-filter: blur(8px);
+      border-top: 1px solid #374151;
+    }
+    .ext-chapter-label {
+      padding: 6px 12px; font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600; color: #6B7280;
+      cursor: pointer; border: none; background: none;
+      transition: all 0.15s; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+    }
+    .ext-chapter-label:hover { color: #D1D5DB; }
+    .ext-chapter-label.active { color: #10B981; border-bottom-color: #10B981; }
+    .ext-finding-card {
+      background: #1F2937; border-radius: 12px; padding: 24px;
+      border: 1px solid #374151; margin-bottom: 16px;
+    }
+    .ext-finding-card h4 {
+      font-family: 'JetBrains Mono', monospace; font-size: 16px;
+      font-weight: 700; color: #F9FAFB; margin: 0 0 8px;
+    }
+    .ext-anon-quote {
+      font-size: 18px; font-weight: 500; line-height: 1.6;
+      font-style: italic; color: #E5E7EB; margin: 16px 0 8px;
+      padding-left: 16px; border-left: 3px solid #374151;
+    }
+    .ext-anon-attr {
+      font-size: 12px; color: #6B7280; padding-left: 16px;
+      font-family: 'JetBrains Mono', monospace; margin-bottom: 12px;
+    }
+    .ext-version-card {
+      background: #1F2937; border-radius: 10px; padding: 20px 24px;
+      border: 1px solid #374151; margin-bottom: 12px;
+      position: relative; padding-left: 40px;
+    }
+    .ext-version-card::before {
+      content: ''; position: absolute; left: 16px; top: 0; bottom: 0;
+      width: 2px; background: #374151;
+    }
+    .ext-version-card::after {
+      content: ''; position: absolute; left: 11px; top: 24px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #10B981; border: 2px solid #111;
+    }
+    .ext-feedback-card {
+      background: #1F2937; border-radius: 12px; padding: 24px;
+      border: 1px solid #374151; margin-bottom: 16px;
+    }
+    .ext-feedback-question {
+      font-size: 15px; color: #D1D5DB; line-height: 1.6;
+      margin-bottom: 12px; padding-left: 16px;
+      border-left: 2px solid #374151;
+    }
+    .ext-criteria-card {
+      background: #1F2937; border-radius: 12px; padding: 20px;
+      border: 1px solid #374151; margin-bottom: 12px;
+    }
+    .ext-criteria-card h4 {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      font-weight: 700; color: #F9FAFB; margin: 0 0 6px;
     }
     /* ── Free Browse Tabs ──────────────────────────────────── */
     .browse-tabs { display: flex; gap: 0; border-bottom: 1px solid #374151; margin-bottom: 24px; }
@@ -120,7 +187,7 @@
     @media print {
       body { background: white !important; }
       .story-overlay { position: static; background: white; color: #1A1A1A; }
-      .story-nav, .story-toggle, .story-close { display: none !important; }
+      .story-nav, .story-toggle, .story-close, .ext-chapter-bar { display: none !important; }
       .story-page { min-height: auto; page-break-after: always; padding: 24px 0; }
       .story-page:last-child { page-break-after: auto; }
       .story-big-number { color: #1A1A1A; }
@@ -129,6 +196,7 @@
     }
   </style>
   <script src="sessions-data.js"></script>
+  <script src="sprint-narrative.js"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -808,13 +876,19 @@
       };
     }
 
+    function computeExternalStats() {
+      const stats = computeResearchStats();
+      if (!stats) return null;
+      return { ...stats, speakerLabel: "Student Participants", speakers: null };
+    }
+
     /* ── Story Mode: Landing Page (Page 0) ────────────────── */
     function StoryLanding() {
       return (
         <div className="story-page" style={{ maxWidth: 760, textAlign: "left" }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div style={{ fontFamily: MONO, fontSize: 13, color: "#10B981", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>PROTOTYPE</div>
-            <h2 style={{ fontSize: 36, lineHeight: 1.2, textAlign: "center" }}>Story Mode</h2>
+            <h2 style={{ fontSize: 36, lineHeight: 1.2, textAlign: "center" }}>Team Review</h2>
             <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 540, margin: "8px auto 0" }}>
               A narrative walkthrough of what emerged from your research — built by AI from your own words.
             </p>
@@ -1246,8 +1320,437 @@
       );
     }
 
+    /* ── External Present Mode ──────────────────────────── */
+
+    const EXT_CHAPTERS = [
+      { id: 0, label: "Context" },
+      { id: 1, label: "Seed" },
+      { id: 2, label: "Discovery" },
+      { id: 3, label: "Map" },
+      { id: 4, label: "Findings" },
+      { id: 5, label: "Opportunities" },
+      { id: 6, label: "Criteria" },
+      { id: 7, label: "Built" },
+      { id: 8, label: "Demo" },
+      { id: 9, label: "Feedback" },
+    ];
+
+    function ExtChapterNav({ page, setPage }) {
+      return (
+        <div className="ext-chapter-bar">
+          <button className="story-nav-btn" onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0} style={{ opacity: page === 0 ? 0.3 : 1, marginRight: 12 }}>← Back</button>
+          {EXT_CHAPTERS.map(ch => (
+            <button key={ch.id} className={`ext-chapter-label ${page === ch.id ? "active" : ""}`} onClick={() => setPage(ch.id)}>{ch.label}</button>
+          ))}
+          <button className={`story-nav-btn ${page < 9 ? "primary" : ""}`} onClick={() => page < 9 ? setPage(p => p + 1) : null} style={{ marginLeft: 12, opacity: page === 9 ? 0.3 : 1 }} disabled={page === 9}>{page < 9 ? "Next →" : "Done"}</button>
+        </div>
+      );
+    }
+
+    function ExtCellDetail({ perspKey, stepId, onClose }) {
+      const latestSession = SESSION_DATA?.sessions?.[SESSION_DATA.sessions.length - 1];
+      if (!latestSession) return null;
+      const step = DEFAULT_STEPS.find(s => s.id === stepId);
+      const pData = latestSession.perspectives?.[perspKey];
+      const stepData = pData?.steps?.[stepId];
+      const stab = SESSION_DATA?.cumulative?.stability?.[stepId];
+      const yieldOpp = (SESSION_DATA?.cumulative?.yieldOpportunities || []).find(o => o.stepId === stepId);
+
+      useEffect(() => {
+        const handler = (e) => { if (e.key === "Escape") onClose(); };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+      }, [onClose]);
+
+      return (
+        <div className="story-cell-detail">
+          <button onClick={onClose} style={{ float: "right", background: "none", border: "1px solid #374151", borderRadius: 6, padding: "4px 10px", color: "#9CA3AF", cursor: "pointer", fontFamily: MONO, fontSize: 12 }}>✕</button>
+          <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: perspKey === "student" ? "#10B981" : perspKey === "coach" ? "#7C3AED" : "#EF4444", textTransform: "uppercase", marginBottom: 8 }}>{perspKey}</div>
+          <h3 style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#F9FAFB", margin: "0 0 16px" }}>{step?.title || stepId}</h3>
+          {stab && (
+            <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <span className="story-stability-badge" style={{ background: stab.level === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: stab.level === "stable" ? "#10B981" : "#F59E0B" }}>{stab.level} · {stab.supportCount} participants</span>
+              {yieldOpp && <span className="story-yield-badge" style={{ background: "rgba(239,68,68,0.15)", color: "#EF4444", fontSize: 12 }}>Yield {yieldOpp.yieldScore}/10</span>}
+            </div>
+          )}
+          {stepData?.summary && <p style={{ fontSize: 13, color: "#D1D5DB", lineHeight: 1.6, marginBottom: 16 }}>{stepData.summary}</p>}
+          {stepData?.themes && stepData.themes.length > 0 && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+              {stepData.themes.map((t, i) => (
+                <span key={i} style={{ padding: "3px 10px", borderRadius: 12, background: "#1F2937", color: "#9CA3AF", fontSize: 11, fontFamily: MONO }}>{t}</span>
+              ))}
+            </div>
+          )}
+          {stepData?.keyQuotes && stepData.keyQuotes.length > 0 && (
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#6B7280", marginBottom: 8, textTransform: "uppercase" }}>Quotes</div>
+              {stepData.keyQuotes.map((q, i) => (
+                <div key={i} style={{ padding: "10px 14px", background: "#1F2937", borderRadius: 6, marginBottom: 6, borderLeft: "2px solid #3B82F6" }}>
+                  <div style={{ fontSize: 13, color: "#D1D5DB", fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
+                  <div style={{ fontSize: 11, color: "#6B7280", marginTop: 4 }}>— First-year medical student</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {stepData?.suggestedFriction && (
+            <div style={{ marginTop: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#EF4444", marginBottom: 4 }}>FRICTION</div>
+              <div style={{ fontSize: 12, color: "#FCA5A5", lineHeight: 1.5 }}>{stepData.suggestedFriction}</div>
+            </div>
+          )}
+          {stepData?.suggestedWish && (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 4 }}>WISH</div>
+              <div style={{ fontSize: 12, color: "#6EE7B7", lineHeight: 1.5 }}>{stepData.suggestedWish}</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* Page 0 — Context */
+    function ExtTitlePage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const ctx = narrative.context;
+      const timeline = narrative.sprintTimeline || [];
+      return (
+        <div className="story-page" style={{ maxWidth: 760, textAlign: "left" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: "#10B981", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>EXTERNAL PRESENTATION</div>
+            <h2 style={{ fontSize: 36, lineHeight: 1.2, textAlign: "center" }}>{ctx.sprintName}</h2>
+            <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 540, margin: "8px auto 0" }}>
+              {ctx.teamSize} {ctx.teamDescription} · {ctx.institutionShort} · {ctx.sprintDates}
+            </p>
+            <p style={{ color: "#6B7280", fontSize: 13, margin: "4px auto 0" }}>
+              {ctx.instructor} · {ctx.instructorRole}
+            </p>
+          </div>
+
+          <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 20, marginBottom: 28, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>SPRINT TIMELINE</div>
+            <div style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
+              {timeline.map((day, i) => (
+                <div key={i} style={{ flex: 1, textAlign: "center", padding: "10px 4px", background: i === timeline.length - 1 ? "rgba(16,185,129,0.15)" : i < timeline.length - 1 ? "rgba(16,185,129,0.05)" : "transparent", borderRadius: 8, border: i === timeline.length - 1 ? "1px solid rgba(16,185,129,0.4)" : "1px solid transparent" }}>
+                  <div style={{ fontFamily: MONO, fontSize: 11, color: i < timeline.length - 1 ? "#6B7280" : "#10B981", fontWeight: 700 }}>Day {day.day}</div>
+                  <div style={{ fontSize: 13, fontWeight: i === timeline.length - 1 ? 700 : 500, color: i < timeline.length - 1 ? "#6B7280" : "#F9FAFB", fontFamily: MONO }}>{day.title}</div>
+                  <div style={{ fontSize: 10, color: "#6B7280" }}>{day.date}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ padding: "20px 24px", background: "#1F2937", borderRadius: 12, borderLeft: "3px solid #10B981" }}>
+            <p style={{ fontSize: 15, color: "#D1FAE5", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
+              "{ctx.sprintFraming}"
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 1 — Seed */
+    function ExtSeedPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const seed = narrative.seed;
+      return (
+        <div className="story-page">
+          <h3>THE SEED</h3>
+          <h2 style={{ fontSize: 28 }}>"{seed.prompt}"</h2>
+          <p className="story-subtitle" style={{ maxWidth: 640 }}>{seed.emergenceStory}</p>
+
+          <div style={{ marginBottom: 32 }}>
+            <p className="story-pull-quote">"{seed.pullQuote.text}"</p>
+            <p className="story-quote-attr">— {seed.pullQuote.attribution}</p>
+          </div>
+
+          <div style={{ width: "100%", maxWidth: 600 }}>
+            <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>WHY FCM?</div>
+            {seed.whyFCM.map((reason, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: "#1F2937", borderRadius: 8, marginBottom: 6 }}>
+                <div style={{ fontFamily: MONO, fontSize: 14, color: "#10B981", fontWeight: 700 }}>{i + 1}</div>
+                <div style={{ fontSize: 14, color: "#D1D5DB" }}>{reason}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 2 — Discovery */
+    function ExtDiscoveryPage() {
+      const stats = useMemo(() => computeExternalStats(), []);
+      if (!stats) return null;
+      return (
+        <div className="story-page">
+          <h3>DISCOVERY</h3>
+          <h2>What We Found</h2>
+          <p className="story-subtitle">Research methodology: structured interviews, journey mapping, and synthesis across three stakeholder perspectives.</p>
+          <div className="story-stats-grid">
+            <div><div className="story-big-number">{stats.sessionCount}</div><div className="story-big-label">Research Sessions</div></div>
+            <div><div className="story-big-number">{stats.totalQuotes}+</div><div className="story-big-label">Direct Quotes</div></div>
+            <div><div className="story-big-number">{stats.namedStudents}</div><div className="story-big-label">{stats.speakerLabel}</div></div>
+            <div><div className="story-big-number">{stats.stepsCount}</div><div className="story-big-label">FCM Steps Mapped</div></div>
+          </div>
+          <div className="story-stats-grid" style={{ maxWidth: 500 }}>
+            <div><div className="story-big-number">{stats.perspectiveCount}</div><div className="story-big-label">Stakeholder Views</div></div>
+            <div><div className="story-big-number">{stats.stablePatterns}</div><div className="story-big-label">Stable Patterns</div></div>
+            <div><div className="story-big-number" style={{ color: "#EF4444" }}>{stats.topYield}/10</div><div className="story-big-label">Top Yield Score</div></div>
+          </div>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", width: "100%", maxWidth: 800, marginTop: 24 }}>
+            {["Student Experience", "Coach Perspective", "Administrative Needs"].map((label, i) => (
+              <div key={i} style={{ padding: "12px 20px", background: "#1F2937", borderRadius: 10, border: "1px solid #374151", textAlign: "center" }}>
+                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: ["#10B981", "#7C3AED", "#EF4444"][i] }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 3 — Journey Map */
+    function ExtJourneyMapPage() {
+      const [cellDetail, setCellDetail] = useState(null);
+      return (
+        <div style={{ position: "relative" }}>
+          <SwimlaneMap onCellClick={(perspKey, stepId) => setCellDetail({ perspKey, stepId })} />
+          {cellDetail && <ExtCellDetail perspKey={cellDetail.perspKey} stepId={cellDetail.stepId} onClose={() => setCellDetail(null)} />}
+        </div>
+      );
+    }
+
+    /* Page 4 — Pain Points / Findings */
+    function ExtPainPointsPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const findings = narrative.keyFindings || [];
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>KEY FINDINGS</h3>
+          <h2>What's Broken</h2>
+          <p className="story-subtitle">The four most significant pain points, validated across multiple participants.</p>
+          <div style={{ width: "100%", maxWidth: 700 }}>
+            {findings.map((f, i) => (
+              <div key={f.id} className="ext-finding-card">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                  <h4 style={{ margin: 0 }}>{i + 1}. {f.title}</h4>
+                  <span className="story-stability-badge" style={{ background: f.stability === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: f.stability === "stable" ? "#10B981" : "#F59E0B", flexShrink: 0 }}>
+                    {f.stability} · {f.supportCount}/{f.totalParticipants}
+                  </span>
+                </div>
+                <p style={{ fontSize: 14, color: "#9CA3AF", lineHeight: 1.6, margin: "0 0 16px" }}>{f.summary}</p>
+                {f.quotes.map((q, qi) => (
+                  <div key={qi}>
+                    <div className="ext-anon-quote">"{q.text}"</div>
+                    <div className="ext-anon-attr">— {q.attribution}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 5 — Opportunities */
+    function ExtOpportunitiesPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const opps = narrative.opportunities || [];
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>OPPORTUNITIES</h3>
+          <h2>Where to Intervene</h2>
+          <p className="story-subtitle">Yield-scored interventions ranked by impact potential.</p>
+          <div style={{ width: "100%", maxWidth: 700 }}>
+            {opps.map((opp, i) => (
+              <div key={opp.id} style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "16px 20px", background: "#1F2937", borderRadius: 10, marginBottom: 8, border: i === 0 ? "1px solid rgba(239,68,68,0.3)" : "1px solid #374151" }}>
+                <div style={{ fontFamily: MONO, fontWeight: 800, fontSize: 28, color: opp.yieldScore >= 9 ? "#EF4444" : opp.yieldScore >= 7 ? "#F59E0B" : "#6B7280", minWidth: 48, textAlign: "center" }}>{opp.yieldScore}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: "#F9FAFB", fontFamily: MONO }}>{opp.title}</div>
+                  <div style={{ fontSize: 13, color: "#9CA3AF", marginTop: 4, lineHeight: 1.5 }}>{opp.description}</div>
+                  <div style={{ fontSize: 12, color: "#10B981", marginTop: 8, fontStyle: "italic" }}>{opp.impact}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 6 — Criteria + Success Metrics */
+    function ExtCriteriaPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const criteria = narrative.designCriteria || [];
+      const metrics = narrative.successMetrics || [];
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>DESIGN PRINCIPLES</h3>
+          <h2>How We Decided What to Build</h2>
+          <p className="story-subtitle">Design criteria that guided every decision, and how we'll know it's working.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, width: "100%", maxWidth: 800 }}>
+            <div>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "#10B981", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>DESIGN CRITERIA</div>
+              {criteria.map((c, i) => (
+                <div key={i} className="ext-criteria-card">
+                  <h4><span style={{ marginRight: 8 }}>{c.icon}</span>{c.title}</h4>
+                  <p style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5, margin: 0 }}>{c.description}</p>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "#F59E0B", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>SUCCESS METRICS</div>
+              {metrics.map((m, i) => (
+                <div key={i} className="ext-criteria-card">
+                  <h4>{m.metric}</h4>
+                  <p style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5, margin: "0 0 6px" }}>{m.description}</p>
+                  <div style={{ fontSize: 11, color: "#6B7280", fontFamily: MONO }}>{m.measurement}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 7 — What We Built */
+    function ExtWhatWeBuiltPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const products = narrative.productEvolution || [];
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>WHAT WE BUILT</h3>
+          <h2>From Research to Product in 5 Days</h2>
+          <p className="story-subtitle">Two products evolved through the sprint — a research tool and a student-facing app.</p>
+          <div style={{ width: "100%", maxWidth: 700 }}>
+            {products.map(product => (
+              <div key={product.id} style={{ marginBottom: 40 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                  <div style={{ fontFamily: MONO, fontSize: 18, fontWeight: 800, color: "#F9FAFB" }}>{product.product}</div>
+                  <span style={{ padding: "3px 10px", borderRadius: 12, background: "rgba(16,185,129,0.15)", color: "#10B981", fontSize: 11, fontFamily: MONO, fontWeight: 600 }}>{product.role}</span>
+                </div>
+                {product.versions.map((v, vi) => (
+                  <div key={vi} className="ext-version-card">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{v.version} — {v.title}</div>
+                        <div style={{ fontSize: 12, color: "#6B7280", fontFamily: MONO, marginTop: 2 }}>{v.date}</div>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5, margin: "8px 0 4px" }}>{v.description}</p>
+                    <div style={{ fontSize: 12, color: "#10B981", fontStyle: "italic" }}>{v.milestone}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 8 — Demo Handoff */
+    function ExtDemoHandoffPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      return (
+        <div className="story-page">
+          <h3>LIVE DEMO</h3>
+          <h2>See It in Action</h2>
+          <p className="story-subtitle">Transitioning from slides to the live product.</p>
+
+          <div style={{ padding: "32px 40px", background: "#1F2937", borderRadius: 16, border: "1px solid #374151", textAlign: "center", marginBottom: 32, maxWidth: 600, width: "100%" }}>
+            <div style={{ fontSize: 16, color: "#9CA3AF", marginBottom: 12 }}>FCM Companion</div>
+            <a href="https://fcm-companion.vercel.app" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 20, fontWeight: 700, color: "#10B981", textDecoration: "none" }}>
+              fcm-companion.vercel.app →
+            </a>
+          </div>
+
+          <div style={{ width: "100%", maxWidth: 600 }}>
+            <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 16 }}>THINGS TO WATCH FOR</div>
+            {[
+              "Interactive differential diagnosis with VINDICATE grid",
+              "AI-powered feedback on reasoning quality (not just correctness)",
+              "324 practice cases from medical literature",
+              "Faculty dashboard showing per-student reasoning data",
+              "Session management with schedule integration",
+              "Progressive Web App — works offline on any device",
+            ].map((item, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: i % 2 === 0 ? "#1F2937" : "transparent", borderRadius: 8, marginBottom: 4 }}>
+                <div style={{ fontFamily: MONO, fontSize: 12, color: "#10B981", fontWeight: 700 }}>✓</div>
+                <div style={{ fontSize: 14, color: "#D1D5DB" }}>{item}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* Page 9 — Feedback */
+    function ExtFeedbackPage() {
+      const narrative = window.SPRINT_NARRATIVE;
+      if (!narrative) return null;
+      const groups = narrative.feedbackQuestions || [];
+      return (
+        <div className="story-page" style={{ paddingBottom: 100 }}>
+          <h3>YOUR FEEDBACK</h3>
+          <h2>Questions for You</h2>
+          <p className="story-subtitle">These are the right questions for the prototype stage — not "do you like it?" but "where does this go?"</p>
+          <div style={{ width: "100%", maxWidth: 700 }}>
+            {groups.map((group, gi) => (
+              <div key={gi} className="ext-feedback-card">
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                  <span style={{ padding: "4px 12px", borderRadius: 12, background: `${group.levelColor}22`, color: group.levelColor, fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>{group.levelLabel}</span>
+                </div>
+                {group.questions.map((q, qi) => (
+                  <div key={qi} className="ext-feedback-question">{q}</div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ExternalPresent Container */
+    function ExternalPresent({ onClose }) {
+      const [page, setPage] = useState(0);
+      const totalPages = 10;
+
+      useEffect(() => {
+        const handler = (e) => {
+          const tag = document.activeElement?.tagName;
+          if (tag === "INPUT" || tag === "TEXTAREA") return;
+          if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); setPage(p => Math.min(p + 1, totalPages - 1)); }
+          if (e.key === "ArrowLeft") { e.preventDefault(); setPage(p => Math.max(p - 1, 0)); }
+          if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+      }, [onClose]);
+
+      return (
+        <div className="story-overlay">
+          <button className="story-close" onClick={onClose}>✕ Exit</button>
+          {page === 0 && <ExtTitlePage />}
+          {page === 1 && <ExtSeedPage />}
+          {page === 2 && <ExtDiscoveryPage />}
+          {page === 3 && <ExtJourneyMapPage />}
+          {page === 4 && <ExtPainPointsPage />}
+          {page === 5 && <ExtOpportunitiesPage />}
+          {page === 6 && <ExtCriteriaPage />}
+          {page === 7 && <ExtWhatWeBuiltPage />}
+          {page === 8 && <ExtDemoHandoffPage />}
+          {page === 9 && <ExtFeedbackPage />}
+          <ExtChapterNav page={page} setPage={setPage} />
+        </div>
+      );
+    }
+
     /* ── Story Mode: Container ───────────────────────────── */
-    function StoryMode({ onClose }) {
+    function ReviewMode({ onClose }) {
       const [page, setPage] = useState(0);
       const [mode, setMode] = useState("story"); // "story" or "browse"
       const [cellDetail, setCellDetail] = useState(null);
@@ -1318,7 +1821,7 @@
               onClick={() => setMode(mode === "story" ? "browse" : "story")}
               style={{ fontSize: 12 }}
             >
-              {mode === "story" ? "Free Browse" : "Story Mode"}
+              {mode === "story" ? "Free Browse" : "Team Review"}
             </button>
             <button
               className="story-nav-btn"
@@ -3398,8 +3901,10 @@
       const [presentMode, setPresentMode] = useState(() => {
         try {
           const href = window.location.href;
-          return href.includes("?present") || href.includes("#present") || href.includes("&present");
-        } catch { return false; }
+          if (href.includes("?review") || href.includes("#review") || href.includes("&review")) return "review";
+          if (href.includes("?present") || href.includes("#present") || href.includes("&present")) return "external";
+          return null;
+        } catch { return null; }
       });
       const theme = darkMode ? BRAND_DARK : BRAND;
       useEffect(() => { document.body.style.background = theme.offWhite; }, [theme.offWhite]);
@@ -3745,16 +4250,24 @@
 
       return (
         <ThemeContext.Provider value={theme}>
-        {presentMode && SESSION_DATA && (
-          <StoryMode
-            onClose={() => setPresentMode(false)}
+        {presentMode === "review" && SESSION_DATA && (
+          <ReviewMode
+            onClose={() => setPresentMode(null)}
+          />
+        )}
+        {presentMode === "external" && (
+          <ExternalPresent
+            onClose={() => setPresentMode(null)}
           />
         )}
         <div style={{ maxWidth: mainTab === "productlab" ? 1100 : 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh", transition: "max-width 0.3s" }}>
           <div style={{ textAlign: "center", marginBottom: 32, position: "relative" }}>
             <div style={{ position: "absolute", top: 0, right: 0, display: "flex", gap: 8 }}>
               {SESSION_DATA && (
-                <button onClick={() => setPresentMode(true)} style={{ background: theme.emerald, border: "none", borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#fff" }}>Present</button>
+                <>
+                  <button onClick={() => setPresentMode("review")} style={{ background: "transparent", border: `1px solid ${theme.emerald}`, borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.emerald }}>Team Review</button>
+                  <button onClick={() => setPresentMode("external")} style={{ background: theme.emerald, border: "none", borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#fff" }}>Present</button>
+                </>
               )}
               <button onClick={toggleDarkMode} style={{ background: theme.white, border: `1px solid ${theme.lightGray}`, borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 18, lineHeight: 1 }} title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>{darkMode ? "☀️" : "🌙"}</button>
             </div>
