@@ -1,0 +1,16 @@
+{
+  "name": "FCM Journey Mapper",
+  "short_name": "FCM Map",
+  "description": "Map the real FCM experience — Health Design Sprint 2026",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#10B981",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FCM Journey Mapper · Health Design Sprint 2026</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#10B981" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FCM Map" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -183,11 +190,217 @@
     .rendered-prd table { width: 100%; border-collapse: collapse; margin: 12px 0; }
     .rendered-prd th, .rendered-prd td { border: 1px solid #E5E7EB; padding: 8px 12px; text-align: left; font-size: 13px; }
     .rendered-prd th { background: #F9FAFB; font-weight: 600; }
+    /* ── Mobile Student View ─────────────────────────────── */
+    .mobile-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #111; color: #F9FAFB;
+      overflow-y: auto; overflow-x: hidden;
+      display: flex; flex-direction: column;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mobile-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: rgba(17,17,17,0.95);
+      backdrop-filter: blur(8px); border-bottom: 1px solid #374151;
+      min-height: 48px;
+    }
+    .mobile-header-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 15px;
+      font-weight: 700; color: #10B981;
+    }
+    .mobile-header-close {
+      background: none; border: 1px solid #374151; border-radius: 8px;
+      padding: 6px 12px; color: #9CA3AF; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    }
+    .mobile-header-close:hover { color: #F9FAFB; border-color: #6B7280; }
+    .mobile-content {
+      flex: 1; overflow-y: auto; padding: 16px 16px 80px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mobile-tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 1001;
+      display: flex; align-items: stretch; justify-content: space-around;
+      height: 60px; background: rgba(17,17,17,0.98);
+      backdrop-filter: blur(8px); border-top: 1px solid #374151;
+    }
+    .mobile-tab {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 2px; background: none; border: none;
+      color: #6B7280; cursor: pointer; font-size: 11px;
+      font-family: 'JetBrains Mono', monospace; font-weight: 600;
+      border-top: 2px solid transparent; padding: 4px 0;
+      transition: all 0.15s;
+    }
+    .mobile-tab:hover { color: #D1D5DB; }
+    .mobile-tab.active { color: #10B981; border-top-color: #10B981; }
+    .mobile-tab-icon { font-size: 20px; line-height: 1; }
+    .mobile-card {
+      background: #1F2937; border-radius: 12px; padding: 16px;
+      border: 1px solid #374151; margin-bottom: 12px;
+    }
+    .mobile-stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .mobile-stat-card {
+      background: #1F2937; border-radius: 12px; padding: 16px;
+      border: 1px solid #374151; text-align: center;
+    }
+    .mobile-stat-number {
+      font-family: 'JetBrains Mono', monospace; font-size: 36px;
+      font-weight: 800; color: #10B981; line-height: 1;
+    }
+    .mobile-stat-label {
+      font-size: 11px; color: #9CA3AF; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-top: 4px;
+    }
+    .mobile-step-card {
+      background: #1F2937; border-radius: 12px; padding: 16px;
+      border: 1px solid #374151; margin-bottom: 10px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .mobile-step-card:active { transform: scale(0.98); }
+    .mobile-step-card.expanded { border-color: #10B981; }
+    .mobile-step-card.gap-step { border-left: 3px solid #F59E0B; }
+    .mobile-step-header {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .mobile-step-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      font-weight: 700; color: #10B981; min-width: 28px;
+    }
+    .mobile-step-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      font-weight: 600; color: #F9FAFB; flex: 1;
+    }
+    .mobile-step-emotion {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .mobile-step-detail {
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid #374151;
+      font-size: 13px; color: #D1D5DB; line-height: 1.6;
+    }
+    .mobile-step-friction {
+      padding: 10px 12px; border-radius: 8px;
+      background: rgba(239,68,68,0.1); border-left: 3px solid #EF4444;
+      margin-top: 10px; font-size: 13px; color: #FCA5A5;
+    }
+    .mobile-step-wish {
+      padding: 10px 12px; border-radius: 8px;
+      background: rgba(16,185,129,0.1); border-left: 3px solid #10B981;
+      margin-top: 8px; font-size: 13px; color: #6EE7B7;
+    }
+    .mobile-step-quote {
+      padding: 10px 12px; background: #111827; border-radius: 8px;
+      margin-top: 8px; border-left: 3px solid #3B82F6;
+      font-style: italic; font-size: 13px; color: #E5E7EB; line-height: 1.5;
+    }
+    .mobile-step-quote-attr {
+      font-size: 11px; color: #6B7280; margin-top: 4px; font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mobile-finding-card {
+      background: #1F2937; border-radius: 12px; padding: 16px;
+      border: 1px solid #374151; margin-bottom: 10px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .mobile-finding-card:active { transform: scale(0.98); }
+    .mobile-finding-card.expanded { border-color: #10B981; }
+    .mobile-finding-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .mobile-finding-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      font-weight: 700; color: #F9FAFB;
+    }
+    .mobile-stability-badge {
+      display: inline-flex; padding: 2px 10px; border-radius: 10px;
+      font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      background: rgba(16,185,129,0.15); color: #10B981;
+    }
+    .mobile-finding-summary {
+      font-size: 13px; color: #D1D5DB; line-height: 1.5; margin-top: 8px;
+    }
+    .mobile-finding-quotes {
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid #374151;
+    }
+    .mobile-opp-card {
+      background: #1F2937; border-radius: 10px; padding: 14px;
+      border: 1px solid #374151; margin-bottom: 8px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .mobile-opp-score {
+      font-family: 'JetBrains Mono', monospace; font-size: 20px;
+      font-weight: 800; color: #10B981; min-width: 32px; text-align: center;
+    }
+    .mobile-opp-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      font-weight: 700; color: #F9FAFB;
+    }
+    .mobile-opp-desc {
+      font-size: 12px; color: #9CA3AF; margin-top: 4px; line-height: 1.4;
+    }
+    .mobile-version-card {
+      background: #1F2937; border-radius: 10px; padding: 14px 14px 14px 36px;
+      border: 1px solid #374151; margin-bottom: 8px;
+      position: relative;
+    }
+    .mobile-version-card::before {
+      content: ''; position: absolute; left: 14px; top: 0; bottom: 0;
+      width: 2px; background: #374151;
+    }
+    .mobile-version-card::after {
+      content: ''; position: absolute; left: 9px; top: 18px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #10B981; border: 2px solid #111;
+    }
+    .mobile-section-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      font-weight: 700; color: #10B981; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 12px;
+    }
+    .mobile-pull-quote {
+      font-size: 18px; font-weight: 600; line-height: 1.5;
+      text-align: center; font-style: italic; color: #F9FAFB;
+      padding: 20px 16px; max-width: 400px; margin: 0 auto 8px;
+    }
+    .mobile-quote-attr {
+      font-size: 11px; color: #6B7280; text-align: center;
+      font-family: 'JetBrains Mono', monospace; margin-bottom: 16px;
+    }
+    .mobile-context-card {
+      background: #1F2937; border-radius: 12px; padding: 16px;
+      border: 1px solid #374151; margin-bottom: 16px;
+    }
+    .mobile-context-row {
+      display: flex; justify-content: space-between; padding: 6px 0;
+      border-bottom: 1px solid #2D3748; font-size: 13px;
+    }
+    .mobile-context-row:last-child { border-bottom: none; }
+    .mobile-context-label { color: #9CA3AF; }
+    .mobile-context-value { color: #F9FAFB; font-weight: 600; }
+    .mobile-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      padding: 10px 16px; background: #10B981; color: #111;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      cursor: pointer;
+    }
+    .mobile-banner-close {
+      background: none; border: none; color: #064E3B; cursor: pointer;
+      font-size: 18px; padding: 0 4px; line-height: 1;
+    }
+    @media (min-width: 601px) {
+      .mobile-banner { display: none !important; }
+    }
     /* ── Print Styles ──────────────────────────────────────── */
     @media print {
       body { background: white !important; }
       .story-overlay { position: static; background: white; color: #1A1A1A; }
-      .story-nav, .story-toggle, .story-close, .ext-chapter-bar { display: none !important; }
+      .story-nav, .story-toggle, .story-close, .ext-chapter-bar, .mobile-tab-bar, .mobile-banner { display: none !important; }
       .story-page { min-height: auto; page-break-after: always; padding: 24px 0; }
       .story-page:last-child { page-break-after: auto; }
       .story-big-number { color: #1A1A1A; }
@@ -1708,6 +1921,223 @@
                   <div key={qi} className="ext-feedback-question">{q}</div>
                 ))}
               </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ── Mobile Student View ───────────────────────────────── */
+    function MobileOverview() {
+      const N = window.SPRINT_NARRATIVE;
+      const ctx = N.context;
+      const SD = window.FCM_SESSION_DATA;
+      const totalQuotes = N.keyFindings.reduce((sum, f) => sum + f.quotes.length, 0);
+      return (
+        <div>
+          <div className="mobile-pull-quote">"{N.seed.pullQuote.text}"</div>
+          <div className="mobile-quote-attr">— {N.seed.pullQuote.attribution}</div>
+          <div className="mobile-context-card">
+            <div className="mobile-context-row"><span className="mobile-context-label">Sprint</span><span className="mobile-context-value">{ctx.sprintDates}</span></div>
+            <div className="mobile-context-row"><span className="mobile-context-label">Team</span><span className="mobile-context-value">{ctx.teamSize} {ctx.teamDescription}</span></div>
+            <div className="mobile-context-row"><span className="mobile-context-label">Institution</span><span className="mobile-context-value">{ctx.institutionShort}</span></div>
+            <div className="mobile-context-row"><span className="mobile-context-label">Instructor</span><span className="mobile-context-value">{ctx.instructor}</span></div>
+          </div>
+          <div className="mobile-stat-grid">
+            <div className="mobile-stat-card"><div className="mobile-stat-number">{SD ? SD.meta.totalSessions : 2}</div><div className="mobile-stat-label">Sessions</div></div>
+            <div className="mobile-stat-card"><div className="mobile-stat-number">{totalQuotes}+</div><div className="mobile-stat-label">Quotes</div></div>
+            <div className="mobile-stat-card"><div className="mobile-stat-number">{ctx.teamSize + 1}</div><div className="mobile-stat-label">Participants</div></div>
+            <div className="mobile-stat-card"><div className="mobile-stat-number">{DEFAULT_STEPS.length}</div><div className="mobile-stat-label">Steps Mapped</div></div>
+          </div>
+          <div className="mobile-section-title">Design Seed</div>
+          <div className="mobile-card" style={{ fontSize: 14, lineHeight: 1.6, color: "#D1D5DB" }}>
+            <div style={{ fontWeight: 700, color: "#F9FAFB", marginBottom: 8, fontFamily: MONO, fontSize: 13 }}>"{N.seed.prompt}"</div>
+            <p style={{ margin: 0 }}>{N.seed.emergenceStory}</p>
+          </div>
+          <div className="mobile-section-title">Sprint Timeline</div>
+          {N.sprintTimeline.map(day => (
+            <div key={day.day} className="mobile-card" style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+              <div style={{ fontFamily: MONO, fontWeight: 800, fontSize: 20, color: "#10B981", minWidth: 28 }}>D{day.day}</div>
+              <div>
+                <div style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: "#F9FAFB" }}>{day.title}</div>
+                <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>{day.date}</div>
+                <div style={{ fontSize: 13, color: "#D1D5DB", marginTop: 6, lineHeight: 1.5 }}>{day.summary}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function MobileJourney() {
+      const [expanded, setExpanded] = useState(null);
+      const SD = window.FCM_SESSION_DATA;
+
+      const getStepData = (stepId) => {
+        if (!SD) return null;
+        const session = SD.sessions[SD.sessions.length - 1];
+        return session?.perspectives?.student?.steps?.[stepId] || null;
+      };
+
+      return (
+        <div>
+          <div className="mobile-section-title">FCM Journey — 10 Steps</div>
+          {DEFAULT_STEPS.map((step, i) => {
+            const isGap = step.id.startsWith("gap");
+            const isOpen = expanded === step.id;
+            const sd = getStepData(step.id);
+            const emotionIdx = sd?.suggestedEmotion;
+            const emotion = emotionIdx !== undefined && emotionIdx !== null ? EMOTIONS[emotionIdx] : null;
+            const quoteCount = sd?.keyQuotes?.length || 0;
+
+            return (
+              <div key={step.id}
+                className={`mobile-step-card${isOpen ? " expanded" : ""}${isGap ? " gap-step" : ""}`}
+                onClick={() => setExpanded(isOpen ? null : step.id)}>
+                <div className="mobile-step-header">
+                  <span className="mobile-step-num">{isGap ? "⏳" : step.id}</span>
+                  <span className="mobile-step-title">{step.title.replace(/^⏳\s*/, "")}</span>
+                  {emotion && <span className="mobile-step-emotion" style={{ background: emotion.color }} title={emotion.label} />}
+                  {quoteCount > 0 && <span style={{ fontSize: 11, color: "#6B7280", fontFamily: MONO }}>{quoteCount}q</span>}
+                  <span style={{ fontSize: 14, color: "#6B7280", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>▼</span>
+                </div>
+                {!isOpen && sd?.summary && (
+                  <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 6, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    {sd.summary.slice(0, 120)}…
+                  </div>
+                )}
+                {isOpen && (
+                  <div className="mobile-step-detail">
+                    {sd?.summary && <p style={{ margin: "0 0 10px" }}>{sd.summary}</p>}
+                    {emotion && <div style={{ fontSize: 12, color: emotion.color, marginBottom: 8 }}>{emotion.emoji} {emotion.label}</div>}
+                    {sd?.suggestedFriction && <div className="mobile-step-friction"><strong style={{ color: "#EF4444" }}>Friction:</strong> {sd.suggestedFriction}</div>}
+                    {sd?.suggestedWish && <div className="mobile-step-wish"><strong style={{ color: "#10B981" }}>Wish:</strong> {sd.suggestedWish}</div>}
+                    {sd?.keyQuotes?.slice(0, 2).map((q, qi) => (
+                      <div key={qi} className="mobile-step-quote">
+                        "{q.text}"
+                        <div className="mobile-step-quote-attr">— First-year medical student</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    function MobileFindings() {
+      const [expanded, setExpanded] = useState(null);
+      const N = window.SPRINT_NARRATIVE;
+
+      return (
+        <div>
+          <div className="mobile-section-title">Key Findings</div>
+          {N.keyFindings.map(finding => {
+            const isOpen = expanded === finding.id;
+            return (
+              <div key={finding.id}
+                className={`mobile-finding-card${isOpen ? " expanded" : ""}`}
+                onClick={() => setExpanded(isOpen ? null : finding.id)}>
+                <div className="mobile-finding-header">
+                  <span className="mobile-finding-title">{finding.title}</span>
+                  <span className="mobile-stability-badge">{finding.stability}</span>
+                </div>
+                <div className="mobile-finding-summary">{finding.summary}</div>
+                <div style={{ fontSize: 11, color: "#6B7280", marginTop: 6, fontFamily: MONO }}>
+                  {finding.supportCount}/{finding.totalParticipants} participants · {finding.quotes.length} quotes
+                </div>
+                {isOpen && (
+                  <div className="mobile-finding-quotes">
+                    {finding.quotes.map((q, qi) => (
+                      <div key={qi} className="mobile-step-quote" style={{ marginBottom: 8 }}>
+                        "{q.text}"
+                        <div className="mobile-step-quote-attr">— {q.attribution}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    function MobileBuild() {
+      const N = window.SPRINT_NARRATIVE;
+
+      return (
+        <div>
+          <div className="mobile-section-title">Opportunities (Yield-Scored)</div>
+          {N.opportunities.map(opp => (
+            <div key={opp.id} className="mobile-opp-card">
+              <div className="mobile-opp-score">{opp.yieldScore}</div>
+              <div>
+                <div className="mobile-opp-title">{opp.title}</div>
+                <div className="mobile-opp-desc">{opp.description}</div>
+              </div>
+            </div>
+          ))}
+
+          <div className="mobile-section-title" style={{ marginTop: 24 }}>Product Evolution</div>
+          {N.productEvolution.map(product => (
+            <div key={product.id} style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: "#F9FAFB", marginBottom: 4 }}>{product.product}</div>
+              <div style={{ fontSize: 12, color: "#9CA3AF", marginBottom: 10 }}>{product.role}</div>
+              {product.versions.map(v => (
+                <div key={v.version} className="mobile-version-card">
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 14, color: "#10B981" }}>{v.version}</span>
+                    <span style={{ fontSize: 11, color: "#6B7280" }}>{v.date}</span>
+                  </div>
+                  <div style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: "#F9FAFB" }}>{v.title}</div>
+                  <div style={{ fontSize: 12, color: "#D1D5DB", marginTop: 4, lineHeight: 1.4 }}>{v.description}</div>
+                  <div style={{ fontSize: 11, color: "#10B981", marginTop: 6, fontFamily: MONO }}>{v.milestone}</div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function MobileStudentView({ onClose }) {
+      const [tab, setTab] = useState("overview");
+      const TABS = [
+        { id: "overview", icon: "📊", label: "Overview" },
+        { id: "journey", icon: "🗺️", label: "Journey" },
+        { id: "findings", icon: "🔍", label: "Findings" },
+        { id: "build", icon: "🔨", label: "Build" },
+      ];
+
+      useEffect(() => {
+        const handler = (e) => {
+          if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+      }, [onClose]);
+
+      return (
+        <div className="mobile-overlay">
+          <div className="mobile-header">
+            <span className="mobile-header-title">FCM Journey Map</span>
+            <button className="mobile-header-close" onClick={onClose}>✕ Exit</button>
+          </div>
+          <div className="mobile-content">
+            {tab === "overview" && <MobileOverview />}
+            {tab === "journey" && <MobileJourney />}
+            {tab === "findings" && <MobileFindings />}
+            {tab === "build" && <MobileBuild />}
+          </div>
+          <div className="mobile-tab-bar">
+            {TABS.map(t => (
+              <button key={t.id} className={`mobile-tab${tab === t.id ? " active" : ""}`} onClick={() => setTab(t.id)}>
+                <span className="mobile-tab-icon">{t.icon}</span>
+                {t.label}
+              </button>
             ))}
           </div>
         </div>
@@ -3894,6 +4324,9 @@
       const [yieldApprovals, setYieldApprovals] = useState({});
       const [expandSignal, setExpandSignal] = useState(0);
       const [showDiff, setShowDiff] = useState(false);
+      const [showMobileBanner, setShowMobileBanner] = useState(() => {
+        try { return !localStorage.getItem("fcm-mobile-banner-dismissed"); } catch { return true; }
+      });
       const [darkMode, setDarkMode] = useState(() => {
         try { return localStorage.getItem("fcm-dark-mode") === "true"; } catch { return false; }
       });
@@ -3901,6 +4334,7 @@
       const [presentMode, setPresentMode] = useState(() => {
         try {
           const href = window.location.href;
+          if (href.includes("?mobile") || href.includes("#mobile") || href.includes("&mobile")) return "mobile";
           if (href.includes("?review") || href.includes("#review") || href.includes("&review")) return "review";
           if (href.includes("?present") || href.includes("#present") || href.includes("&present")) return "external";
           return null;
@@ -4250,6 +4684,12 @@
 
       return (
         <ThemeContext.Provider value={theme}>
+        {showMobileBanner && !presentMode && (
+          <div className="mobile-banner" onClick={() => { setPresentMode("mobile"); setShowMobileBanner(false); }}>
+            <span>📱 Try Mobile View →</span>
+            <button className="mobile-banner-close" onClick={(e) => { e.stopPropagation(); setShowMobileBanner(false); try { localStorage.setItem("fcm-mobile-banner-dismissed", "1"); } catch {} }}>✕</button>
+          </div>
+        )}
         {presentMode === "review" && SESSION_DATA && (
           <ReviewMode
             onClose={() => setPresentMode(null)}
@@ -4260,12 +4700,18 @@
             onClose={() => setPresentMode(null)}
           />
         )}
+        {presentMode === "mobile" && (
+          <MobileStudentView
+            onClose={() => setPresentMode(null)}
+          />
+        )}
         <div style={{ maxWidth: mainTab === "productlab" ? 1100 : 720, margin: "0 auto", padding: "24px 16px", fontFamily: SANS, background: theme.offWhite, minHeight: "100vh", transition: "max-width 0.3s" }}>
           <div style={{ textAlign: "center", marginBottom: 32, position: "relative" }}>
             <div style={{ position: "absolute", top: 0, right: 0, display: "flex", gap: 8 }}>
               {SESSION_DATA && (
                 <>
                   <button onClick={() => setPresentMode("review")} style={{ background: "transparent", border: `1px solid ${theme.emerald}`, borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.emerald }}>Team Review</button>
+                  <button onClick={() => setPresentMode("mobile")} style={{ background: "transparent", border: `1px solid ${theme.emerald}`, borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: theme.emerald }}>📱 Mobile</button>
                   <button onClick={() => setPresentMode("external")} style={{ background: theme.emerald, border: "none", borderRadius: 8, padding: "6px 16px", cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#fff" }}>Present</button>
                 </>
               )}
@@ -4389,6 +4835,10 @@
         </div>
         </ThemeContext.Provider>
       );
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
     const root = ReactDOM.createRoot(document.getElementById("root"));
