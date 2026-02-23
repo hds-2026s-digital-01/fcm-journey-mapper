@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FCM Journey Mapper · Health Design Sprint 2026</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#10B981" />
+  <meta name="theme-color" content="#10a48b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="FCM Map" />
@@ -17,7 +17,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; padding: 0; background: #F9FAFB; -webkit-font-smoothing: antialiased; }
-    textarea:focus, select:focus, button:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }
+    textarea:focus, select:focus, button:focus-visible { outline: 2px solid #10a48b; outline-offset: 2px; }
     @media (max-width: 600px) {
       h1 { font-size: 22px !important; }
       .emotion-buttons { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; }
@@ -42,27 +42,27 @@
       padding: 48px 32px; max-width: 960px; margin: 0 auto;
     }
     .story-page h2 { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; margin: 0 0 12px; text-align: center; }
-    .story-page h3 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; margin: 0 0 8px; color: #10B981; }
+    .story-page h3 { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; margin: 0 0 8px; color: #10a48b; }
     .story-subtitle { font-size: 16px; color: #9CA3AF; text-align: center; margin: 0 0 40px; line-height: 1.6; }
-    .story-big-number { font-family: 'JetBrains Mono', monospace; font-size: 56px; font-weight: 800; color: #10B981; line-height: 1; }
+    .story-big-number { font-family: 'JetBrains Mono', monospace; font-size: 56px; font-weight: 800; color: #10a48b; line-height: 1; }
     .story-big-label { font-size: 13px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
     .story-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; text-align: center; width: 100%; max-width: 700px; margin-bottom: 40px; }
     .story-pull-quote { font-size: 24px; font-weight: 600; line-height: 1.5; text-align: center; max-width: 700px; margin: 0 0 16px; font-style: italic; color: #F9FAFB; }
     .story-quote-attr { font-size: 13px; color: #6B7280; text-align: center; }
     .story-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1001; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 16px 24px; background: rgba(17,17,17,0.95); backdrop-filter: blur(8px); border-top: 1px solid #374151; }
     .story-dot { width: 10px; height: 10px; border-radius: 50%; background: #374151; cursor: pointer; transition: all 0.2s; border: none; padding: 0; }
-    .story-dot.active { background: #10B981; transform: scale(1.3); }
+    .story-dot.active { background: #10a48b; transform: scale(1.3); }
     .story-nav-btn { padding: 8px 20px; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #E5E7EB; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; transition: all 0.15s; }
     .story-nav-btn:hover { background: #1F2937; }
-    .story-nav-btn.primary { background: #10B981; border-color: #10B981; color: #111; }
-    .story-nav-btn.primary:hover { background: #059669; }
+    .story-nav-btn.primary { background: #10a48b; border-color: #10a48b; color: #111; }
+    .story-nav-btn.primary:hover { background: #0b8574; }
     .story-toggle { position: fixed; top: 16px; right: 16px; z-index: 1002; }
     .story-close { position: fixed; top: 16px; left: 16px; z-index: 1002; background: none; border: 1px solid #374151; border-radius: 8px; padding: 8px 14px; color: #9CA3AF; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
     .story-close:hover { color: #F9FAFB; border-color: #6B7280; }
     .story-process-step { text-align: center; padding: 24px; background: #1F2937; border-radius: 12px; flex: 1; min-width: 200px; }
     .story-process-arrow { font-size: 28px; color: #374151; align-self: center; }
     .story-moment-friction { padding: 12px 16px; border-radius: 8px; background: rgba(239,68,68,0.1); border-left: 3px solid #EF4444; margin-bottom: 12px; }
-    .story-moment-wish { padding: 12px 16px; border-radius: 8px; background: rgba(16,185,129,0.1); border-left: 3px solid #10B981; margin-bottom: 12px; }
+    .story-moment-wish { padding: 12px 16px; border-radius: 8px; background: rgba(16,185,129,0.1); border-left: 3px solid #10a48b; margin-bottom: 12px; }
     .story-quote-card { padding: 14px 18px; background: #1F2937; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #3B82F6; }
     .story-swimlane { display: grid; gap: 2px; width: 100%; overflow-x: auto; }
     .story-swimlane-cell { padding: 8px 4px; border-radius: 6px; text-align: center; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.15s; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.3; }
@@ -72,7 +72,7 @@
     .story-stability-badge { display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
     /* ── Story Design Pages (9-17) ───────────────────────── */
     .story-discussion {
-      border-left: 3px solid #10B981; padding: 14px 18px; margin: 20px 0;
+      border-left: 3px solid #10a48b; padding: 14px 18px; margin: 20px 0;
       background: rgba(16,185,129,0.06); border-radius: 0 8px 8px 0;
       font-size: 14px; color: #D1FAE5; line-height: 1.6;
     }
@@ -123,7 +123,7 @@
       border-bottom: 2px solid transparent;
     }
     .ext-chapter-label:hover { color: #D1D5DB; }
-    .ext-chapter-label.active { color: #10B981; border-bottom-color: #10B981; }
+    .ext-chapter-label.active { color: #10a48b; border-bottom-color: #10a48b; }
     .ext-finding-card {
       background: #1F2937; border-radius: 12px; padding: 24px;
       border: 1px solid #374151; margin-bottom: 16px;
@@ -153,7 +153,7 @@
     .ext-version-card::after {
       content: ''; position: absolute; left: 11px; top: 24px;
       width: 12px; height: 12px; border-radius: 50%;
-      background: #10B981; border: 2px solid #111;
+      background: #10a48b; border: 2px solid #111;
     }
     .ext-feedback-card {
       background: #1F2937; border-radius: 12px; padding: 24px;
@@ -175,10 +175,10 @@
     /* ── Free Browse Tabs ──────────────────────────────────── */
     .browse-tabs { display: flex; gap: 0; border-bottom: 1px solid #374151; margin-bottom: 24px; }
     .browse-tab { padding: 10px 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6B7280; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
-    .browse-tab.active { color: #10B981; border-bottom-color: #10B981; }
+    .browse-tab.active { color: #10a48b; border-bottom-color: #10a48b; }
     /* ── Rendered PRD ──────────────────────────────────────── */
     .rendered-prd { font-family: Inter, -apple-system, sans-serif; font-size: 14px; line-height: 1.7; color: #1A1A1A; padding: 32px; }
-    .rendered-prd h1 { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; margin: 0 0 8px; color: #1A1A1A; border-bottom: 2px solid #10B981; padding-bottom: 8px; }
+    .rendered-prd h1 { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; margin: 0 0 8px; color: #1A1A1A; border-bottom: 2px solid #10a48b; padding-bottom: 8px; }
     .rendered-prd h2 { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: #1A1A1A; border-bottom: 1px solid #E5E7EB; padding-bottom: 6px; }
     .rendered-prd h3 { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: #2D2D2D; }
     .rendered-prd p { margin: 0 0 12px; }
@@ -207,7 +207,7 @@
     }
     .mobile-header-title {
       font-family: 'JetBrains Mono', monospace; font-size: 15px;
-      font-weight: 700; color: #10B981;
+      font-weight: 700; color: #10a48b;
     }
     .mobile-header-close {
       background: none; border: 1px solid #374151; border-radius: 8px;
@@ -234,7 +234,7 @@
       transition: all 0.15s;
     }
     .mobile-tab:hover { color: #D1D5DB; }
-    .mobile-tab.active { color: #10B981; border-top-color: #10B981; }
+    .mobile-tab.active { color: #10a48b; border-top-color: #10a48b; }
     .mobile-tab-icon { font-size: 20px; line-height: 1; }
     .mobile-card {
       background: #1F2937; border-radius: 12px; padding: 16px;
@@ -250,7 +250,7 @@
     }
     .mobile-stat-number {
       font-family: 'JetBrains Mono', monospace; font-size: 36px;
-      font-weight: 800; color: #10B981; line-height: 1;
+      font-weight: 800; color: #10a48b; line-height: 1;
     }
     .mobile-stat-label {
       font-size: 11px; color: #9CA3AF; text-transform: uppercase;
@@ -262,14 +262,14 @@
       cursor: pointer; transition: all 0.15s;
     }
     .mobile-step-card:active { transform: scale(0.98); }
-    .mobile-step-card.expanded { border-color: #10B981; }
+    .mobile-step-card.expanded { border-color: #10a48b; }
     .mobile-step-card.gap-step { border-left: 3px solid #F59E0B; }
     .mobile-step-header {
       display: flex; align-items: center; gap: 10px;
     }
     .mobile-step-num {
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
-      font-weight: 700; color: #10B981; min-width: 28px;
+      font-weight: 700; color: #10a48b; min-width: 28px;
     }
     .mobile-step-title {
       font-family: 'JetBrains Mono', monospace; font-size: 14px;
@@ -289,7 +289,7 @@
     }
     .mobile-step-wish {
       padding: 10px 12px; border-radius: 8px;
-      background: rgba(16,185,129,0.1); border-left: 3px solid #10B981;
+      background: rgba(16,185,129,0.1); border-left: 3px solid #10a48b;
       margin-top: 8px; font-size: 13px; color: #6EE7B7;
     }
     .mobile-step-quote {
@@ -307,7 +307,7 @@
       cursor: pointer; transition: all 0.15s;
     }
     .mobile-finding-card:active { transform: scale(0.98); }
-    .mobile-finding-card.expanded { border-color: #10B981; }
+    .mobile-finding-card.expanded { border-color: #10a48b; }
     .mobile-finding-header {
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
     }
@@ -319,7 +319,7 @@
       display: inline-flex; padding: 2px 10px; border-radius: 10px;
       font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
       text-transform: uppercase; letter-spacing: 0.05em;
-      background: rgba(16,185,129,0.15); color: #10B981;
+      background: rgba(16,185,129,0.15); color: #10a48b;
     }
     .mobile-finding-summary {
       font-size: 13px; color: #D1D5DB; line-height: 1.5; margin-top: 8px;
@@ -334,7 +334,7 @@
     }
     .mobile-opp-score {
       font-family: 'JetBrains Mono', monospace; font-size: 20px;
-      font-weight: 800; color: #10B981; min-width: 32px; text-align: center;
+      font-weight: 800; color: #10a48b; min-width: 32px; text-align: center;
     }
     .mobile-opp-title {
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
@@ -355,11 +355,11 @@
     .mobile-version-card::after {
       content: ''; position: absolute; left: 9px; top: 18px;
       width: 12px; height: 12px; border-radius: 50%;
-      background: #10B981; border: 2px solid #111;
+      background: #10a48b; border: 2px solid #111;
     }
     .mobile-section-title {
       font-family: 'JetBrains Mono', monospace; font-size: 13px;
-      font-weight: 700; color: #10B981; text-transform: uppercase;
+      font-weight: 700; color: #10a48b; text-transform: uppercase;
       letter-spacing: 0.1em; margin-bottom: 12px;
     }
     .mobile-pull-quote {
@@ -385,7 +385,7 @@
     .mobile-banner {
       position: fixed; top: 0; left: 0; right: 0; z-index: 999;
       display: flex; align-items: center; justify-content: center; gap: 12px;
-      padding: 10px 16px; background: #10B981; color: #111;
+      padding: 10px 16px; background: #10a48b; color: #111;
       font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
       cursor: pointer;
     }
@@ -424,31 +424,31 @@
 
     /* ── Brand tokens ─────────────────────────────────────────── */
     const BRAND = {
-      black: "#1A1A1A",
-      darkGray: "#2D2D2D",
-      medGray: "#6B7280",
-      lightGray: "#E5E7EB",
-      offWhite: "#F9FAFB",
-      white: "#FFFFFF",
-      emerald: "#10B981",
-      emeraldLight: "#D1FAE5",
-      amber: "#F59E0B",
-      amberLight: "#FEF3C7",
-      red: "#EF4444",
-      redLight: "#FEE2E2",
+      black: "#1c1917",
+      darkGray: "#292524",
+      medGray: "#78716c",
+      lightGray: "#d6d3d1",
+      offWhite: "#f5f5f4",
+      white: "#fafaf9",
+      emerald: "#10a48b",
+      emeraldLight: "#c6f7e9",
+      amber: "#b45309",
+      amberLight: "#fef3c7",
+      red: "#b91c1c",
+      redLight: "#fee2e2",
       blue: "#3B82F6",
       blueLight: "#DBEAFE",
     };
 
     const BRAND_DARK = {
-      black: "#F9FAFB",
-      darkGray: "#E5E7EB",
-      medGray: "#6B7280",
-      lightGray: "#374151",
-      offWhite: "#1A1A1A",
-      white: "#2D2D2D",
-      emerald: "#10B981",
-      emeraldLight: "#064E3B",
+      black: "#f5f5f4",
+      darkGray: "#d6d3d1",
+      medGray: "#a8a29e",
+      lightGray: "#44403c",
+      offWhite: "#1c1917",
+      white: "#292524",
+      emerald: "#28c4a6",
+      emeraldLight: "#10453f",
       amber: "#F59E0B",
       amberLight: "#78350F",
       red: "#EF4444",
@@ -491,7 +491,7 @@
       { emoji: "😐", label: "Going through motions", color: BRAND.medGray },
       { emoji: "🤔", label: "Engaged", color: BRAND.blue },
       { emoji: "😊", label: "Confident", color: BRAND.emerald },
-      { emoji: "😁", label: "Energized", color: "#059669" },
+      { emoji: "😁", label: "Energized", color: "#0b8574" },
       { emoji: "😤", label: "Frustrated", color: BRAND.red },
     ];
 
@@ -1100,7 +1100,7 @@
       return (
         <div className="story-page" style={{ maxWidth: 760, textAlign: "left" }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ fontFamily: MONO, fontSize: 13, color: "#10B981", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>PROTOTYPE</div>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: "#10a48b", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>PROTOTYPE</div>
             <h2 style={{ fontSize: 36, lineHeight: 1.2, textAlign: "center" }}>Team Review</h2>
             <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 540, margin: "8px auto 0" }}>
               A narrative walkthrough of what emerged from your research — built by AI from your own words.
@@ -1109,7 +1109,7 @@
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 32 }}>
             <div style={{ background: "rgba(16,185,129,0.08)", borderRadius: 12, padding: 20, border: "1px solid rgba(16,185,129,0.2)" }}>
-              <div style={{ fontFamily: MONO, fontSize: 11, color: "#10B981", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>THE PROJECT</div>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "#10a48b", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>THE PROJECT</div>
               <div style={{ fontSize: 18, fontWeight: 700, color: "#F9FAFB", marginBottom: 8, fontFamily: MONO }}>Redesigning FCM</div>
               <p style={{ fontSize: 14, color: "#D1D5DB", lineHeight: 1.6, margin: 0 }}>
                 You've spent two days mapping how Foundations of Clinical Medicine actually works — from a student's first glance at the chief complaint through the gap, the session, and the fade. This presentation surfaces the patterns, quotes, and opportunities that emerged from <em>your</em> conversations.
@@ -1132,26 +1132,26 @@
                 const isDone = num === "1";
                 return (
                   <div key={num} style={{ flex: 1, textAlign: "center", padding: "10px 4px", background: isActive ? "rgba(16,185,129,0.15)" : isDone ? "rgba(16,185,129,0.05)" : "transparent", borderRadius: 8, border: isActive ? "1px solid rgba(16,185,129,0.4)" : "1px solid transparent", position: "relative" }}>
-                    <div style={{ fontFamily: MONO, fontSize: 11, color: isDone ? "#6B7280" : isActive ? "#10B981" : "#4B5563", fontWeight: 700 }}>{num}</div>
+                    <div style={{ fontFamily: MONO, fontSize: 11, color: isDone ? "#6B7280" : isActive ? "#10a48b" : "#4B5563", fontWeight: 700 }}>{num}</div>
                     <div style={{ fontSize: 13, fontWeight: isActive ? 700 : 500, color: isDone ? "#6B7280" : isActive ? "#F9FAFB" : "#4B5563", fontFamily: MONO }}>{label}</div>
                     {isDone && <div style={{ fontSize: 10, color: "#6B7280" }}>Days 1–2</div>}
-                    {isActive && <div style={{ fontSize: 10, color: "#10B981", fontWeight: 600 }}>Today</div>}
+                    {isActive && <div style={{ fontSize: 10, color: "#10a48b", fontWeight: 600 }}>Today</div>}
                   </div>
                 );
               })}
             </div>
             <p style={{ fontSize: 13, color: "#9CA3AF", margin: "12px 0 0", lineHeight: 1.5, textAlign: "center" }}>
-              Days 1–2 were <strong style={{ color: "#D1D5DB" }}>Understand</strong>. Today we <strong style={{ color: "#10B981" }}>Define</strong> — synthesize what you found and decide where to focus.
+              Days 1–2 were <strong style={{ color: "#D1D5DB" }}>Understand</strong>. Today we <strong style={{ color: "#10a48b" }}>Define</strong> — synthesize what you found and decide where to focus.
             </p>
           </div>
 
           <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 16, border: "1px solid rgba(255,255,255,0.08)" }}>
             <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 10 }}>HOW TO NAVIGATE</div>
             <div style={{ display: "flex", gap: 24, fontSize: 14, color: "#D1D5DB" }}>
-              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>→</span> or <span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Next</span> to advance</div>
-              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>←</span> or <span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Back</span> to go back</div>
-              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Dots</span> at the bottom to jump to any page</div>
-              <div><span style={{ fontFamily: MONO, color: "#10B981", fontWeight: 700 }}>Free Browse</span> to explore non-linearly</div>
+              <div><span style={{ fontFamily: MONO, color: "#10a48b", fontWeight: 700 }}>→</span> or <span style={{ fontFamily: MONO, color: "#10a48b", fontWeight: 700 }}>Next</span> to advance</div>
+              <div><span style={{ fontFamily: MONO, color: "#10a48b", fontWeight: 700 }}>←</span> or <span style={{ fontFamily: MONO, color: "#10a48b", fontWeight: 700 }}>Back</span> to go back</div>
+              <div><span style={{ fontFamily: MONO, color: "#10a48b", fontWeight: 700 }}>Dots</span> at the bottom to jump to any page</div>
+              <div><span style={{ fontFamily: MONO, color: "#10a48b", fontWeight: 700 }}>Free Browse</span> to explore non-linearly</div>
             </div>
           </div>
         </div>
@@ -1208,7 +1208,7 @@
               <div style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5 }}>Reviewed findings. Starred insights. Confirmed what resonated.</div>
             </div>
           </div>
-          <div style={{ padding: "20px 24px", background: "#1F2937", borderRadius: 12, maxWidth: 700, borderLeft: "3px solid #10B981" }}>
+          <div style={{ padding: "20px 24px", background: "#1F2937", borderRadius: 12, maxWidth: 700, borderLeft: "3px solid #10a48b" }}>
             <p style={{ fontSize: 15, color: "#D1FAE5", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
               "The AI didn't invent these insights. It organized YOUR expertise into a form we can act on."
             </p>
@@ -1247,7 +1247,7 @@
             {stability && (
               <span className="story-stability-badge" style={{
                 background: stability.level === "stable" ? "rgba(16,185,129,0.15)" : stability.level === "emerging" ? "rgba(245,158,11,0.15)" : "rgba(107,114,128,0.15)",
-                color: stability.level === "stable" ? "#10B981" : stability.level === "emerging" ? "#F59E0B" : "#6B7280"
+                color: stability.level === "stable" ? "#10a48b" : stability.level === "emerging" ? "#F59E0B" : "#6B7280"
               }}>
                 {stability.level === "stable" ? "Stable" : stability.level === "emerging" ? "Emerging" : "Tentative"} · {stability.supportCount}/{SESSION_DATA.sessions[SESSION_DATA.sessions.length-1].participantCount} participants
               </span>
@@ -1266,7 +1266,7 @@
           {hasCoachData ? (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, width: "100%", maxWidth: 800, marginBottom: 24 }}>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 12, textTransform: "uppercase" }}>Student View</div>
+                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10a48b", marginBottom: 12, textTransform: "uppercase" }}>Student View</div>
                 {quotes.slice(1).map((q, i) => (
                   <div key={i} className="story-quote-card">
                     <div style={{ fontSize: 13, color: "#D1D5DB", fontStyle: "italic", lineHeight: 1.5 }}>"{q.text}"</div>
@@ -1305,7 +1305,7 @@
             )}
             {stepData.suggestedWish && (
               <div className="story-moment-wish">
-                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 4 }}>WISH</div>
+                <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10a48b", marginBottom: 4 }}>WISH</div>
                 <div style={{ fontSize: 13, color: "#6EE7B7", lineHeight: 1.5 }}>{stepData.suggestedWish}</div>
               </div>
             )}
@@ -1331,7 +1331,7 @@
       if (!latestSession) return null;
 
       const rows = [
-        { key: "student", label: "Student", color: "#10B981" },
+        { key: "student", label: "Student", color: "#10a48b" },
         { key: "coach", label: "Coach", color: "#7C3AED" },
         { key: "administrator", label: "Admin", color: "#EF4444" },
       ];
@@ -1392,7 +1392,7 @@
                           <div style={{ fontSize: 10, color: row.color, fontWeight: 600 }}>
                             {cell.quoteCount ? `${cell.quoteCount} quotes` : "data"}
                           </div>
-                          {stab && <div style={{ fontSize: 8, marginTop: 2, color: stab.level === "stable" ? "#10B981" : stab.level === "emerging" ? "#F59E0B" : "#6B7280" }}>{stab.level}</div>}
+                          {stab && <div style={{ fontSize: 8, marginTop: 2, color: stab.level === "stable" ? "#10a48b" : stab.level === "emerging" ? "#F59E0B" : "#6B7280" }}>{stab.level}</div>}
                         </>
                       ) : (
                         <div style={{ fontSize: 10, color: "#374151" }}>—</div>
@@ -1426,11 +1426,11 @@
       return (
         <div className="story-cell-detail">
           <button onClick={onClose} style={{ float: "right", background: "none", border: "1px solid #374151", borderRadius: 6, padding: "4px 10px", color: "#9CA3AF", cursor: "pointer", fontFamily: MONO, fontSize: 12 }}>✕</button>
-          <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: perspKey === "student" ? "#10B981" : perspKey === "coach" ? "#7C3AED" : "#EF4444", textTransform: "uppercase", marginBottom: 8 }}>{perspKey}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: perspKey === "student" ? "#10a48b" : perspKey === "coach" ? "#7C3AED" : "#EF4444", textTransform: "uppercase", marginBottom: 8 }}>{perspKey}</div>
           <h3 style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#F9FAFB", margin: "0 0 16px" }}>{step?.title || stepId}</h3>
           {stab && (
             <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <span className="story-stability-badge" style={{ background: stab.level === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: stab.level === "stable" ? "#10B981" : "#F59E0B" }}>{stab.level} · {stab.supportCount} participants</span>
+              <span className="story-stability-badge" style={{ background: stab.level === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: stab.level === "stable" ? "#10a48b" : "#F59E0B" }}>{stab.level} · {stab.supportCount} participants</span>
               {yieldOpp && <span className="story-yield-badge" style={{ background: "rgba(239,68,68,0.15)", color: "#EF4444", fontSize: 12 }}>Yield {yieldOpp.yieldScore}/10</span>}
             </div>
           )}
@@ -1461,7 +1461,7 @@
           )}
           {stepData?.suggestedWish && (
             <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 4 }}>WISH</div>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10a48b", marginBottom: 4 }}>WISH</div>
               <div style={{ fontSize: 12, color: "#6EE7B7", lineHeight: 1.5 }}>{stepData.suggestedWish}</div>
             </div>
           )}
@@ -1578,11 +1578,11 @@
       return (
         <div className="story-cell-detail">
           <button onClick={onClose} style={{ float: "right", background: "none", border: "1px solid #374151", borderRadius: 6, padding: "4px 10px", color: "#9CA3AF", cursor: "pointer", fontFamily: MONO, fontSize: 12 }}>✕</button>
-          <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: perspKey === "student" ? "#10B981" : perspKey === "coach" ? "#7C3AED" : "#EF4444", textTransform: "uppercase", marginBottom: 8 }}>{perspKey}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: perspKey === "student" ? "#10a48b" : perspKey === "coach" ? "#7C3AED" : "#EF4444", textTransform: "uppercase", marginBottom: 8 }}>{perspKey}</div>
           <h3 style={{ fontFamily: MONO, fontSize: 18, fontWeight: 700, color: "#F9FAFB", margin: "0 0 16px" }}>{step?.title || stepId}</h3>
           {stab && (
             <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <span className="story-stability-badge" style={{ background: stab.level === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: stab.level === "stable" ? "#10B981" : "#F59E0B" }}>{stab.level} · {stab.supportCount} participants</span>
+              <span className="story-stability-badge" style={{ background: stab.level === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: stab.level === "stable" ? "#10a48b" : "#F59E0B" }}>{stab.level} · {stab.supportCount} participants</span>
               {yieldOpp && <span className="story-yield-badge" style={{ background: "rgba(239,68,68,0.15)", color: "#EF4444", fontSize: 12 }}>Yield {yieldOpp.yieldScore}/10</span>}
             </div>
           )}
@@ -1613,7 +1613,7 @@
           )}
           {stepData?.suggestedWish && (
             <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 4 }}>WISH</div>
+              <div style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: "#10a48b", marginBottom: 4 }}>WISH</div>
               <div style={{ fontSize: 12, color: "#6EE7B7", lineHeight: 1.5 }}>{stepData.suggestedWish}</div>
             </div>
           )}
@@ -1630,7 +1630,7 @@
       return (
         <div className="story-page" style={{ maxWidth: 760, textAlign: "left" }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{ fontFamily: MONO, fontSize: 13, color: "#10B981", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>EXTERNAL PRESENTATION</div>
+            <div style={{ fontFamily: MONO, fontSize: 13, color: "#10a48b", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>EXTERNAL PRESENTATION</div>
             <h2 style={{ fontSize: 36, lineHeight: 1.2, textAlign: "center" }}>{ctx.sprintName}</h2>
             <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 540, margin: "8px auto 0" }}>
               {ctx.teamSize} {ctx.teamDescription} · {ctx.institutionShort} · {ctx.sprintDates}
@@ -1645,7 +1645,7 @@
             <div style={{ display: "flex", gap: 0, alignItems: "stretch" }}>
               {timeline.map((day, i) => (
                 <div key={i} style={{ flex: 1, textAlign: "center", padding: "10px 4px", background: i === timeline.length - 1 ? "rgba(16,185,129,0.15)" : i < timeline.length - 1 ? "rgba(16,185,129,0.05)" : "transparent", borderRadius: 8, border: i === timeline.length - 1 ? "1px solid rgba(16,185,129,0.4)" : "1px solid transparent" }}>
-                  <div style={{ fontFamily: MONO, fontSize: 11, color: i < timeline.length - 1 ? "#6B7280" : "#10B981", fontWeight: 700 }}>Day {day.day}</div>
+                  <div style={{ fontFamily: MONO, fontSize: 11, color: i < timeline.length - 1 ? "#6B7280" : "#10a48b", fontWeight: 700 }}>Day {day.day}</div>
                   <div style={{ fontSize: 13, fontWeight: i === timeline.length - 1 ? 700 : 500, color: i < timeline.length - 1 ? "#6B7280" : "#F9FAFB", fontFamily: MONO }}>{day.title}</div>
                   <div style={{ fontSize: 10, color: "#6B7280" }}>{day.date}</div>
                 </div>
@@ -1653,7 +1653,7 @@
             </div>
           </div>
 
-          <div style={{ padding: "20px 24px", background: "#1F2937", borderRadius: 12, borderLeft: "3px solid #10B981" }}>
+          <div style={{ padding: "20px 24px", background: "#1F2937", borderRadius: 12, borderLeft: "3px solid #10a48b" }}>
             <p style={{ fontSize: 15, color: "#D1FAE5", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
               "{ctx.sprintFraming}"
             </p>
@@ -1682,7 +1682,7 @@
             <div style={{ fontFamily: MONO, fontSize: 11, color: "#9CA3AF", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>WHY FCM?</div>
             {seed.whyFCM.map((reason, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: "#1F2937", borderRadius: 8, marginBottom: 6 }}>
-                <div style={{ fontFamily: MONO, fontSize: 14, color: "#10B981", fontWeight: 700 }}>{i + 1}</div>
+                <div style={{ fontFamily: MONO, fontSize: 14, color: "#10a48b", fontWeight: 700 }}>{i + 1}</div>
                 <div style={{ fontSize: 14, color: "#D1D5DB" }}>{reason}</div>
               </div>
             ))}
@@ -1714,7 +1714,7 @@
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", width: "100%", maxWidth: 800, marginTop: 24 }}>
             {["Student Experience", "Coach Perspective", "Administrative Needs"].map((label, i) => (
               <div key={i} style={{ padding: "12px 20px", background: "#1F2937", borderRadius: 10, border: "1px solid #374151", textAlign: "center" }}>
-                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: ["#10B981", "#7C3AED", "#EF4444"][i] }}>{label}</div>
+                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: ["#10a48b", "#7C3AED", "#EF4444"][i] }}>{label}</div>
               </div>
             ))}
           </div>
@@ -1748,7 +1748,7 @@
               <div key={f.id} className="ext-finding-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <h4 style={{ margin: 0 }}>{i + 1}. {f.title}</h4>
-                  <span className="story-stability-badge" style={{ background: f.stability === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: f.stability === "stable" ? "#10B981" : "#F59E0B", flexShrink: 0 }}>
+                  <span className="story-stability-badge" style={{ background: f.stability === "stable" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: f.stability === "stable" ? "#10a48b" : "#F59E0B", flexShrink: 0 }}>
                     {f.stability} · {f.supportCount}/{f.totalParticipants}
                   </span>
                 </div>
@@ -1783,7 +1783,7 @@
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: "#F9FAFB", fontFamily: MONO }}>{opp.title}</div>
                   <div style={{ fontSize: 13, color: "#9CA3AF", marginTop: 4, lineHeight: 1.5 }}>{opp.description}</div>
-                  <div style={{ fontSize: 12, color: "#10B981", marginTop: 8, fontStyle: "italic" }}>{opp.impact}</div>
+                  <div style={{ fontSize: 12, color: "#10a48b", marginTop: 8, fontStyle: "italic" }}>{opp.impact}</div>
                 </div>
               </div>
             ))}
@@ -1805,7 +1805,7 @@
           <p className="story-subtitle">Design criteria that guided every decision, and how we'll know it's working.</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, width: "100%", maxWidth: 800 }}>
             <div>
-              <div style={{ fontFamily: MONO, fontSize: 11, color: "#10B981", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>DESIGN CRITERIA</div>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "#10a48b", fontWeight: 700, letterSpacing: 1, marginBottom: 12 }}>DESIGN CRITERIA</div>
               {criteria.map((c, i) => (
                 <div key={i} className="ext-criteria-card">
                   <h4><span style={{ marginRight: 8 }}>{c.icon}</span>{c.title}</h4>
@@ -1843,7 +1843,7 @@
               <div key={product.id} style={{ marginBottom: 40 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                   <div style={{ fontFamily: MONO, fontSize: 18, fontWeight: 800, color: "#F9FAFB" }}>{product.product}</div>
-                  <span style={{ padding: "3px 10px", borderRadius: 12, background: "rgba(16,185,129,0.15)", color: "#10B981", fontSize: 11, fontFamily: MONO, fontWeight: 600 }}>{product.role}</span>
+                  <span style={{ padding: "3px 10px", borderRadius: 12, background: "rgba(16,185,129,0.15)", color: "#10a48b", fontSize: 11, fontFamily: MONO, fontWeight: 600 }}>{product.role}</span>
                 </div>
                 {product.versions.map((v, vi) => (
                   <div key={vi} className="ext-version-card">
@@ -1854,7 +1854,7 @@
                       </div>
                     </div>
                     <p style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5, margin: "8px 0 4px" }}>{v.description}</p>
-                    <div style={{ fontSize: 12, color: "#10B981", fontStyle: "italic" }}>{v.milestone}</div>
+                    <div style={{ fontSize: 12, color: "#10a48b", fontStyle: "italic" }}>{v.milestone}</div>
                   </div>
                 ))}
               </div>
@@ -1876,7 +1876,7 @@
 
           <div style={{ padding: "32px 40px", background: "#1F2937", borderRadius: 16, border: "1px solid #374151", textAlign: "center", marginBottom: 32, maxWidth: 600, width: "100%" }}>
             <div style={{ fontSize: 16, color: "#9CA3AF", marginBottom: 12 }}>FCM Companion</div>
-            <a href="https://fcm-companion.vercel.app" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 20, fontWeight: 700, color: "#10B981", textDecoration: "none" }}>
+            <a href="https://fcm-companion.vercel.app" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 20, fontWeight: 700, color: "#10a48b", textDecoration: "none" }}>
               fcm-companion.vercel.app →
             </a>
           </div>
@@ -1892,7 +1892,7 @@
               "Progressive Web App — works offline on any device",
             ].map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", background: i % 2 === 0 ? "#1F2937" : "transparent", borderRadius: 8, marginBottom: 4 }}>
-                <div style={{ fontFamily: MONO, fontSize: 12, color: "#10B981", fontWeight: 700 }}>✓</div>
+                <div style={{ fontFamily: MONO, fontSize: 12, color: "#10a48b", fontWeight: 700 }}>✓</div>
                 <div style={{ fontSize: 14, color: "#D1D5DB" }}>{item}</div>
               </div>
             ))}
@@ -1957,7 +1957,7 @@
           <div className="mobile-section-title">Sprint Timeline</div>
           {N.sprintTimeline.map(day => (
             <div key={day.day} className="mobile-card" style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-              <div style={{ fontFamily: MONO, fontWeight: 800, fontSize: 20, color: "#10B981", minWidth: 28 }}>D{day.day}</div>
+              <div style={{ fontFamily: MONO, fontWeight: 800, fontSize: 20, color: "#10a48b", minWidth: 28 }}>D{day.day}</div>
               <div>
                 <div style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: "#F9FAFB" }}>{day.title}</div>
                 <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>{day.date}</div>
@@ -2011,7 +2011,7 @@
                     {sd?.summary && <p style={{ margin: "0 0 10px" }}>{sd.summary}</p>}
                     {emotion && <div style={{ fontSize: 12, color: emotion.color, marginBottom: 8 }}>{emotion.emoji} {emotion.label}</div>}
                     {sd?.suggestedFriction && <div className="mobile-step-friction"><strong style={{ color: "#EF4444" }}>Friction:</strong> {sd.suggestedFriction}</div>}
-                    {sd?.suggestedWish && <div className="mobile-step-wish"><strong style={{ color: "#10B981" }}>Wish:</strong> {sd.suggestedWish}</div>}
+                    {sd?.suggestedWish && <div className="mobile-step-wish"><strong style={{ color: "#10a48b" }}>Wish:</strong> {sd.suggestedWish}</div>}
                     {sd?.keyQuotes?.slice(0, 2).map((q, qi) => (
                       <div key={qi} className="mobile-step-quote">
                         "{q.text}"
@@ -2089,12 +2089,12 @@
               {product.versions.map(v => (
                 <div key={v.version} className="mobile-version-card">
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 14, color: "#10B981" }}>{v.version}</span>
+                    <span style={{ fontFamily: MONO, fontWeight: 800, fontSize: 14, color: "#10a48b" }}>{v.version}</span>
                     <span style={{ fontSize: 11, color: "#6B7280" }}>{v.date}</span>
                   </div>
                   <div style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: "#F9FAFB" }}>{v.title}</div>
                   <div style={{ fontSize: 12, color: "#D1D5DB", marginTop: 4, lineHeight: 1.4 }}>{v.description}</div>
-                  <div style={{ fontSize: 11, color: "#10B981", marginTop: 6, fontFamily: MONO }}>{v.milestone}</div>
+                  <div style={{ fontSize: 11, color: "#10a48b", marginTop: 6, fontFamily: MONO }}>{v.milestone}</div>
                 </div>
               ))}
             </div>
@@ -2321,10 +2321,10 @@
       DESIGN: { bg: "rgba(124,58,237,0.15)", color: "#A78BFA" },
       EVIDENCE: { bg: "rgba(59,130,246,0.15)", color: "#60A5FA" },
       BUILD: { bg: "rgba(245,158,11,0.15)", color: "#F59E0B" },
-      STRATEGY: { bg: "rgba(16,185,129,0.15)", color: "#10B981" },
+      STRATEGY: { bg: "rgba(16,185,129,0.15)", color: "#10a48b" },
       VALIDATE: { bg: "rgba(239,68,68,0.15)", color: "#EF4444" },
       CONVERGE: { bg: "rgba(99,102,241,0.15)", color: "#818CF8" },
-      SHIP: { bg: "rgba(16,185,129,0.15)", color: "#10B981" },
+      SHIP: { bg: "rgba(16,185,129,0.15)", color: "#10a48b" },
     };
 
     function SectionLabel({ label }) {
@@ -2361,7 +2361,7 @@
                     <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{s.name}</div>
                     <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
                       <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, background: "rgba(59,130,246,0.15)", color: "#60A5FA", fontFamily: MONO, fontWeight: 600 }}>{s.device}</span>
-                      <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, background: "rgba(16,185,129,0.15)", color: "#10B981", fontFamily: MONO, fontWeight: 600 }}>{s.timing}</span>
+                      <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, background: "rgba(16,185,129,0.15)", color: "#10a48b", fontFamily: MONO, fontWeight: 600 }}>{s.timing}</span>
                     </div>
                   </div>
                 </div>
@@ -2392,14 +2392,14 @@
           <NarrativeIntro>These pain points and wishes came directly from your journey mapping sessions. Click to prioritize the ones that matter most — your votes shape the product.</NarrativeIntro>
 
           <div style={{ marginBottom: 16, textAlign: "center" }}>
-            <span style={{ fontSize: 20, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{totalVoted}</span>
+            <span style={{ fontSize: 20, fontWeight: 800, fontFamily: MONO, color: "#10a48b" }}>{totalVoted}</span>
             <span style={{ fontSize: 13, color: "#9CA3AF", marginLeft: 8 }}>items prioritized</span>
           </div>
 
           <ThemeContext.Provider value={BRAND_DARK}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, width: "100%" }}>
               {Object.entries(PL_EVIDENCE).map(([key, data]) => {
-                const sc = { color: key === "student" ? "#10B981" : key === "instructor" ? "#A78BFA" : "#EF4444", bg: key === "student" ? "#064E3B" : key === "instructor" ? "#4C1D95" : "#7F1D1D" };
+                const sc = { color: key === "student" ? "#10a48b" : key === "instructor" ? "#A78BFA" : "#EF4444", bg: key === "student" ? "#064E3B" : key === "instructor" ? "#4C1D95" : "#7F1D1D" };
                 return (
                   <div key={key} style={{ background: "#1F2937", border: "1px solid #374151", borderRadius: 10, overflow: "hidden" }}>
                     <div style={{ background: sc.bg, padding: "14px 16px", borderBottom: "1px solid #374151" }}>
@@ -2461,7 +2461,7 @@
 
           <div style={{ width: "100%", marginBottom: 24, padding: "12px 20px", background: "#1F2937", borderRadius: 8, display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ height: 8, flex: 1, background: "#374151", borderRadius: 4, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: "0%", background: "#10B981", borderRadius: 4 }} />
+              <div style={{ height: "100%", width: "0%", background: "#10a48b", borderRadius: 4 }} />
             </div>
             <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: "#6B7280" }}>0 / {PL_BUDGET}</span>
           </div>
@@ -2486,7 +2486,7 @@
                         {hasVotedEvidence && <div style={{ fontSize: 10, color: "#60A5FA", fontFamily: MONO }}>Addresses your prioritized evidence</div>}
                         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
                           {f.stakeholders.map(s => (
-                            <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: 3, color: s === "student" ? "#10B981" : s === "instructor" ? "#A78BFA" : "#EF4444", background: s === "student" ? "#064E3B" : s === "instructor" ? "#4C1D95" : "#7F1D1D", fontFamily: MONO, textTransform: "uppercase" }}>{s}</span>
+                            <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: 3, color: s === "student" ? "#10a48b" : s === "instructor" ? "#A78BFA" : "#EF4444", background: s === "student" ? "#064E3B" : s === "instructor" ? "#4C1D95" : "#7F1D1D", fontFamily: MONO, textTransform: "uppercase" }}>{s}</span>
                           ))}
                         </div>
                       </div>
@@ -2523,7 +2523,7 @@
                 const selected = selectedFeatures.includes(f.id);
                 const hasVotedEvidence = (f.addressesEvidence || []).some(eId => votedIds.has(eId));
                 return (
-                  <button key={f.id} onClick={() => toggleFeature(f.id)} style={{ display: "flex", alignItems: "flex-start", gap: 10, width: "100%", padding: "12px 14px", marginBottom: 8, textAlign: "left", fontFamily: SANS, background: selected ? "rgba(16,185,129,0.12)" : "#1F2937", border: `2px solid ${selected ? "#10B981" : "#374151"}`, borderRadius: 8, cursor: overBudget && !selected ? "not-allowed" : "pointer", opacity: overBudget && !selected ? 0.5 : 1, transition: "all 0.15s", color: "#F9FAFB" }}>
+                  <button key={f.id} onClick={() => toggleFeature(f.id)} style={{ display: "flex", alignItems: "flex-start", gap: 10, width: "100%", padding: "12px 14px", marginBottom: 8, textAlign: "left", fontFamily: SANS, background: selected ? "rgba(16,185,129,0.12)" : "#1F2937", border: `2px solid ${selected ? "#10a48b" : "#374151"}`, borderRadius: 8, cursor: overBudget && !selected ? "not-allowed" : "pointer", opacity: overBudget && !selected ? 0.5 : 1, transition: "all 0.15s", color: "#F9FAFB" }}>
                     <span style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
@@ -2544,14 +2544,14 @@
               <div style={{ background: "#1F2937", borderRadius: 12, padding: 20, border: "1px solid #374151" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 16, fontFamily: MONO }}>Budget</div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: overBudget ? "#EF4444" : "#10B981" }}>{totalCost}</span>
+                  <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: overBudget ? "#EF4444" : "#10a48b" }}>{totalCost}</span>
                   <span style={{ fontSize: 28, fontWeight: 800, fontFamily: MONO, color: "#6B7280" }}>/ {PL_BUDGET}</span>
                 </div>
                 <div style={{ height: 8, background: "#374151", borderRadius: 4, overflow: "hidden", marginBottom: 8 }}>
-                  <div style={{ height: "100%", width: `${pct}%`, background: overBudget ? "#EF4444" : pct > 80 ? "#F59E0B" : "#10B981", borderRadius: 4, transition: "all 0.3s" }} />
+                  <div style={{ height: "100%", width: `${pct}%`, background: overBudget ? "#EF4444" : pct > 80 ? "#F59E0B" : "#10a48b", borderRadius: 4, transition: "all 0.3s" }} />
                 </div>
                 {overBudget && <div style={{ fontSize: 12, color: "#EF4444", fontWeight: 600, fontFamily: MONO }}>Over budget by {totalCost - PL_BUDGET} pts! Remove features.</div>}
-                {!overBudget && totalCost > 0 && <div style={{ fontSize: 12, color: "#10B981", fontFamily: MONO }}>{PL_BUDGET - totalCost} points remaining</div>}
+                {!overBudget && totalCost > 0 && <div style={{ fontSize: 12, color: "#10a48b", fontFamily: MONO }}>{PL_BUDGET - totalCost} points remaining</div>}
 
                 {selFeats.length > 0 && (
                   <div style={{ marginTop: 16 }}>
@@ -2570,7 +2570,7 @@
                   <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
                     {PL_FCM_STEPS.map(step => {
                       const covered = selFeats.some(f => (f.affectsSteps || []).includes(step.id));
-                      return <span key={step.id} style={{ fontSize: 9, padding: "3px 6px", borderRadius: 4, background: covered ? "rgba(16,185,129,0.15)" : "rgba(55,65,81,0.3)", color: covered ? "#10B981" : "#4B5563", fontFamily: MONO, fontWeight: 600 }}>{step.short}</span>;
+                      return <span key={step.id} style={{ fontSize: 9, padding: "3px 6px", borderRadius: 4, background: covered ? "rgba(16,185,129,0.15)" : "rgba(55,65,81,0.3)", color: covered ? "#10a48b" : "#4B5563", fontFamily: MONO, fontWeight: 600 }}>{step.short}</span>;
                     })}
                   </div>
                 </div>
@@ -2603,13 +2603,13 @@
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, width: "100%", maxWidth: 800 }}>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 12 }}>Quick Wins ({quickWins.length})</div>
+                <div style={{ fontSize: 14, fontWeight: 700, fontFamily: MONO, color: "#10a48b", marginBottom: 12 }}>Quick Wins ({quickWins.length})</div>
                 <div style={{ fontSize: 11, color: "#9CA3AF", marginBottom: 16 }}>Low cost, few deps. Ship these first.</div>
                 {quickWins.length === 0 && <div style={{ fontSize: 12, color: "#4B5563", fontStyle: "italic" }}>No quick wins in your selection</div>}
                 {quickWins.map(f => (
                   <div key={f.id} style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 8, padding: 12, marginBottom: 8 }}>
                     <div style={{ fontSize: 13, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{f.icon} {f.name}</div>
-                    <div style={{ fontSize: 10, color: "#10B981", fontFamily: MONO, marginTop: 4 }}>{f.cost}pt · needs: {(f.requires || []).join(", ") || "nothing"}</div>
+                    <div style={{ fontSize: 10, color: "#10a48b", fontFamily: MONO, marginTop: 4 }}>{f.cost}pt · needs: {(f.requires || []).join(", ") || "nothing"}</div>
                   </div>
                 ))}
               </div>
@@ -2662,23 +2662,23 @@
               const missingFeatures = featureStates.filter(fs => !fs.selected);
 
               return (
-                <div key={syn.id} style={{ background: "#1F2937", borderRadius: 12, padding: 20, marginBottom: 16, border: `2px solid ${isComplete ? "#10B981" : isPartial ? "#F59E0B" : "#374151"}` }}>
+                <div key={syn.id} style={{ background: "#1F2937", borderRadius: 12, padding: 20, marginBottom: 16, border: `2px solid ${isComplete ? "#10a48b" : isPartial ? "#F59E0B" : "#374151"}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                     <span style={{ fontSize: 28 }}>{syn.icon}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#F9FAFB" }}>{syn.name}</div>
                       <div style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5 }}>{syn.description}</div>
                     </div>
-                    <span style={{ fontSize: 12, fontWeight: 700, fontFamily: MONO, padding: "4px 12px", borderRadius: 8, background: isComplete ? "rgba(16,185,129,0.15)" : isPartial ? "rgba(245,158,11,0.15)" : "rgba(107,114,128,0.15)", color: isComplete ? "#10B981" : isPartial ? "#F59E0B" : "#6B7280" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, fontFamily: MONO, padding: "4px 12px", borderRadius: 8, background: isComplete ? "rgba(16,185,129,0.15)" : isPartial ? "rgba(245,158,11,0.15)" : "rgba(107,114,128,0.15)", color: isComplete ? "#10a48b" : isPartial ? "#F59E0B" : "#6B7280" }}>
                       {isComplete ? "Complete" : `${selectedCount}/${syn.features.length}`}
                     </span>
                   </div>
 
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
                     {featureStates.map(({ feature, selected }) => (
-                      <div key={feature.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, background: selected ? "rgba(16,185,129,0.12)" : "rgba(55,65,81,0.3)", border: `1px solid ${selected ? "#10B981" : "#374151"}` }}>
+                      <div key={feature.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, background: selected ? "rgba(16,185,129,0.12)" : "rgba(55,65,81,0.3)", border: `1px solid ${selected ? "#10a48b" : "#374151"}` }}>
                         <span style={{ fontSize: 14 }}>{feature.icon}</span>
-                        <span style={{ fontSize: 11, fontFamily: MONO, color: selected ? "#10B981" : "#6B7280", fontWeight: selected ? 700 : 400 }}>{feature.name}</span>
+                        <span style={{ fontSize: 11, fontFamily: MONO, color: selected ? "#10a48b" : "#6B7280", fontWeight: selected ? 700 : 400 }}>{feature.name}</span>
                         <span style={{ fontSize: 10 }}>{selected ? "✅" : "⬜"}</span>
                       </div>
                     ))}
@@ -2716,7 +2716,7 @@
               const covered = needed.filter(fId => selIds.has(fId));
               const missing = needed.filter(fId => !selIds.has(fId));
               const ratio = needed.length > 0 ? covered.length / needed.length : 0;
-              const color = ratio >= 1 ? "#10B981" : ratio >= 0.5 ? "#F59E0B" : "#EF4444";
+              const color = ratio >= 1 ? "#10a48b" : ratio >= 0.5 ? "#F59E0B" : "#EF4444";
 
               return (
                 <div key={s.id} style={{ background: "#1F2937", borderRadius: 12, padding: 18, marginBottom: 10, border: `1px solid ${ratio >= 1 ? "rgba(16,185,129,0.3)" : "#374151"}` }}>
@@ -2732,7 +2732,7 @@
                       const f = PL_FEATURES.find(ff => ff.id === fId);
                       const has = selIds.has(fId);
                       return f ? (
-                        <span key={fId} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: has ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.1)", color: has ? "#10B981" : "#EF4444", fontFamily: MONO, fontWeight: 600, border: `1px solid ${has ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.2)"}` }}>
+                        <span key={fId} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: has ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.1)", color: has ? "#10a48b" : "#EF4444", fontFamily: MONO, fontWeight: 600, border: `1px solid ${has ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.2)"}` }}>
                           {has ? "✓" : "✗"} {f.name}
                         </span>
                       ) : null;
@@ -2796,19 +2796,19 @@
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 16, fontFamily: MONO }}>Summary</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16 }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{selFeats.length}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10a48b" }}>{selFeats.length}</div>
                 <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>features</div>
               </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: totalCost > PL_BUDGET ? "#EF4444" : "#10B981" }}>{totalCost}/{PL_BUDGET}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: totalCost > PL_BUDGET ? "#EF4444" : "#10a48b" }}>{totalCost}/{PL_BUDGET}</div>
                 <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>build pts</div>
               </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{activeSynergies.length}/{PL_SYNERGIES.length}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10a48b" }}>{activeSynergies.length}/{PL_SYNERGIES.length}</div>
                 <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>loops</div>
               </div>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10B981" }}>{reqSet.size}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, fontFamily: MONO, color: "#10a48b" }}>{reqSet.size}</div>
                 <div style={{ fontSize: 10, color: "#6B7280", textTransform: "uppercase", fontFamily: MONO }}>tech reqs</div>
               </div>
             </div>
@@ -2817,7 +2817,7 @@
               {scenarioCoverage.map(sc => (
                 <div key={sc.name} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 11, color: "#9CA3AF", flex: 1, fontFamily: MONO }}>{sc.name}</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: sc.covered === sc.total ? "#10B981" : sc.covered > 0 ? "#F59E0B" : "#EF4444" }}>{sc.covered}/{sc.total}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, fontFamily: MONO, color: sc.covered === sc.total ? "#10a48b" : sc.covered > 0 ? "#F59E0B" : "#EF4444" }}>{sc.covered}/{sc.total}</span>
                 </div>
               ))}
             </div>
@@ -2881,7 +2881,7 @@
           </div>
 
           <div style={{ marginTop: 32, padding: "20px 24px", background: "rgba(16,185,129,0.06)", borderRadius: 12, border: "1px solid rgba(16,185,129,0.2)", width: "100%", textAlign: "center" }}>
-            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#10B981", marginBottom: 8 }}>What happens next?</div>
+            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: MONO, color: "#10a48b", marginBottom: 8 }}>What happens next?</div>
             <p style={{ fontSize: 13, color: "#D1D5DB", lineHeight: 1.6, margin: 0 }}>
               Paste this PRD into Claude Code or your AI coding assistant. It has everything needed to start building — the domain context, user research, feature decisions, and technical requirements. Your design sprint research becomes a real product.
             </p>
@@ -3035,7 +3035,7 @@
         description: "A teaching platform that creates a feedback loop. Students share their prep and reasoning; instructors see where the class is before walking in. Both sides get more from every session.",
         bestFor: "Fixing the instructor-student information gap — coaches fly blind, students can't signal confusion",
         tradeoff: "Requires adoption from both sides. If instructors don't check it, the loop breaks.",
-        color: "#10B981",
+        color: "#10a48b",
         bgLight: "#F0FDF4", bgDark: "#0a2a1a",
         referenceApps: [
           { name: "Piazza", icon: "💬", trait: "Q&A + instructor visibility", patterns: [

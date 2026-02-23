@@ -4,8 +4,8 @@
   "description": "Map the real FCM experience — Health Design Sprint 2026",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#10B981",
+  "background_color": "#1c1917",
+  "theme_color": "#10a48b",
   "icons": [
     {
       "src": "icon.svg",
