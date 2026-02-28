@@ -1,170 +1,95 @@
-# FCM Journey Mapper — HDS 2026
+# FCM Journey Mapper & Product Lab
 
-Static single-file React app for mapping the FCM case cycle experience. Deployed on GitHub Pages.
+**A research-to-PRD pipeline that turns user research into structured product requirements — built during the [Health Design Sprint](https://github.com/uva-medical-design/health-design-sprint) at the University of Virginia School of Medicine.**
 
-## File Structure
+> The Product Lab is a 4-stage process for transforming raw user research into a product requirements document, complete with constraint budgets, archetype positioning, and design philosophy reinterpretation.
 
-```
-fcm-journey-mapper/
-  index.html          — App (components, styles, logic)
-  sessions-data.js    — Pre-processed session data (window.FCM_SESSION_DATA)
-  README.md           — This file
-  transcripts/        — Local only, not deployed. Raw session transcripts.
-```
+## What It Does
 
-## Adding a New Session
+### Journey Map
 
-### 1. Prepare the transcript
+Interactive timeline of the medical education case cycle (Foundations of Clinical Medicine), with:
 
-Place the raw transcript markdown in `transcripts/` (this directory is local only — never deployed).
+- **9 steps** mapped across the full case cycle — from assignment through differential building, the cognitive gap, small group session, patient encounter, feedback, note writing, and the fade
+- **Emotional journey tracking** across three perspectives (Student, Faculty Coach, Course Director)
+- **Stability analysis** — green (stable), amber (emerging), gray (tentative) badges show finding confidence across sessions
+- **High-yield opportunity detection** — ranked intervention points with yield scores, triage actions (approve/discuss/dismiss)
+- **Pre-processed session data** — themes, quotes, context notes, and friction/wish annotations from real student research sessions
 
-### 2. Process with Claude Code
+### Product Lab
 
-Ask Claude Code to process the transcript. Use a prompt like:
+A structured 4-stage pipeline for converting user research into product decisions:
 
-```
-Process this FCM group discussion transcript into a session data object
-for the FCM Journey Mapper. Map findings to these step IDs:
-"1" (Get Assignment), "2" (Build Differential), "gap1" (The Gap),
-"3" (Small Group), "4" (Patient Encounter), "5" (Coach Feedback),
-"6" (Write the Note), "7" (Written Feedback), "gap2" (The Fade),
-"8" (Next Case).
+1. **Evidence Wall** — All surfaced pain points, wishes, and quotes organized by stakeholder perspective (Student, Instructor, Course Director). Click items to prioritize — votes flow directly into the PRD.
 
-For each step, extract:
-- summary, themes[], keyQuotes[{text, speaker, context}], contextNotes
-- suggestedEmotion (index into EMOTIONS array: 0=Anxious, 1=Uncertain,
-  2=Going through motions, 3=Engaged, 4=Confident, 5=Energized, 6=Frustrated)
-- suggestedActual, suggestedFriction, suggestedWish
+2. **Product DNA Map** — Drag a pin on a 2x2 archetype matrix (Engagement x Structure) to position your product. Four quadrants — The AI Tutor, The Study Group, The Quick Hit, The Dashboard — each mapped to reference apps (Duolingo, Piazza, Strava, ChatGPT). Synergy detection highlights powerful feature combinations across archetypes.
 
-Also generate:
-- stability analysis per step (stable/emerging/tentative + evidence + supportCount)
-- yield opportunities ranked by yieldScore (1-10) with rationale and interventions
-- administrator macroJobs (compliance, progress, teaching-quality)
+3. **Product Builder** — Select features from a wishlist, each with explicit point costs. A 10-point budget forces trade-off decisions. Five analysis lenses let you examine your choices from different angles:
+   - **Budget** — Real-time cost tracking with over-budget warnings
+   - **Tech Stack** — Required infrastructure for selected features
+   - **Product Shape** — Stakeholder coverage, engagement pattern mix, step coverage visualization
+   - **What Would X Do?** — Reinterpret your feature set through the design philosophy of Duolingo, Piazza, Strava, or ChatGPT. Each philosophy applies verdict tags (PERFECT FIT, SIMPLIFY, CUT IT, GAMIFY IT) to every selected feature with specific adaptation notes.
+   - **Scenarios** — User scenarios that test whether your feature set addresses real moments in the student workflow
 
-Output as a JavaScript object matching the schema in sessions-data.js.
-```
+4. **PRD Draft** — Auto-generated product requirements document from all your decisions. Includes vision statement, prioritized evidence, feature specifications with costs and stakeholder mapping, archetype positioning, design philosophy, and explicit "not building" declarations. Renders as formatted markdown with export.
 
-### 3. Review the output
+### Presentation Modes
 
-Check that:
-- Step IDs match exactly (`"1"`, `"2"`, `"gap1"`, etc.)
-- Quotes are attributed correctly
-- Stability levels make sense given the evidence
-- Yield scores are justified by the rationale
-- Administrator macro jobs are relevant
+- **Team Review** — 18-page narrative walkthrough for internal team discussion. Research findings, journey moments, budget negotiation, scenario testing, and PRD generation — all as a guided story with discussion prompts and instructor notes.
+- **External Present** — 10-chapter overview for stakeholders (Context, Seed, Discovery, Map, Findings, Opportunities, Criteria, Built, Demo, Feedback). Anonymized quotes, timeline of what was built, and structured feedback collection.
+- **Mobile** — 4-tab touch-optimized layout (Overview, Journey, Findings, Build) for on-the-go review.
+- **Free Browse** — Non-linear exploration mode within Team Review, with tab-based navigation across Journey Map and Product Lab.
 
-### 4. Add to sessions-data.js
+## Try It
 
-1. Append the new session object to the `sessions` array
-2. Update `meta.totalSessions` and `meta.lastUpdated`
-3. Update `cumulative` stability and yield opportunities (merge across sessions)
+**[Live demo](https://hds-2026s-digital-01.github.io/fcm-journey-mapper/)**
 
-### 5. Deploy
+Add `?present` to the URL (or `#present` for file:// URLs) for presentation mode.
+
+## Technical Details
+
+Single-file React application (~4,850 lines). No build step required.
+
+- **Stack:** React 18 (in-browser Babel/JSX), CSS-in-JS, localStorage persistence
+- **Data:** Pre-processed session data in `sessions-data.js`, sprint narrative in `sprint-narrative.js`
+- **Dependencies:** React 18, ReactDOM, Babel standalone (all loaded via CDN)
+- **Fonts:** Inter + JetBrains Mono (Google Fonts)
+- **PWA:** Service worker + manifest for installable web app
+- **Deployment:** Static HTML — works on any web server, GitHub Pages, or directly from the filesystem
 
 ```bash
-git add sessions-data.js
-git commit -m "feat: add session N data"
-git push
+# Local development — just open the file
+open index.html
+
+# Or use a local server for full PWA support
+npx live-server
 ```
 
-GitHub Pages auto-deploys from the main branch.
+### Architecture
 
-## Data Schema Reference
+Everything lives in `index.html`: components, styles, state management, and data processing. Key architectural decisions:
 
-```javascript
-window.FCM_SESSION_DATA = {
-  meta: {
-    lastUpdated: "YYYY-MM-DD",
-    processedBy: "Claude Code",
-    courseYear: "HDS 2026",
-    totalSessions: Number
-  },
+- **In-browser Babel** transpiles JSX at runtime — no build tooling, no node_modules
+- **CSS-in-JS** via inline styles with brand tokens (light/dark themes)
+- **`PROJECT_CONFIG`** constant extracts course-specific values for future cohort reuse
+- **localStorage** persists all user annotations, feature selections, votes, and PRD drafts
+- **Responsive** — mobile banner auto-detects small screens and offers the mobile-optimized view
 
-  sessions: [{
-    id: "session-N",
-    label: "Session N — Description",
-    date: "YYYY-MM-DD",
-    description: "...",
-    participantCount: Number,
+## Why This Matters
 
-    perspectives: {
-      student: {
-        steps: {
-          "[stepId]": {
-            summary: "...",
-            themes: ["..."],
-            keyQuotes: [{ text: "...", speaker: "...", context: "..." }],
-            contextNotes: "...",
-            suggestedEmotion: Number,    // 0-6, index into EMOTIONS
-            suggestedActual: "...",
-            suggestedFriction: "...",
-            suggestedWish: "..."
-          }
-        }
-      },
-      coach: { steps: { /* same shape */ } },
-      administrator: {
-        macroJobs: [{
-          id: "...",
-          title: "...",
-          status: "...",
-          keyInsights: ["..."],
-          keyQuotes: [{ text, speaker, context }],
-          frictionPoints: ["..."]
-        }]
-      }
-    },
+The Product Lab demonstrates that structured design processes can be encoded into interactive tools — making design thinking systematic rather than intuitive. Built by medical students during a 10-day design sprint, it shows how domain experts can create sophisticated research pipelines without engineering backgrounds.
 
-    analysis: {
-      stability: {
-        "[stepId]": {
-          level: "stable" | "emerging" | "tentative",
-          evidence: "...",
-          supportCount: Number
-        }
-      },
-      yieldOpportunities: [{
-        stepId: "...",
-        title: "...",
-        yieldScore: Number,        // 1-10
-        rationale: "...",
-        suggestedInterventions: ["..."]
-      }]
-    }
-  }],
+The constraint budget (10 points across features of varying cost) is the key pedagogical innovation: it forces teams to make explicit trade-off decisions rather than building wish lists. Combined with the "What Would X Do?" lens — which reinterprets every feature through a consumer product's design philosophy — teams develop product intuition while making concrete decisions.
 
-  cumulative: {
-    stability: { /* same shape as session stability */ },
-    yieldOpportunities: [{
-      stepId, title, yieldScore,
-      sessions: ["session-1", ...]  // which sessions support this
-    }],
-    trendNotes: "..."
-  }
-};
-```
+## License
 
-## EMOTIONS Index
+[MIT](LICENSE)
 
-| Index | Emoji | Label |
-|-------|-------|-------|
-| 0 | 😰 | Anxious |
-| 1 | 😟 | Uncertain |
-| 2 | 😐 | Going through motions |
-| 3 | 🤔 | Engaged |
-| 4 | 😊 | Confident |
-| 5 | 😁 | Energized |
-| 6 | 😤 | Frustrated |
+## Related
 
-## Features
+- **[Health Design Sprint](https://github.com/uva-medical-design/health-design-sprint)** — The methodology and course framework
+- **[FCM Companion](https://github.com/uva-medical-design/fcm-companion)** — The clinical reasoning platform that was built using this pipeline
 
-- **Session selector** — pick a pre-processed session or start blank
-- **Three perspectives** — Student, Coach/Faculty, Administrator
-- **Pre-filled insights** — themes, quotes, context notes from session data
-- **Stability badges** — green (stable), amber (emerging), gray (tentative)
-- **High-yield badges** — red pill on steps with yield score >= 7
-- **Annotation layering** — user edits stored separately, persist in localStorage
-- **Yield analysis** — ranked opportunities with approve/discuss/dismiss triaging
-- **Administrator dashboard** — macro jobs-to-be-done (replaces step view)
-- **Cumulative analysis** — cross-session trends (appears with 2+ sessions)
-- **Export** — markdown export includes session context and yield approvals
+---
+
+*Built during the Health Design Sprint at the University of Virginia School of Medicine, February 2026.*
